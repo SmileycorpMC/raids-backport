@@ -26,7 +26,7 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.smileycorp.atlas.api.IOngoingEvent;
 import net.smileycorp.atlas.api.util.DataUtils;
-import net.smileycorp.raids.common.RaidWaves;
+import net.smileycorp.raids.common.RaidHandler;
 import net.smileycorp.raids.common.RaidsContent;
 
 public interface IRaid extends IOngoingEvent {
@@ -39,7 +39,7 @@ public interface IRaid extends IOngoingEvent {
 	
 	public List<EntityLiving> getWaveEntities();
 	
-	public void startEvent(int maxWaves, int level);
+	public void startEvent(int maxWaves, int bonusWaves, int level);
 	
 	public void startNextWave();
 	
@@ -74,7 +74,7 @@ public interface IRaid extends IOngoingEvent {
 		protected final List<EntityVillager> villagers = new ArrayList<EntityVillager>();
 		protected int cooldown = 0;
 		protected boolean fireworks = false;
-		protected int wave = 0, maxWaves = 0, level = 0;
+		protected int wave = 0, maxWaves = 0, bonusWaves = 0, level = 0;
 		protected float health = 0, totalHealth = 0;
 		protected final Random rand = new Random();
 		
@@ -173,7 +173,7 @@ public interface IRaid extends IOngoingEvent {
 		}
 		
 		@Override
-		public void startEvent(int maxWaves, int level) {
+		public void startEvent(int maxWaves, int bonusWaves, int level) {
 			cooldown = 60;
 			this.maxWaves = maxWaves;
 			this.level = level;
@@ -182,7 +182,7 @@ public interface IRaid extends IOngoingEvent {
 		@Override
 		public void startNextWave() {
 			wave++;
-			RaidWaves.createNewWave(village, entities, level);
+			RaidHandler.createNewWave(village, entities, wave > maxWaves ? maxWaves : wave, level);
 			health = 0;
 			for (EntityLiving entity : entities) health+=entity.getHealth();
 			totalHealth = health;

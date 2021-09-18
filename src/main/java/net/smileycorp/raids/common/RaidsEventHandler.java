@@ -4,7 +4,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityOwnable;
-import net.minecraft.entity.monster.AbstractIllager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
@@ -26,7 +25,7 @@ public class RaidsEventHandler {
 	@SubscribeEvent
 	public void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> event) {
 		Entity entity = event.getObject();
-		if (!entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && entity instanceof AbstractIllager && !(entity instanceof EntityPlayer)) {
+		if (!entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && RaidHandler.CAPABILITY_ENTITIES.contains(entity.getClass())) {
 			event.addCapability(ModDefinitions.getResource("Raider"), new IRaider.Provider((EntityLiving) entity));
 		}
 	}
@@ -71,10 +70,10 @@ public class RaidsEventHandler {
 								IRaid raid = village.getCapability(RaidsContent.RAID_CAPABILITY, null);
 								if (!raid.isActive(world)) {
 									int amplifier = player.getActivePotionEffect(RaidsContent.BAD_OMEN).getAmplifier();
-									int waves = RaidWaves.getWaveCount(world);
+									int waves = RaidHandler.getWaveCount(world);
 									if (amplifier > 0) waves++;
 									if (waves>0) {
-										raid.startEvent(waves, amplifier);
+										raid.startEvent(waves, amplifier > 0 ? 1 : 0, amplifier);
 										player.removeActivePotionEffect(RaidsContent.BAD_OMEN);
 									}
 								}
@@ -126,6 +125,7 @@ public class RaidsEventHandler {
 									if (amplifier < 4) player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000, amplifier+1));
 									player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000));
 								} else player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000));
+								//if (player instanceof EntityPlayerMP) ((EntityPlayerMP) player).getAdvancements().grantCriterion(Advancement, p_192750_2_)
 							}
 						}
 					}
