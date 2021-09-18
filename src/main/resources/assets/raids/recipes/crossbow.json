@@ -1,0 +1,29 @@
+{
+  "type": "forge:ore_shaped",
+  "group": "raids:crossbow",
+  "pattern": [
+    "SIS",
+    "$T$",
+    " S "
+  ],
+  "key": {
+    "$": {
+      "type": "forge:ore_dict",
+      "ore": "string"
+    },
+    "S": {
+      "type": "forge:ore_dict",
+      "ore": "stickWood"
+    },
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "ingotIron"
+    },
+    "T": {
+      "item": "minecraft:tripwire_hook"
+    }
+  },
+  "result": {
+    "item": "raids:crossbow"
+  }
+}
