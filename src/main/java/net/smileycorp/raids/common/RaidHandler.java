@@ -20,17 +20,25 @@ public class RaidHandler {
 	
 	private static final List<RaidEntry> ENTRIES = new ArrayList<RaidEntry>();
 	
-	public static void registerEntry(Class<? extends EntityLiving> entity, @Nullable Class<? extends EntityLiving> mount, int[] min, int[] max) {
-		ENTRIES.add(new RaidEntry(entity, mount, min, max));
+	public static void registerEntry(Class<? extends EntityLiving> entity, @Nullable Class<? extends EntityLiving> mount, int[] min, int[] max, @Nullable BonusSpawns bonusSpawns) {
+		ENTRIES.add(new RaidEntry(entity, mount, min, max, bonusSpawns));
 		if (!CAPABILITY_ENTITIES.contains(entity) && entity!=null) CAPABILITY_ENTITIES.add(entity);
 		if (!CAPABILITY_ENTITIES.contains(mount) && mount!=null) CAPABILITY_ENTITIES.add(mount);
 	}
 	
+	public static void registerEntry(Class<? extends EntityLiving> entity, int[] min, int[] max, @Nullable BonusSpawns bonusSpawns) {
+		registerEntry(entity, null, min, max, bonusSpawns);
+	}
+	
+	public static void registerEntry(Class<? extends EntityLiving> entity, @Nullable Class<? extends EntityLiving> mount, int[] min, int[] max) {
+		registerEntry(entity, mount, min, max, null);
+	}
+	
 	public static void registerEntry(Class<? extends EntityLiving> entity, int[] min, int[] max) {
-		registerEntry(entity, null, min, max);
+		registerEntry(entity, null, min, max, null);
 	}
 
-	public static void createNewWave(Village village, List<EntityLiving> entities, int wave, int level) {
+	public static void createNewWave(Village village, List<EntityLiving> entities, int wave, int level, boolean isBonusWave) {
 		
 	}
 
@@ -48,23 +56,34 @@ public class RaidHandler {
 		private Class<? extends EntityLiving> entity, mount;
 		private int[] min;
 		private int[] max;
+		private BonusSpawns bonusSpawns;
 		
-		public RaidEntry(Class<? extends EntityLiving> entity, @Nullable Class<? extends EntityLiving> mount, int[] min, int[] max) {
+		public RaidEntry(Class<? extends EntityLiving> entity, @Nullable Class<? extends EntityLiving> mount, int[] min, int[] max, @Nullable BonusSpawns bonusSpawns) {
 			this.entity=entity;
 			this.mount=mount;
 			this.min=min;
 			this.max=max;
+			this.bonusSpawns=bonusSpawns;
 		}
 		
-		public int getCount(Random rand, Village village, int wave) {
+		public int getCount(Random rand, Village village, int wave, boolean isBonusWave) {
+			EnumDifficulty difficulty = village.world.getDifficulty();
+			int count = getCountWithoutBonus(difficulty, rand, village, wave);
+			if (bonusSpawns!=null) count = bonusSpawns.apply(difficulty, rand, village, count, wave, isBonusWave);
+			return count;
+		}
+		
+		private int getCountWithoutBonus(EnumDifficulty difficulty, Random rand, Village village, int wave) {
 			wave--;
-			if (this.min.length<=wave||this.max.length<=wave) return 0;
+			if (this.min.length<=wave||this.max.length<=wave) wave = Math.min(this.min.length, this.max.length);
 			int min = this.min[wave];
 			int max = this.max[wave];
 			if (max == 0 || max < min) return 0;
 			if (max == min) return min;
-			if (village.world.getDifficulty() == EnumDifficulty.HARD && !(min == 0 && max == 1) && wave < 5) max++;
-			return min + rand.nextInt(max-min);
+			if (difficulty == EnumDifficulty.HARD && !(min == 0 && max == 1) && wave < 5) max++;
+			int count = min;
+			for (int i = 0; i< max-min; i++) if (rand.nextInt(difficulty == EnumDifficulty.EASY ? 4 : 2) == 0) count++;
+			return count;
 		}
 		
 		public void spawnEntity(Random rand, Village village, BlockPos pos, List<EntityLiving> entities, int level, boolean isLeader) throws Exception {
@@ -79,5 +98,9 @@ public class RaidHandler {
 				if (mount.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && raid!=null) mount.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setRaid(raid);
 			} else village.world.spawnEntity(entity);
 		}
+	}
+	@FunctionalInterface
+	public static interface BonusSpawns {
+		int apply(EnumDifficulty difficulty, Random rand, Village village, int wave, int count, boolean isBonusWave);
 	}
 }

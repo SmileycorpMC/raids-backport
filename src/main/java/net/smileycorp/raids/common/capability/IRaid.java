@@ -182,7 +182,8 @@ public interface IRaid extends IOngoingEvent {
 		@Override
 		public void startNextWave() {
 			wave++;
-			RaidHandler.createNewWave(village, entities, wave > maxWaves ? maxWaves : wave, level);
+			boolean isBonusWave = wave > maxWaves;
+			RaidHandler.createNewWave(village, entities, isBonusWave ? maxWaves : wave, level , isBonusWave);
 			health = 0;
 			for (EntityLiving entity : entities) health+=entity.getHealth();
 			totalHealth = health;
