@@ -18,5 +18,6 @@ Insert events for other mods to hook into to Raid spawning
 Implement pillager outposts and spawning
 Make raid patrols spawn naturally
 Add hero of the village discount
+Make villagers take shelter during raids
 Add crossbow enchantments
 Add advancements
