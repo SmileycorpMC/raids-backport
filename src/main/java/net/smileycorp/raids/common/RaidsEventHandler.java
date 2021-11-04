@@ -14,6 +14,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -131,6 +133,14 @@ public class RaidsEventHandler {
 					}
 				}
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void worldTick(LivingSpawnEvent.AllowDespawn event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
+			if (entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).isRaidActive()) event.setResult(Result.DENY);
 		}
 	}
 }

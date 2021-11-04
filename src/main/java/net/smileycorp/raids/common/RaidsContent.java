@@ -2,6 +2,7 @@ package net.smileycorp.raids.common;
 
 import java.util.Random;
 
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -51,8 +52,12 @@ public class RaidsContent {
 	public static EntityEntry RAVAGER /*= EntityEntryBuilder.create().entity(EntityRavager.class).id(ModDefinitions.getResource("ravager"), ID++).name(ModDefinitions.getName("Ravager")).egg(7697520, 5984329)
 			.tracker(64, 3, true).build()*/;
 	
-	public static Potion BAD_OMEN = new PotionBadOmen();
-	public static Potion HERO_OF_THE_VILLAGE = new PotionHeroOfTheVillage();
+	public static final Potion BAD_OMEN = new PotionBadOmen();
+	public static final Potion HERO_OF_THE_VILLAGE = new PotionHeroOfTheVillage();
+	
+	public static Enchantment QUICK_CHARGE;
+	public static Enchantment MULTISHOT;
+	public static Enchantment Piercing;
 	
 	public static final SoundEvent CROSSBOW_LOADING_END = new SoundEvent(ModDefinitions.getResource("item.crossbow.loading_end"));
 	public static final SoundEvent CROSSBOW_LOADING_MIDDLE = new SoundEvent(ModDefinitions.getResource("item.crossbow.loading_middle"));

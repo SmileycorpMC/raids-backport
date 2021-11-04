@@ -1,12 +1,15 @@
 package net.smileycorp.raids.common;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.monster.AbstractIllager;
+import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.Village;
@@ -38,8 +41,44 @@ public class RaidHandler {
 		registerEntry(entity, null, min, max, null);
 	}
 
-	public static void createNewWave(Village village, List<EntityLiving> entities, int wave, int level, boolean isBonusWave) {
+	public static List<EntityLiving> createNewWave(Village village, int wave, int level, boolean isBonusWave) {
 		
+		List<EntityLiving> entities = new ArrayList<EntityLiving>();
+		Random rand = village.world.rand;
+		BlockPos pos = village.getCenter();
+		for (RaidEntry entry : ENTRIES) {
+			for (int i = 0; i<entry.getCount(rand, village, wave, isBonusWave); i++) {
+				try {
+					entry.spawnEntity(rand, village, pos.north(rand.nextInt(6)-3).east(rand.nextInt(6)-3), entities, level);
+				} catch (Exception e) {
+					Raids.logError("Could not spawn entity for entry " + entry, e);
+				}
+			}
+		}
+		Collections.shuffle(entities);
+		chooseRaidLeader(entities);
+		return entities;
+	}
+
+	private static void chooseRaidLeader(List<EntityLiving> entities) {
+		for (EntityLiving entity : entities) {
+			if (entity instanceof EntityVindicator && entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
+				entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setLeader();
+				return;
+			}
+		}
+		for (EntityLiving entity : entities) {
+			if ((entity instanceof AbstractIllager) && entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
+				entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setLeader();
+				return;
+			}
+		}
+		for (EntityLiving entity : entities) {
+			if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
+				entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setLeader();
+				return;
+			}
+		}
 	}
 
 	public static int getWaveCount(World world) {
@@ -86,17 +125,23 @@ public class RaidHandler {
 			return count;
 		}
 		
-		public void spawnEntity(Random rand, Village village, BlockPos pos, List<EntityLiving> entities, int level, boolean isLeader) throws Exception {
+		public void spawnEntity(Random rand, Village village, BlockPos pos, List<EntityLiving> entities, int level) throws Exception {
+			World world = village.world;
 			IRaid raid  = null;
 			if (village.hasCapability(RaidsContent.RAID_CAPABILITY, null)) raid = village.getCapability(RaidsContent.RAID_CAPABILITY, null);
-			EntityLiving entity = this.entity.getConstructor(World.class).newInstance(village.world);
+			EntityLiving entity = this.entity.getConstructor(World.class).newInstance(world);
 			entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
+			world.spawnEntity(entity);
+			entities.add(entity);
 			if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && raid!=null) entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setRaid(raid);
 			if (mount!=null) {
-				EntityLiving mount = this.mount.getConstructor(World.class).newInstance(village.world);
-				entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
+				EntityLiving mount = this.mount.getConstructor(World.class).newInstance(world);
+				mount.setPosition(pos.getX(), pos.getY(), pos.getZ());
 				if (mount.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && raid!=null) mount.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setRaid(raid);
-			} else village.world.spawnEntity(entity);
+				world.spawnEntity(mount);
+				entity.startRiding(mount, true);
+				entities.add(mount);
+			}
 		}
 	}
 	@FunctionalInterface

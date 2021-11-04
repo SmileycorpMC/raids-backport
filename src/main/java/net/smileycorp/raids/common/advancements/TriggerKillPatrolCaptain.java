@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common;
+package net.smileycorp.raids.common.advancements;
 
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.ICriterionTrigger;
