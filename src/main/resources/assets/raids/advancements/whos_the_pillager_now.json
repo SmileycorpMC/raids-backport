@@ -1,8 +1,8 @@
 {
-  "parent": "minecraft:adventure/ol_betsy",
+  "parent": "hordes:adventure/ol_betsy",
   "display": {
     "icon": {
-      "item": "minecraft:crossbow",
+      "item": "raids:crossbow",
       "nbt": "{Damage:0}"
     },
     "title": {
@@ -25,7 +25,7 @@
             {
               "condition": "minecraft:entity_properties",
               "predicate": {
-                "type": "minecraft:pillager"
+                "type": "raids:pillager"
               },
               "entity": "this"
             }

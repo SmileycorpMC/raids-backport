@@ -1,24 +1,97 @@
 {
-	"item.crossbow.loading_end": {"sounds": [ "raids:item/crossbow/loading_end"], "subtitle": "subtitles.raids.item.crossbow.load" },
-	"item.crossbow.loading_middle": {"sounds": [ "raids:item/crossbow/loading_middle1", "raids:item/crossbow/loading_middle2", "raids:item/crossbow/loading_middle3", "raids:item/crossbow/loading_middle4"] },
-	"item.crossbow.loading_start": {"sounds": [ "raids:item/crossbow/loading_start", "subtitle": "subtitles.raids.item.crossbow.charge"] },
-	"item.crossbow.loading_quick_charge_1": {"sounds": [ "raids:item/crossbow/quick_charge/quick1_1", "raids:item/crossbow/quick_charge/quick1_2", "raids:item/crossbow/quick_charge/quick1_3", "subtitle": "subtitles.raids.item.crossbow.charge"] },
-	"item.crossbow.loading_quick_charge_2": {"sounds": [ "raids:item/crossbow/quick_charge/quick2_1", "raids:item/crossbow/quick_charge/quick2_2", "raids:item/crossbow/quick_charge/quick2_3", "subtitle": "subtitles.raids.item.crossbow.charge"] },
-	"item.crossbow.loading_quick_charge_3": {"sounds": [ "raids:item/crossbow/quick_charge/quick3_1", "raids:item/crossbow/quick_charge/quick3_2", "raids:item/crossbow/quick_charge/quick3_3", "subtitle": "subtitles.raids.item.crossbow.charge"] },
-	"item.crossbow.shoot": {"sounds": [ "raids:item/crossbow/loading_shoot1", "raids:item/crossbow/shoot2", "raids:item/crossbow/shoot3"], "subtitle": "subtitles.hordes.item.crossbow.shoot" },
-	"entity.pillager.ambient": { "category": "hostile", "sounds": [ "raids:mob/pillager/idle1", "raids:mob/pillager/idle2", "raids:mob/pillager/idle3", "raids:mob/pillager/idle4"], "subtitle": "subtitles.hordes.entity.pillager.ambient" },
-	"entity.pillager.hurt": { "category": "hostile", "sounds": [ "raids:mob/pillager/hurt1", "raids:mob/pillager/hurt2", "raids:mob/pillager/hurt3", "subtitle": "subtitles.raids.entity.pillager.hurt"] },
-	"entity.pillager.death": { "category": "hostile", "sounds": [ "raids:mob/pillager/death1", "raids:mob/pillager/death2"], "subtitle": "subtitles.raids.entity.pillager.death" },
-	"entity.pillager.celebrate": { "category": "hostile", "sounds": [ "raids:mob/pillager/celebrate1", "raids:mob/pillager/celebrate2", "raids:mob/pillager/celebrate3",
-		"raids:mob/pillager/celebrate4", "raids:mob/pillager/horn_celebrate"], "subtitle": "subtitles.raids.entity.pillager.celebrate" },
-	"entity.ravager.ambient": { "category": "hostile", "sounds": [ "raids:mob/ravager/idle1", "raids:mob/ravager/idle2", "raids:mob/ravager/idle3", "raids:mob/ravager/idle4", "raids:mob/ravager/idle5", 
-		"raids:mob/ravager/idle6", "raids:mob/ravager/idle7", "raids:mob/ravager/idle8"], "subtitle": "subtitles.raids.entity.ravager.ambient" },
-	"entity.ravager.hurt": { "category": "hostile", "sounds": [ "raids:mob/ravager/hurt1", "raids:mob/ravager/hurt2", "raids:mob/ravager/hurt3", "raids:mob/ravager/hurt4"], "subtitle": "subtitles.raids.entity.ravager.hurt" },
-	"entity.ravager.death": { "category": "hostile", "sounds": [ "raids:mob/ravager/death1", "raids:mob/ravager/death2", "raids:mob/ravager/death3"], "subtitle": "subtitles.raids.entity.ravager.death" },
-	"entity.ravager.celebrate": { "category": "hostile", "sounds": [ "raids:mob/ravager/celebrate1", "raids:mob/ravager/celebrate2"], "subtitles.raids.entity.ravager.celebrate" },
-	"entity.ravager.step": { "category": "hostile", "sounds": [ "raids:mob/ravager/step1", "raids:mob/ravager/step2", "raids:mob/ravager/step3", "raids:mob/ravager/step4", "raids:mob/ravager/step5"], "subtitle": "subtitles.raids.entity.ravager.step" },
-	"entity.ravager.stunned": { "category": "hostile", "sounds": [ "raids:mob/ravager/stun1", "raids:mob/ravager/stun2", "raids:mob/ravager/stun3", "subtitle": "subtitles.raids.entity.ravager.stunned"] },
-	"entity.ravager.roar": { "category": "hostile", "sounds": [ "raids:mob/ravager/roar1", "raids:mob/ravager/roar2", "raids:mob/ravager/roar3", "raids:mob/ravager/roar4", "subtitle": "subtitles.raids.entity.ravager.roar"] },
-	"entity.ravager.attack": { "category": "hostile", "sounds": [ "raids:mob/ravager/bite1", "raids:mob/ravager/bite2", "raids:mob/ravager/bite3"], "subtitle": "subtitles.raids.entity.ravager.attack" },
-	"event.raid.horn": {"sounds": [ "raids:event/raid/raidhorn_01", "raids:event/raid/raidhorn_02", "raids:event/raid/raidhorn_03", "raids:event/raid/raidhorn_04"], "subtitle": "subtitles.raids.event.raid.horn" }
+	"item.crossbow.loading_end": {
+		"sounds": ["raids:item/crossbow/loading_end"],
+		"subtitle": "subtitles.raids.item.crossbow.load"
+	},
+	"item.crossbow.loading_middle": {
+		"sounds": ["raids:item/crossbow/loading_middle1", "raids:item/crossbow/loading_middle2", "raids:item/crossbow/loading_middle3", "raids:item/crossbow/loading_middle4"]
+	},
+	"item.crossbow.loading_start": {
+		"sounds": ["raids:item/crossbow/loading_start"],
+		"subtitle": "subtitles.raids.item.crossbow.charge"
+	},
+	"item.crossbow.loading_quick_charge_1": {
+		"sounds": ["raids:item/crossbow/quick_charge/quick1_1", "raids:item/crossbow/quick_charge/quick1_2", "raids:item/crossbow/quick_charge/quick1_3"],
+		"subtitle": "subtitles.raids.item.crossbow.charge"
+	},
+	"item.crossbow.loading_quick_charge_2": {
+		"sounds": ["raids:item/crossbow/quick_charge/quick2_1", "raids:item/crossbow/quick_charge/quick2_2", "raids:item/crossbow/quick_charge/quick2_3"],
+		"subtitle": "subtitles.raids.item.crossbow.charge"
+	},
+	"item.crossbow.loading_quick_charge_3": {
+		"sounds": ["raids:item/crossbow/quick_charge/quick3_1", "raids:item/crossbow/quick_charge/quick3_2", "raids:item/crossbow/quick_charge/quick3_3"],
+		"subtitle": "subtitles.raids.item.crossbow.charge"
+	},
+	"item.crossbow.shoot": {
+		"sounds": ["raids:item/crossbow/loading_shoot1", "raids:item/crossbow/shoot2", "raids:item/crossbow/shoot3"],
+		"subtitle": "subtitles.hordes.item.crossbow.shoot"
+	},
+	"entity.pillager.ambient": {
+		"category": "hostile",
+		"sounds": ["raids:mob/pillager/idle1", "raids:mob/pillager/idle2", "raids:mob/pillager/idle3", "raids:mob/pillager/idle4"],
+		"subtitle": "subtitles.hordes.entity.pillager.ambient"
+	},
+	"entity.pillager.hurt": {
+		"category": "hostile",
+		"sounds": ["raids:mob/pillager/hurt1", "raids:mob/pillager/hurt2", "raids:mob/pillager/hurt3"],
+		"subtitle": "subtitles.raids.entity.pillager.hurt"
+	},
+	"entity.pillager.death": {
+		"category": "hostile",
+		"sounds": ["raids:mob/pillager/death1", "raids:mob/pillager/death2"],
+		"subtitle": "subtitles.raids.entity.pillager.death"
+	},
+	"entity.pillager.celebrate": {
+		"category": "hostile",
+		"sounds": ["raids:mob/pillager/celebrate1", "raids:mob/pillager/celebrate2", "raids:mob/pillager/celebrate3",
+			"raids:mob/pillager/celebrate4", "raids:mob/pillager/horn_celebrate"
+		],
+		"subtitle": "subtitles.raids.entity.pillager.celebrate"
+	},
+	"entity.ravager.ambient": {
+		"category": "hostile",
+		"sounds": ["raids:mob/ravager/idle1", "raids:mob/ravager/idle2", "raids:mob/ravager/idle3", "raids:mob/ravager/idle4", "raids:mob/ravager/idle5",
+			"raids:mob/ravager/idle6", "raids:mob/ravager/idle7", "raids:mob/ravager/idle8"
+		],
+		"subtitle": "subtitles.raids.entity.ravager.ambient"
+	},
+	"entity.ravager.hurt": {
+		"category": "hostile",
+		"sounds": ["raids:mob/ravager/hurt1", "raids:mob/ravager/hurt2", "raids:mob/ravager/hurt3", "raids:mob/ravager/hurt4"],
+		"subtitle": "subtitles.raids.entity.ravager.hurt"
+	},
+	"entity.ravager.death": {
+		"category": "hostile",
+		"sounds": ["raids:mob/ravager/death1", "raids:mob/ravager/death2", "raids:mob/ravager/death3"],
+		"subtitle": "subtitles.raids.entity.ravager.death"
+	},
+	"entity.ravager.celebrate": {
+		"category": "hostile",
+		"sounds": ["raids:mob/ravager/celebrate1", "raids:mob/ravager/celebrate2"],
+		"subtitle": "subtitles.raids.entity.ravager.celebrate"
+	},
+	"entity.ravager.step": {
+		"category": "hostile",
+		"sounds": ["raids:mob/ravager/step1", "raids:mob/ravager/step2", "raids:mob/ravager/step3", "raids:mob/ravager/step4", "raids:mob/ravager/step5"],
+		"subtitle": "subtitles.raids.entity.ravager.step"
+	},
+	"entity.ravager.stunned": {
+		"category": "hostile",
+		"sounds": ["raids:mob/ravager/stun1", "raids:mob/ravager/stun2", "raids:mob/ravager/stun3"],
+		"subtitle": "subtitles.raids.entity.ravager.stunned"
+	},
+	"entity.ravager.roar": {
+		"category": "hostile",
+		"sounds": ["raids:mob/ravager/roar1", "raids:mob/ravager/roar2", "raids:mob/ravager/roar3", "raids:mob/ravager/roar4"],
+		"subtitle": "subtitles.raids.entity.ravager.roar"
+	},
+	"entity.ravager.attack": {
+		"category": "hostile",
+		"sounds": ["raids:mob/ravager/bite1", "raids:mob/ravager/bite2", "raids:mob/ravager/bite3"],
+		"subtitle": "subtitles.raids.entity.ravager.attack"
+	},
+	"event.raid.horn": {
+		"sounds": ["raids:event/raid/raidhorn_01", "raids:event/raid/raidhorn_02", "raids:event/raid/raidhorn_03", "raids:event/raid/raidhorn_04"],
+		"subtitle": "subtitles.raids.event.raid.horn"
+	}
 }

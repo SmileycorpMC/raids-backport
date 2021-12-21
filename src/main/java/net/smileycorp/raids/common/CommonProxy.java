@@ -11,6 +11,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.smileycorp.raids.common.capability.IRaid;
 import net.smileycorp.raids.common.capability.IRaider;
+import net.smileycorp.raids.common.capability.Raider;
+import net.smileycorp.raids.common.capability.Raid;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 
@@ -18,8 +20,8 @@ public class CommonProxy {
 	
 	public void preInit(FMLPreInitializationEvent event) {
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());
-		CapabilityManager.INSTANCE.register(IRaid.class, new IRaid.Storage(), ()-> new IRaid.Implementation());
-		CapabilityManager.INSTANCE.register(IRaider.class, new IRaider.Storage(), ()-> new IRaider.Implementation());
+		CapabilityManager.INSTANCE.register(IRaid.class, new IRaid.Storage(), ()-> new Raid());
+		CapabilityManager.INSTANCE.register(IRaider.class, new IRaider.Storage(), ()-> new Raider());
 		registerSpawns();
 	}
 

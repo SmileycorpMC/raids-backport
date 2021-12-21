@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/ol_betsy",
+  "parent": "hordes:adventure/ol_betsy",
   "display": {
     "icon": {
       "item": "minecraft:crossbow",

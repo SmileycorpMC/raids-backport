@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/voluntary_exile",
+  "parent": "hordes:adventure/voluntary_exile",
   "display": {
     "icon": {
       "item": "minecraft:white_banner",
