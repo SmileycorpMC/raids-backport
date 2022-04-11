@@ -27,7 +27,7 @@ public class RaidsEventHandler {
 	@SubscribeEvent
 	public void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> event) {
 		Entity entity = event.getObject();
-		if (!entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && RaidHandler.CAPABILITY_ENTITIES.contains(entity.getClass())) {
+		if (!entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && RaidHandler.CAPABILITY_ENTITIES.contains(entity.getClass()) &! entity.world.isRemote) {
 			event.addCapability(ModDefinitions.getResource("Raider"), new IRaider.Provider((EntityLiving) entity));
 		}
 	}

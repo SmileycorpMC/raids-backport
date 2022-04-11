@@ -8,11 +8,11 @@ import net.minecraft.village.Village;
 import net.smileycorp.raids.common.RaidsContent;
 
 public class Raider implements IRaider {
-	
+
 	protected final EntityLiving entity;
 	protected IRaid raid = null;
 	protected boolean raidLeader;
-	
+
 	public Raider() {
 		entity = null;
 	}
@@ -39,12 +39,16 @@ public class Raider implements IRaider {
 	@Override
 	public NBTTagCompound writeNBT(NBTTagCompound nbt) {
 		nbt.setBoolean("raidLeader", raidLeader);
-		BlockPos pos = raid.getVillage().getCenter();
-		NBTTagCompound villagePos = new NBTTagCompound();
-		villagePos.setInteger("x", pos.getX());
-		villagePos.setInteger("y", pos.getY());
-		villagePos.setInteger("z", pos.getZ());
-		nbt.setTag("villagePos", villagePos);
+		if (raid != null) {
+			if (raid.getVillage() != null) {
+				BlockPos pos = raid.getVillage().getCenter();
+				NBTTagCompound villagePos = new NBTTagCompound();
+				villagePos.setInteger("x", pos.getX());
+				villagePos.setInteger("y", pos.getY());
+				villagePos.setInteger("z", pos.getZ());
+				nbt.setTag("villagePos", villagePos);
+			}
+		}
 		return nbt;
 	}
 
@@ -81,5 +85,5 @@ public class Raider implements IRaider {
 		}
 		raidLeader = true;
 	}
-	
+
 }

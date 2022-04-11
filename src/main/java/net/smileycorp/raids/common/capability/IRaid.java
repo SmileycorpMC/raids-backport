@@ -11,31 +11,33 @@ import net.minecraft.village.Village;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import net.smileycorp.atlas.api.IOngoingEvent;
 import net.smileycorp.raids.common.RaidsContent;
 
 public interface IRaid extends IOngoingEvent {
 
 	public Village getVillage();
-	
+
 	public float getWaveHealth();
-	
+
 	public float getTotalWaveHealth();
-	
+
 	public List<EntityLiving> getWaveEntities();
-	
+
 	public void startEvent(int maxWaves, int bonusWaves, int level);
-	
+
 	public void startNextWave();
-	
+
 	public void endEvent();
-	
+
 	public void takeDamage(EntityLiving entity, DamageSource source, float damage);
-	
+
 	public void entityDie(EntityLiving entity);
-	
+
 	public int entitiesRemaining();
-	
+
 	public class Storage implements IStorage<IRaid> {
 
 		@Override
@@ -47,15 +49,15 @@ public interface IRaid extends IOngoingEvent {
 		public void readNBT(Capability<IRaid> capability, IRaid instance, EnumFacing side, NBTBase nbt) {
 			instance.readFromNBT((NBTTagCompound) nbt);
 		}
-		
+
 	}
-	
+
 	public static class Provider implements ICapabilitySerializable<NBTTagCompound> {
-		
+
 		protected IRaid impl;
-		
+
 		public Provider(Village village) {
-			impl = new Raid(village);
+			impl = FMLCommonHandler.instance().getSide() == Side.CLIENT ? new ClientRaid(village) : new Raid(village);
 		}
 
 		@Override
@@ -77,6 +79,6 @@ public interface IRaid extends IOngoingEvent {
 		public void deserializeNBT(NBTTagCompound nbt) {
 			impl.readFromNBT(nbt);
 		}
-		
+
 	}
 }

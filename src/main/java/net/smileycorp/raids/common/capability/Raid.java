@@ -20,6 +20,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.village.Village;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import net.smileycorp.atlas.api.util.DataUtils;
 import net.smileycorp.raids.common.RaidHandler;
 import net.smileycorp.raids.common.Raids;
@@ -27,8 +29,6 @@ import net.smileycorp.raids.common.RaidsContent;
 
 public class Raid implements IRaid {
 
-	protected final World world;
-	protected final Village village;
 	protected final List<EntityLiving> entities = new ArrayList<EntityLiving>();
 	protected final List<EntityPlayer> participants = new ArrayList<EntityPlayer>();
 	protected final List<EntityVillager> villagers = new ArrayList<EntityVillager>();
@@ -38,11 +38,10 @@ public class Raid implements IRaid {
 	protected float health = 0, totalHealth = 0;
 	protected final Random rand = new Random();
 	protected boolean isActive;
+	protected Village village = null;
+	protected World world = null;
 
-	public Raid() {
-		village = null;
-		world = null;
-	}
+	public Raid() {}
 
 	public Raid(Village village) {
 		this.village = village;
@@ -55,7 +54,8 @@ public class Raid implements IRaid {
 		if (nbt.hasKey("fireworks")) fireworks = nbt.getBoolean("fireworks");
 		if (nbt.hasKey("wave")) wave = nbt.getInteger("wave");
 		if (nbt.hasKey("isActive")) isActive = nbt.getBoolean("isActive");
-		if (world!=null) {
+		if (FMLCommonHandler.instance().getSide() == Side.SERVER) {
+			World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
 			if (nbt.hasKey("entities")) {
 				for (NBTBase tag : nbt.getTagList("entities", 3)) {
 					entities.add((EntityLiving) world.getEntityByID(((NBTTagInt) tag).getInt()));
@@ -87,7 +87,6 @@ public class Raid implements IRaid {
 
 	@Override
 	public void update(World world) {
-		Raids.logInfo("raid update");
 		if (cooldown > 0) {
 			cooldown--;
 			Raids.logInfo("tick cooldown");
@@ -116,12 +115,7 @@ public class Raid implements IRaid {
 
 	@Override
 	public boolean isActive(World world) {
-		return !world.isRemote && isActive ;
-	}
-
-	@Override
-	public Village getVillage() {
-		return village;
+		return !village.world.isRemote && isActive ;
 	}
 
 	@Override
@@ -183,7 +177,7 @@ public class Raid implements IRaid {
 
 	@Override
 	public void takeDamage(EntityLiving entity, DamageSource source, float damage) {
-		totalHealth -= damage;
+		health -= damage;
 		if (source != null) {
 			if (source.getImmediateSource() instanceof EntityPlayer) participants.add((EntityPlayer) source.getImmediateSource());
 			else if (source.getTrueSource() instanceof EntityPlayer) participants.add((EntityPlayer) source.getTrueSource());
@@ -203,6 +197,11 @@ public class Raid implements IRaid {
 	@Override
 	public int entitiesRemaining() {
 		return entities.size();
+	}
+
+	@Override
+	public Village getVillage() {
+		return village;
 	}
 
 }
