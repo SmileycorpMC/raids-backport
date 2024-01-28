@@ -12,11 +12,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.smileycorp.raids.common.CommonProxy;
-import net.smileycorp.raids.common.ModDefinitions;
+import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.EntityPillager;
 
-@EventBusSubscriber(value = Side.CLIENT, modid=ModDefinitions.MODID)
+@EventBusSubscriber(value = Side.CLIENT, modid= Constants.MODID)
 public class ClientProxy extends CommonProxy {
 	
 	@Override
@@ -38,7 +38,7 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public static void registerModels(ModelRegistryEvent event) {
-		ModelLoader.setCustomModelResourceLocation(RaidsContent.CROSSBOW, 0, new ModelResourceLocation(ModDefinitions.getResource("Crossbow"), "normal"));
+		ModelLoader.setCustomModelResourceLocation(RaidsContent.CROSSBOW, 0, new ModelResourceLocation(Constants.loc("Crossbow"), "normal"));
 	}
 	
 }

@@ -10,12 +10,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-@Mod(modid = ModDefinitions.MODID, name = ModDefinitions.NAME, version = ModDefinitions.VERSION, dependencies = ModDefinitions.DEPENDENCIES)
+@Mod(modid = Constants.MODID, name = Constants.NAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
 public class Raids {
 	
-	private static Logger logger = LogManager.getLogger(ModDefinitions.NAME);
+	private static Logger logger = LogManager.getLogger(Constants.NAME);
 	
-	@SidedProxy(clientSide = ModDefinitions.CLIENT, serverSide = ModDefinitions.SERVER)
+	@SidedProxy(clientSide = Constants.CLIENT, serverSide = Constants.SERVER)
 	public static CommonProxy proxy;
 	
 	@EventHandler

@@ -5,7 +5,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.smileycorp.raids.common.ModDefinitions;
+import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 
 public class PotionHeroOfTheVillage extends Potion {
@@ -14,7 +14,7 @@ public class PotionHeroOfTheVillage extends Potion {
 		super(false, 0x44FF44);
 		setIconIndex(0, 0);
 		setPotionName("effect.raids.hero_of_the_village");
-		setRegistryName(ModDefinitions.getResource("hero_of_the_village"));
+		setRegistryName(Constants.loc("hero_of_the_village"));
 	}
 	
 	@Override

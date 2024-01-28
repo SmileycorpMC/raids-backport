@@ -18,15 +18,15 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.smileycorp.atlas.api.util.DirectionUtils;
-import net.smileycorp.raids.common.capability.IRaid;
+import net.smileycorp.raids.common.capability.Raid;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.network.RaidSoundMessage;
 
 public class RaidHandler {
 
-	protected static final NonNullList<Class<? extends EntityLiving>> CAPABILITY_ENTITIES = NonNullList.<Class<? extends EntityLiving>>create();
+	protected static final NonNullList<Class<? extends EntityLiving>> CAPABILITY_ENTITIES = NonNullList.create();
 
-	private static final List<RaidEntry> ENTRIES = new ArrayList<RaidEntry>();
+	private static final List<RaidEntry> ENTRIES = new ArrayList();
 
 	public static void registerEntry(Class<? extends EntityLiving> entity, @Nullable Class<? extends EntityLiving> mount, int[] min, int[] max, @Nullable BonusSpawns bonusSpawns) {
 		ENTRIES.add(new RaidEntry(entity, mount, min, max, bonusSpawns));
@@ -105,17 +105,17 @@ public class RaidHandler {
 		private BonusSpawns bonusSpawns;
 
 		public RaidEntry(Class<? extends EntityLiving> entity, @Nullable Class<? extends EntityLiving> mount, int[] min, int[] max, @Nullable BonusSpawns bonusSpawns) {
-			this.entity=entity;
-			this.mount=mount;
-			this.min=min;
-			this.max=max;
-			this.bonusSpawns=bonusSpawns;
+			this.entity = entity;
+			this.mount = mount;
+			this.min = min;
+			this.max = max;
+			this.bonusSpawns = bonusSpawns;
 		}
 
 		public int getCount(Random rand, Village village, int wave, boolean isBonusWave) {
 			EnumDifficulty difficulty = village.world.getDifficulty();
 			int count = getCountWithoutBonus(difficulty, rand, village, wave);
-			if (bonusSpawns!=null) count = bonusSpawns.apply(difficulty, rand, village, count, wave, isBonusWave);
+			if (bonusSpawns != null) count = bonusSpawns.apply(difficulty, rand, village, count, wave, isBonusWave);
 			return count;
 		}
 
@@ -134,7 +134,7 @@ public class RaidHandler {
 
 		public void spawnEntity(Random rand, Village village, BlockPos pos, List<EntityLiving> entities, int level) throws Exception {
 			World world = village.world;
-			IRaid raid  = null;
+			Raid raid  = null;
 			if (village.hasCapability(RaidsContent.RAID_CAPABILITY, null)) raid = village.getCapability(RaidsContent.RAID_CAPABILITY, null);
 			EntityLiving entity = this.entity.getConstructor(World.class).newInstance(world);
 			entity.setPosition(pos.getX(), pos.getY(), pos.getZ());

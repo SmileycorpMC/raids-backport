@@ -11,14 +11,20 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.AbstractIllager;
+import net.minecraft.entity.monster.EntityEvoker;
 import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.monster.EntitySpellcasterIllager;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -26,18 +32,27 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.entities.ai.EntityAIAttackRangedCrossbow;
 
-public class EntityPillager extends AbstractIllager implements IRangedAttackMob {
+public class EntityPillager extends AbstractIllager implements ICrossbowAttackMob {
+
+    private static final DataParameter<Boolean> IS_CHARGING_CROSSBOW = EntityDataManager.createKey(EntityPillager.class, DataSerializers.BOOLEAN);
+    private static final float CROSSBOW_POWER = 1.6F;
 
 	public EntityPillager(World world) {
 		super(world);
 	}
+
+    protected void entityInit() {
+        super.entityInit();
+        this.dataManager.register(IS_CHARGING_CROSSBOW, false);
+    }
 	
 	@Override
 	protected void initEntityAI() {
 		super.initEntityAI();
 		this.tasks.addTask(0, new EntityAISwimming(this));
-		this.tasks.addTask(3, new EntityAIAttackRangedBow<EntityPillager>(this, 1.0D, 20, 15.0F));
+		this.tasks.addTask(3, new EntityAIAttackRangedCrossbow(this, 1.0D, 20));
         this.tasks.addTask(8, new EntityAIWanderAvoidWater(this, 1.0D));
         this.tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 15F, 1F));
         this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLivingBase.class, 15F));
@@ -63,8 +78,8 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
     }
 
 	@Override
-	 public void attackEntityWithRangedAttack(EntityLivingBase target, float distanceFactor) {
-        EntityArrow entityarrow = this.getArrow(distanceFactor);
+	 public void attackEntityWithRangedAttack(EntityLivingBase target, float distance) {
+        EntityArrow entityarrow = this.getArrow(distance);
         if (this.getHeldItemMainhand().getItem() instanceof net.minecraft.item.ItemBow)
             entityarrow = ((net.minecraft.item.ItemBow) this.getHeldItemMainhand().getItem()).customizeArrow(entityarrow);
         double d0 = target.posX - this.posX;
@@ -76,8 +91,7 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
         this.world.spawnEntity(entityarrow);
     }
 
-    protected EntityArrow getArrow(float p_190726_1_)
-    {
+    protected EntityArrow getArrow(float p_190726_1_) {
         EntityTippedArrow entitytippedarrow = new EntityTippedArrow(this.world, this);
         entitytippedarrow.setEnchantmentEffectsFromEntity(this, p_190726_1_);
         return entitytippedarrow;
@@ -86,11 +100,6 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
 	@Override
 	public void setSwingingArms(boolean swingingArms) {
         this.setAggressive(1, swingingArms);
-    }
-	
-	@Override
-    public AbstractIllager.IllagerArmPose getArmPose() {
-        return AbstractIllager.IllagerArmPose.BOW_AND_ARROW;
     }
 	
 	@Override
@@ -111,6 +120,20 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
 	@Override
 	protected ResourceLocation getLootTable() {
         return RaidsContent.PILLAGER_DROPS;
+    }
+
+    @Override
+    public void setChargingCrossbow(boolean charging) {
+        dataManager.set(IS_CHARGING_CROSSBOW, charging);
+    }
+
+    @Override
+    public void onCrossbowAttackPerformed() {
+        idleTime = 0;
+    }
+    @Override
+    public EntityLivingBase getTarget() {
+        return getAttackTarget();
     }
 
 }

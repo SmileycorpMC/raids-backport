@@ -8,11 +8,11 @@ import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
-import net.smileycorp.raids.common.ModDefinitions;
+import net.smileycorp.raids.common.Constants;
 
 public class RenderPillager extends RenderLiving<EntityMob> {
 	
-	private static final ResourceLocation texture = ModDefinitions.getResource("textures/entity/illager/pillager.png");
+	private static final ResourceLocation texture = Constants.loc("textures/entity/illager/pillager.png");
 
     public RenderPillager(RenderManager p_i47207_1_) {
         super(p_i47207_1_, new ModelIllager(0.0F, 0.0F, 64, 64), 0.5F);

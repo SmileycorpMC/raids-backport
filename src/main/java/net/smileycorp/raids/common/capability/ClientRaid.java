@@ -9,7 +9,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.village.Village;
 import net.minecraft.world.World;
 
-public class ClientRaid implements IRaid {
+public class ClientRaid implements Raid {
 
 	protected final List<EntityLiving> entities = new ArrayList<EntityLiving>();
 	protected float health = 0, totalHealth = 0;

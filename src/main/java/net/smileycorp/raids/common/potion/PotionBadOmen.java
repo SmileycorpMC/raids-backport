@@ -5,7 +5,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.smileycorp.raids.common.ModDefinitions;
+import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 
 public class PotionBadOmen extends Potion {
@@ -14,7 +14,7 @@ public class PotionBadOmen extends Potion {
 		super(true, 0x0b6138);
 		setIconIndex(1, 0);
 		setPotionName("effect.raids.bad_omen");
-		setRegistryName(ModDefinitions.getResource("bad_omen"));
+		setRegistryName(Constants.loc("bad_omen"));
 	}
 	
 	@Override

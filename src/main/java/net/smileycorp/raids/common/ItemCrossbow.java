@@ -1,24 +1,27 @@
 package net.smileycorp.raids.common;
 
+import java.awt.*;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
-import javax.annotation.Nullable;
-
+import com.mojang.realmsclient.gui.ChatFormatting;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArrow;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemFirework;
-import net.minecraft.item.ItemStack;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -26,40 +29,42 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import com.google.common.collect.Lists;
+import net.smileycorp.raids.common.entities.ICrossbowArrow;
+import net.smileycorp.raids.common.entities.ICrossbowAttackMob;
+import org.lwjgl.util.vector.Quaternion;
+
+import javax.annotation.Nullable;
 
 public class ItemCrossbow extends Item {
-	
-	//public static EnumAction ACTION = EnumHelper.addAction("CROSSBOW");
+
+	private boolean startSoundPlayed = false;
+	private boolean midLoadSoundPlayed = false;
 	
 	public ItemCrossbow() {
-		setUnlocalizedName(ModDefinitions.getName("Crossbow"));
-		setRegistryName(ModDefinitions.getResource("Crossbow"));
+		setUnlocalizedName(Constants.name("Crossbow"));
+		setRegistryName(Constants.loc("Crossbow"));
 		setMaxStackSize(1);
 		setCreativeTab(CreativeTabs.COMBAT);
 		setMaxDamage(326);
-		addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter() {
-            @Override
-            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
-                if (entityIn == null)
-                {
-                    return 0.0F;
-                }
-                else
-                {
-                    return !(entityIn.getActiveItemStack().getItem() instanceof ItemBow) ? 0.0F : (stack.getMaxItemUseDuration() - entityIn.getItemInUseCount()) / 20.0F;
-                }
-            }
-        });
-        this.addPropertyOverride(new ResourceLocation("pulling"), new IItemPropertyGetter() {
-            @Override
-			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-            {
-                return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F;
-            }
-        });
+		addPropertyOverride(new ResourceLocation("pull"), (stack, worldIn, entityIn) -> {
+			if (entityIn == null)
+			{
+				return 0.0F;
+			}
+			else
+			{
+				return stack.getMaxItemUseDuration() - entityIn.getItemInUseCount() / 20.0F;
+			}
+		});
+        addPropertyOverride(new ResourceLocation("pulling"), (stack, worldIn, entityIn) ->
+				entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F);
 	}
 	
 	@Override
@@ -70,6 +75,8 @@ public class ItemCrossbow extends Item {
 			return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
 		} else if (!isCharged(stack)) {
 			System.out.print("eeee");
+			this.startSoundPlayed = false;
+			this.midLoadSoundPlayed = false;
 			player.setActiveHand(hand);
 			return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
 		}
@@ -79,27 +86,39 @@ public class ItemCrossbow extends Item {
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 	      if (!player.world.isRemote) {
-	         //int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.QUICK_CHARGE, stack);
-	         //SoundEvent soundevent = this.getStartSound(i);
-	         //SoundEvent soundevent1 = i == 0 ? SoundEvents.CROSSBOW_LOADING_MIDDLE : null;
-	         //float f = (float)(stack.getMaxItemUseDuration() - p_219972_4_) / (float)getChargeDuration(stack);
-	         /*if (f < 0.2F) {
+	         //int i = EnchantmentHelper.getItemEnchantmentWorld(Enchantments.QUICK_CHARGE, stack);
+	         SoundEvent soundevent = getStartSound(0);
+	         SoundEvent soundevent1 = /*i == 0 ?*/ RaidsContent.CROSSBOW_LOADING_MIDDLE /*: null*/;
+	         float f = (float)(stack.getMaxItemUseDuration() - count) / (float)getChargeDuration(stack);
+	         if (f < 0.2F) {
 	            this.startSoundPlayed = false;
 	            this.midLoadSoundPlayed = false;
 	         }
 
 	         if (f >= 0.2F && !this.startSoundPlayed) {
 	            this.startSoundPlayed = true;
-	            p_219972_1_.playSound((PlayerEntity)null, p_219972_2_.getX(), p_219972_2_.getY(), p_219972_2_.getZ(), soundevent, SoundCategory.PLAYERS, 0.5F, 1.0F);
+	            player.playSound(soundevent, 0.5F, 1.0F);
 	         }
 
 	         if (f >= 0.5F && soundevent1 != null && !this.midLoadSoundPlayed) {
 	            this.midLoadSoundPlayed = true;
-	            p_219972_1_.playSound((PlayerEntity)null, p_219972_2_.getX(), p_219972_2_.getY(), p_219972_2_.getZ(), soundevent1, SoundCategory.PLAYERS, 0.5F, 1.0F);
-	         }*/
+				 player.playSound(soundevent1, 0.5F, 1.0F);
+	         }
 	      }
+	}
 
-	   }
+	private SoundEvent getStartSound(int p_40852_) {
+		switch(p_40852_) {
+			case 1:
+				return RaidsContent.CROSSBOW_QUICK_CHARGE_1;
+			case 2:
+				return RaidsContent.CROSSBOW_QUICK_CHARGE_2;
+			case 3:
+				return RaidsContent.CROSSBOW_QUICK_CHARGE_3;
+			default:
+				return RaidsContent.CROSSBOW_LOADING_START;
+		}
+	}
 	
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entity, int timeLeft) {
@@ -107,10 +126,10 @@ public class ItemCrossbow extends Item {
 			int duration = getUseDuration(stack) - timeLeft;
 			float charge = getCharge(duration, stack);
 			ItemStack ammo = getAmmo(entity);
-			if (charge >= 1 && !isCharged(stack) &&  !ammo.isEmpty()) {
+			if (charge >= 1 && !isCharged(stack) && !ammo.isEmpty()) {
 				setCharged(stack, true);
 				SoundCategory soundcategory = entity instanceof EntityPlayer ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
-				world.playSound(null, entity.posX, entity.posY, entity.posZ, new SoundEvent(ModDefinitions.getResource("item.crossbow.load")), soundcategory, 1.0F, 1.0F / (world.rand.nextFloat() * 0.5F + 1.0F) + 0.2F);
+				world.playSound(null, entity.posX, entity.posY, entity.posZ, new SoundEvent(Constants.loc("item.crossbow.load")), soundcategory, 1.0F, 1.0F / (world.rand.nextFloat() * 0.5F + 1.0F) + 0.2F);
 			}
 		}
 	}
@@ -126,30 +145,30 @@ public class ItemCrossbow extends Item {
 	}
 	
 	public int getUseDuration(ItemStack stack) {
-		return getChargeTime(stack) + 3;
+		return getChargeDuration(stack) + 3;
 	}
 
-	public static int getChargeTime(ItemStack stack) {
-		int i =  1 /*EnchantmentHelper.getEnchantmentLevel(Enchantments.QUICK_CHARGE, stack)*/;
+	public static int getChargeDuration(ItemStack stack) {
+		int i =  0 /*EnchantmentHelper.getEnchantmentWorld(Enchantments.QUICK_CHARGE, stack)*/;
 		return i == 0 ? 25 : 25 - 5 * i;
 	}
-	
-	public EnumAction getUseAction(ItemStack stack) {
-      return isCharged(stack) ? EnumAction.BLOCK : EnumAction.BOW;
+
+	public EnumAction getItemUseAction(ItemStack stack) {
+      return EnumAction.BOW;
 	}
 	
 	protected ItemStack getAmmo(EntityLivingBase entity) {
 		if (entity instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) entity;
-	        if (isAmmo(player.getHeldItem(EnumHand.OFF_HAND))) {
-	            return player.getHeldItem(EnumHand.OFF_HAND);
+			EntityPlayer EntityPlayer = (EntityPlayer) entity;
+	        if (isAmmo(EntityPlayer.getHeldItem(EnumHand.OFF_HAND))) {
+	            return EntityPlayer.getHeldItem(EnumHand.OFF_HAND);
 	        }
-	        else if (isAmmo(player.getHeldItem(EnumHand.MAIN_HAND))) {
-	            return player.getHeldItem(EnumHand.MAIN_HAND);
+	        else if (isAmmo(EntityPlayer.getHeldItem(EnumHand.MAIN_HAND))) {
+	            return EntityPlayer.getHeldItem(EnumHand.MAIN_HAND);
 	        }
 	        else {
-	            for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
-	                ItemStack itemstack = player.inventory.getStackInSlot(i);
+	            for (int i = 0; i < EntityPlayer.inventory.getSizeInventory(); ++i) {
+	                ItemStack itemstack = EntityPlayer.inventory.getStackInSlot(i);
 	
 	                if (isAmmo(itemstack)) {
 	                    return itemstack;
@@ -211,7 +230,7 @@ public class ItemCrossbow extends Item {
 		return list;
 	}
 
-   private static void clearProjectiles(ItemStack stack) {
+   private static void clearChargedProjectiles(ItemStack stack) {
       NBTTagCompound nbt = stack.getTagCompound();
       if (nbt != null) {
          nbt.setTag("ChargedProjectiles", new NBTTagList());
@@ -226,12 +245,127 @@ public class ItemCrossbow extends Item {
    }
    
    private static float getCharge(int duration, ItemStack stack) {
-      float charge = (float)duration / (float)getChargeTime(stack);
+      float charge = (float)duration / (float) getChargeDuration(stack);
       if (charge > 1.0F) {
          charge = 1.0F;
       }
+	  System.out.println(charge);
       return charge;
    }
+
+	public static void performShooting(World p_40888_, EntityLivingBase p_40889_, EnumHand p_40890_, ItemStack p_40891_, float p_40892_, float p_40893_) {
+		if (p_40889_ instanceof EntityPlayer && net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_40891_, p_40888_, (EntityPlayer) p_40889_, 1, true) < 0) return;
+		List<ItemStack> list = getChargedProjectiles(p_40891_);
+		float[] afloat = getShotPitches(p_40889_.getRNG());
+
+		for(int i = 0; i < list.size(); ++i) {
+			ItemStack itemstack = list.get(i);
+			boolean flag = p_40889_ instanceof EntityPlayer && ((EntityPlayer)p_40889_).capabilities.isCreativeMode;
+			if (!itemstack.isEmpty()) {
+				if (i == 0) {
+					shootProjectile(p_40888_, p_40889_, p_40890_, p_40891_, itemstack, afloat[i], flag, p_40892_, p_40893_, 0.0F);
+				} else if (i == 1) {
+					shootProjectile(p_40888_, p_40889_, p_40890_, p_40891_, itemstack, afloat[i], flag, p_40892_, p_40893_, -10.0F);
+				} else if (i == 2) {
+					shootProjectile(p_40888_, p_40889_, p_40890_, p_40891_, itemstack, afloat[i], flag, p_40892_, p_40893_, 10.0F);
+				}
+			}
+		}
+		onCrossbowShot(p_40888_, p_40889_, p_40891_);
+	}
+
+	private static float[] getShotPitches(Random p_40924_) {
+		boolean flag = p_40924_.nextBoolean();
+		return new float[]{1.0F, getRandomShotPitch(flag, p_40924_), getRandomShotPitch(!flag, p_40924_)};
+	}
+
+	private static float getRandomShotPitch(boolean p_150798_, Random p_150799_) {
+		float f = p_150798_ ? 0.63F : 0.43F;
+		return 1.0F / (p_150799_.nextFloat() * 0.5F + 1.8F) + f;
+	}
+
+	private static void onCrossbowShot(World world, EntityLivingBase entity, ItemStack stack) {
+		if (entity instanceof EntityPlayerMP) {
+			EntityPlayerMP player = (EntityPlayerMP)entity;
+			if (!world.isRemote) {
+				//CriteriaTriggers.SHOT_CROSSBOW.trigger(serverEntityPlayer, p_40908_);
+			}
+			player.addStat(StatList.getObjectUseStats(stack.getItem()));
+		}
+		clearChargedProjectiles(stack);
+	}
+
+	private static void shootProjectile(World p_40895_, EntityLivingBase p_40896_, EnumHand p_40897_, ItemStack p_40898_, ItemStack p_40899_, float p_40900_, boolean p_40901_, float p_40902_, float p_40903_, float p_40904_) {
+		if (!p_40895_.isRemote) {
+			boolean isFirework = p_40899_.getItem() == Items.FIREWORKS;
+			Entity projectile = null;
+			if (isFirework) {
+				//projectile = new EntityFireworkRocket(p_40895_, p_40896_.posX, p_40896_.getEyeHeight() - (double)0.15F, p_40896_.posZ, p_40899_);
+			} else {
+				projectile = getArrow(p_40895_, p_40896_, p_40898_, p_40899_);
+				if (p_40901_ || p_40904_ != 0.0F) {
+					((EntityArrow)projectile).pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
+				}
+			}
+
+			if (p_40896_ instanceof ICrossbowAttackMob) {
+				ICrossbowAttackMob crossbowattackmob = (ICrossbowAttackMob)p_40896_;
+				crossbowattackmob.shootCrossbowProjectile(p_40896_, crossbowattackmob.getTarget(), projectile, p_40904_, 1.6F);
+			} else {
+				Vec3d vec31 = p_40896_.getUpVector(1.0F);
+				Quaternion quaternion = new Quaternion(new Vector3f(vec31), p_40904_, true);
+				Vec3 vec3 = p_40896_.getViewVector(1.0F);
+				Vector3f vector3f = new Vector3f(vec3);
+				vector3f.transform(quaternion);
+				projectile.shoot((double)vector3f.x(), (double)vector3f.y(), (double)vector3f.z(), p_40902_, p_40903_);
+			}
+
+			p_40898_.hurtAndBreak(isFirework ? 3 : 1, p_40896_, (p_40858_) -> {
+				p_40858_.broadcastBreakEvent(p_40897_);
+			});
+			p_40895_.spawnEntity(projectile);
+			p_40895_.playSound((EntityPlayer)null, p_40896_.posX, p_40896_.posY, p_40896_.posZ, RaidsContent.CROSSBOW_SHOOT, SoundCategory.PLAYERS, 1.0F, p_40900_);
+		}
+	}
+
+	private static EntityArrow getArrow(World p_40915_, EntityLivingBase p_40916_, ItemStack p_40917_, ItemStack p_40918_) {
+		ItemArrow arrowitem = (ItemArrow) (p_40918_.getItem() instanceof ItemArrow ? p_40918_.getItem() : Items.ARROW);
+		EntityArrow abstractarrow = arrowitem.createArrow(p_40915_, p_40918_, p_40916_);
+		if (p_40916_ instanceof EntityPlayer) {
+			abstractarrow.setIsCritical(true);
+		}
+		ICrossbowArrow crossbowArrow = (ICrossbowArrow) abstractarrow;
+		crossbowArrow.setSoundEvent(RaidsContent.CROSSBOW_HIT);
+		crossbowArrow.setShotFromCrossbow(true);
+		int i = 0/*EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, p_40917_)*/;
+		if (i > 0) {
+			crossbowArrow.setPierceLevel((byte)i);
+		}
+
+		return abstractarrow;
+	}
+
+	@Override
+	public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
+		List<ItemStack> list = getChargedProjectiles(stack);
+		if (isCharged(stack) && !list.isEmpty()) {
+			ItemStack itemstack = list.get(0);
+			tooltip.add(new TextComponentTranslation("item.raids.crossbow.projectile").getFormattedText() + (itemstack.getDisplayName()));
+			if (flag.isAdvanced() && itemstack.getItem() == Items.FIREWORKS) {
+				List<String> firework_props = Lists.newArrayList();
+				Items.FIREWORKS.addInformation(itemstack, world, firework_props, flag);
+				if (!firework_props.isEmpty()) {
+					for(int i = 0; i < firework_props.size(); ++i) {
+						firework_props.set(i, (new TextComponentString("  " + firework_props.get(i))
+								.setStyle(new Style().setColor(TextFormatting.GRAY)).getFormattedText()));
+					}
+
+					tooltip.addAll(firework_props);
+				}
+			}
+
+		}
+	}
    
    @Override
    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {

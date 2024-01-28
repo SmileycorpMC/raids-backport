@@ -19,16 +19,18 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.smileycorp.raids.common.capability.IRaid;
-import net.smileycorp.raids.common.capability.IRaider;
+import net.smileycorp.raids.common.capability.Raid;
+import net.smileycorp.raids.common.capability.Raider;
 
 public class RaidsEventHandler {
 
 	@SubscribeEvent
 	public void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> event) {
 		Entity entity = event.getObject();
-		if (!entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && RaidHandler.CAPABILITY_ENTITIES.contains(entity.getClass()) &! entity.world.isRemote) {
-			event.addCapability(ModDefinitions.getResource("Raider"), new IRaider.Provider((EntityLiving) entity));
+		if (!(entity instanceof EntityLiving) || entity == null) return;
+		if (entity.world.isRemote) return;
+		if (RaidHandler.CAPABILITY_ENTITIES.contains(entity.getClass())) {
+			event.addCapability(Constants.loc("Raider"), new Raider.Provider((EntityLiving) entity));
 		}
 	}
 
@@ -36,7 +38,7 @@ public class RaidsEventHandler {
 	public void attachVillageCapabilities(AttachCapabilitiesEvent<Village> event) {
 		Village village = event.getObject();
 		if (!village.hasCapability(RaidsContent.RAID_CAPABILITY, null)) {
-			event.addCapability(ModDefinitions.getResource("Raid"), new IRaid.Provider(village));
+			event.addCapability(Constants.loc("Raid"), new Raid.Provider(village));
 			Raids.logInfo("added new raid capability to " + village);
 		}
 	}
@@ -51,7 +53,7 @@ public class RaidsEventHandler {
 					for (Village village : villages.getVillageList()) {
 						if (world.isBlockLoaded(village.getCenter())) {
 							if (village.hasCapability(RaidsContent.RAID_CAPABILITY, null)) {
-								IRaid raid = village.getCapability(RaidsContent.RAID_CAPABILITY, null);
+								Raid raid = village.getCapability(RaidsContent.RAID_CAPABILITY, null);
 								if (raid.isActive(world)) raid.update(world);
 							}
 						}
@@ -75,7 +77,7 @@ public class RaidsEventHandler {
 						if (village!=null) {
 							Raids.logInfo("player is in " + village);
 							if (village.hasCapability(RaidsContent.RAID_CAPABILITY, null)) {
-								IRaid raid = village.getCapability(RaidsContent.RAID_CAPABILITY, null);
+								Raid raid = village.getCapability(RaidsContent.RAID_CAPABILITY, null);
 								if (!raid.isActive(world)) {
 									Raids.logInfo("no active raid at " + village);
 									int amplifier = player.getActivePotionEffect(RaidsContent.BAD_OMEN).getAmplifier();
@@ -102,9 +104,9 @@ public class RaidsEventHandler {
 			World world = entity.world;
 			if (!world.isRemote && entity instanceof EntityLiving) {
 				if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
-					IRaider raider = entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null);
+					Raider raider = entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null);
 					if (raider.hasRaid()) {
-						IRaid raid = raider.getRaid();
+						Raid raid = raider.getRaid();
 						if (raid.isActive(world)) raid.takeDamage((EntityLiving) entity, event.getSource(), event.getAmount());
 					}
 				}
@@ -119,9 +121,9 @@ public class RaidsEventHandler {
 			World world = entity.world;
 			if (!world.isRemote && entity instanceof EntityLiving) {
 				if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
-					IRaider raider = entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null);
+					Raider raider = entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null);
 					if (raider.hasRaid()) {
-						IRaid raid = raider.getRaid();
+						Raid raid = raider.getRaid();
 						if (raid.isActive(world)) raid.entityDie((EntityLiving) entity);
 					} else if (raider.isLeader()) {
 						DamageSource source = event.getSource();
