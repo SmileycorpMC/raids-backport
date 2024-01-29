@@ -1,13 +1,13 @@
 package net.smileycorp.raids.common.capability;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.village.Village;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientRaid implements Raid {
 

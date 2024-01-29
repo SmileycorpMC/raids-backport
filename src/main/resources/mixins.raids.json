@@ -1,0 +1,12 @@
+{
+  "compatibilityLevel": "JAVA_8",
+  "package": "net.smileycorp.raids.mixin",
+  "refmap": "mixins.raids.refmap.json",
+  "mixins": [
+	"MixinEntityArrow"
+  ],
+  "client": [
+    "MixinItemRenderer"
+  ],
+  "server": []
+}

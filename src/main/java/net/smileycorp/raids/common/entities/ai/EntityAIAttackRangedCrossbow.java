@@ -5,7 +5,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
 import net.smileycorp.raids.common.ItemCrossbow;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.ICrossbowAttackMob;

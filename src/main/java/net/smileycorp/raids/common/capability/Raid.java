@@ -1,13 +1,6 @@
 package net.smileycorp.raids.common.capability;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.TransferQueue;
-
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,10 +22,14 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.smileycorp.atlas.api.IOngoingEvent;
 import net.smileycorp.atlas.api.util.DataUtils;
-import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidHandler;
 import net.smileycorp.raids.common.Raids;
 import net.smileycorp.raids.common.RaidsContent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 public interface Raid extends IOngoingEvent {
 

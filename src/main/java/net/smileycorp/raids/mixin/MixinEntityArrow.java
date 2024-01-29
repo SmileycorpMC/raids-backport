@@ -1,6 +1,5 @@
-package net.smileycorp.raids;
+package net.smileycorp.raids.mixin;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.SoundEvents;
@@ -8,7 +7,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
-import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.ICrossbowArrow;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

@@ -1,14 +1,8 @@
 package net.smileycorp.raids.common;
 
-import java.util.Random;
-
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBanner;
-import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
@@ -32,6 +26,8 @@ import net.smileycorp.raids.common.capability.Raider;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.potion.PotionBadOmen;
 import net.smileycorp.raids.common.potion.PotionHeroOfTheVillage;
+
+import java.util.Random;
 
 @EventBusSubscriber(modid = Constants.MODID)
 public class RaidsContent {

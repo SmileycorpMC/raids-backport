@@ -1,12 +1,5 @@
 package net.smileycorp.raids.common;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.AbstractIllager;
 import net.minecraft.entity.monster.EntityVindicator;
@@ -21,6 +14,12 @@ import net.smileycorp.atlas.api.util.DirectionUtils;
 import net.smileycorp.raids.common.capability.Raid;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.network.RaidSoundMessage;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class RaidHandler {
 
