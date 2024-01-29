@@ -24,5 +24,40 @@
             "translation": [ 1.13, 3.2, 1.13],
             "scale": [ 0.68, 0.68, 0.68 ]
         }
-    }
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "raids:pulling": 1
+            },
+            "model": "raids:item/crossbow_pulling_0"
+        },
+        {
+            "predicate": {
+                "raids:pulling": 1,
+                "raids:pull": 0.58
+            },
+            "model": "item/crossbow_pulling_1"
+        },
+        {
+            "predicate": {
+                "raids:pulling": 1,
+                "raids:pull": 1.0
+            },
+            "model": "item/crossbow_pulling_2"
+        },
+        {
+            "predicate": {
+                "raids:charged": 1
+            },
+            "model": "item/crossbow_arrow"
+        },
+        {
+            "predicate": {
+                "raids:charged": 1,
+                "raids:firework": 1
+            },
+            "model": "item/crossbow_firework"
+        }
+    ]
 }

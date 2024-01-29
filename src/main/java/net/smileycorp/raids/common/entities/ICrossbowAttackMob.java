@@ -30,14 +30,14 @@ public interface ICrossbowAttackMob extends IRangedAttackMob {
         onCrossbowAttackPerformed();
     }
 
-    default void shootCrossbowProjectile(EntityLivingBase p_32323_, EntityLivingBase p_32324_, Entity p_32325_, float p_32326_, float p_32327_) {
-        double d0 = p_32324_.posX - p_32323_.posX;
-        double d1 = p_32324_.posZ - p_32323_.posZ;
+    default void shootCrossbowProjectile(EntityLivingBase entity, EntityLivingBase target, Entity p_32325_, float p_32326_, float p_32327_) {
+        double d0 = target.posX - entity.posX;
+        double d1 = target.posZ - entity.posZ;
         double d2 = Math.sqrt(d0 * d0 + d1 * d1);
-        double d3 = p_32324_.posY - p_32325_.posY + d2 * (double)0.2F;
-        Vector3f vector3f = this.getProjectileShotVector(p_32323_, new Vec3d(d0, d3, d1), p_32326_);
-        ((IProjectile)p_32325_).shoot(vector3f.x, vector3f.y, vector3f.z, p_32327_, (float)(14 - p_32323_.world.getDifficulty().getDifficultyId() * 4));
-        p_32323_.playSound(RaidsContent.CROSSBOW_SHOOT, 1.0F, 1.0F / (p_32323_.getRNG().nextFloat() * 0.4F + 0.8F));
+        double d3 = target.posY - p_32325_.posY + d2 * (double)0.2F;
+        Vector3f vector3f = this.getProjectileShotVector(entity, new Vec3d(d0, d3, d1), p_32326_);
+        ((IProjectile)p_32325_).shoot(vector3f.x, vector3f.y, vector3f.z, p_32327_, (float)(14 - entity.world.getDifficulty().getDifficultyId() * 4));
+        entity.playSound(RaidsContent.CROSSBOW_SHOOT, 1.0F, 1.0F / (entity.getRNG().nextFloat() * 0.4F + 0.8F));
     }
 
     default Vector3f getProjectileShotVector(EntityLivingBase p_32333_, Vec3d p_32334_, float p_32335_) {
@@ -47,13 +47,10 @@ public interface ICrossbowAttackMob extends IRangedAttackMob {
             //vec31 = vec3.crossProduct(p_32333_.getL);
         }
 
-        Quaternion quaternion = new Quaternion(new Vector3f(vec31), 90.0F, true);
-        Vector3f vector3f = new Vector3f(vec3);
-        vector3f.transform(quaternion);
-        Quaternion quaternion1 = new Quaternion(vector3f, p_32335_, true);
-        Vector3f vector3f1 = new Vector3f(vec3);
-        vector3f1.transform(quaternion1);
-        return vector3f1;
+        Vector3f angle = new Vector3f((float) vec31.x, (float) vec31.y, (float) vec31.z);
+        Vector3f vector3f = new Vector3f((float) vec3.x, (float) vec3.y, (float) vec3.z);
+        vector3f.angle(angle);
+        return vector3f;
     }
 
     void onCrossbowAttackPerformed();

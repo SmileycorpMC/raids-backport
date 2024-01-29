@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -29,6 +30,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -41,6 +43,7 @@ import net.smileycorp.raids.common.entities.ICrossbowAttackMob;
 import org.lwjgl.util.vector.Quaternion;
 
 import javax.annotation.Nullable;
+import javax.vecmath.Vector3f;
 
 public class ItemCrossbow extends Item {
 
@@ -53,18 +56,18 @@ public class ItemCrossbow extends Item {
 		setMaxStackSize(1);
 		setCreativeTab(CreativeTabs.COMBAT);
 		setMaxDamage(326);
-		addPropertyOverride(new ResourceLocation("pull"), (stack, worldIn, entityIn) -> {
-			if (entityIn == null)
-			{
-				return 0.0F;
-			}
-			else
-			{
-				return stack.getMaxItemUseDuration() - entityIn.getItemInUseCount() / 20.0F;
-			}
-		});
-        addPropertyOverride(new ResourceLocation("pulling"), (stack, worldIn, entityIn) ->
+		addPropertyOverride(new ResourceLocation("pulling"), (stack, worldIn, entityIn) ->
 				entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F);
+		addPropertyOverride(new ResourceLocation("pull"), (stack, worldIn, entityIn) -> {
+			if (entityIn == null) return 0.0F;
+			return stack.getMaxItemUseDuration() - entityIn.getItemInUseCount() / 20.0F;
+		});
+		addPropertyOverride(new ResourceLocation("charged"), (stack, worldIn, entityIn) -> isCharged(stack) ? 1 : 0);
+		addPropertyOverride(new ResourceLocation("firework"), (stack, worldIn, entityIn) -> {
+			List<ItemStack> projectiles = getChargedProjectiles(stack);
+			if (projectiles.size() < 1) return 0;
+			return projectiles.get(0).getItem() == Items.FIREWORKS ? 1 : 0;
+		});
 	}
 	
 	@Override
@@ -74,7 +77,7 @@ public class ItemCrossbow extends Item {
 			setCharged(stack, false);
 			return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
 		} else if (!isCharged(stack)) {
-			System.out.print("eeee");
+			System.out.println("eeee");
 			this.startSoundPlayed = false;
 			this.midLoadSoundPlayed = false;
 			player.setActiveHand(hand);
@@ -312,19 +315,17 @@ public class ItemCrossbow extends Item {
 				ICrossbowAttackMob crossbowattackmob = (ICrossbowAttackMob)p_40896_;
 				crossbowattackmob.shootCrossbowProjectile(p_40896_, crossbowattackmob.getTarget(), projectile, p_40904_, 1.6F);
 			} else {
-				Vec3d vec31 = p_40896_.getUpVector(1.0F);
-				Quaternion quaternion = new Quaternion(new Vector3f(vec31), p_40904_, true);
-				Vec3 vec3 = p_40896_.getViewVector(1.0F);
-				Vector3f vector3f = new Vector3f(vec3);
-				vector3f.transform(quaternion);
-				projectile.shoot((double)vector3f.x(), (double)vector3f.y(), (double)vector3f.z(), p_40902_, p_40903_);
+				Vec3d vec31 = p_40896_.getLook(1.0F);
+				Vector3f angle = new Vector3f((float) vec31.x, (float) vec31.y, (float) vec31.z);
+				Vec3d vec3 = p_40896_.getLook(1.0F);
+				Vector3f vector3f = new Vector3f((float) vec3.x, (float) vec3.y, (float) vec3.z);
+				vector3f.angle(angle);
+				((IProjectile)projectile).shoot(vector3f.x, vector3f.y, vector3f.z, p_40902_, p_40903_);
 			}
 
-			p_40898_.hurtAndBreak(isFirework ? 3 : 1, p_40896_, (p_40858_) -> {
-				p_40858_.broadcastBreakEvent(p_40897_);
-			});
+			p_40898_.damageItem(isFirework ? 3 : 1, p_40896_);
 			p_40895_.spawnEntity(projectile);
-			p_40895_.playSound((EntityPlayer)null, p_40896_.posX, p_40896_.posY, p_40896_.posZ, RaidsContent.CROSSBOW_SHOOT, SoundCategory.PLAYERS, 1.0F, p_40900_);
+			p_40895_.playSound(null, p_40896_.posX, p_40896_.posY, p_40896_.posZ, RaidsContent.CROSSBOW_SHOOT, SoundCategory.PLAYERS, 1.0F, p_40900_);
 		}
 	}
 

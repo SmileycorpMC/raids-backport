@@ -43,6 +43,11 @@ public class EntityPillager extends AbstractIllager implements ICrossbowAttackMo
 		super(world);
 	}
 
+    @Override
+    public IllagerArmPose getArmPose() {
+        return IllagerArmPose.BOW_AND_ARROW;
+    }
+
     protected void entityInit() {
         super.entityInit();
         this.dataManager.register(IS_CHARGING_CROSSBOW, false);
