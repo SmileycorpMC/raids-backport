@@ -1,6 +1,6 @@
 {
-    "parent": "item/crossbow",
+    "parent": "raids:item/crossbow",
     "textures": {
-        "layer0": "item/crossbow_firework"
+        "layer0": "raids:item/crossbow_firework"
     }
 }

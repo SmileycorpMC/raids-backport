@@ -1,6 +1,7 @@
 package net.smileycorp.raids.common;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +16,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -23,6 +25,9 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.smileycorp.raids.common.capability.Raid;
 import net.smileycorp.raids.common.capability.Raider;
+import net.smileycorp.raids.common.enchantment.EnchantmentMultishot;
+import net.smileycorp.raids.common.enchantment.EnchantmentPiercing;
+import net.smileycorp.raids.common.enchantment.EnchantmentQuickCharge;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.potion.PotionBadOmen;
 import net.smileycorp.raids.common.potion.PotionHeroOfTheVillage;
@@ -50,12 +55,13 @@ public class RaidsContent {
 	
 	public static final Potion BAD_OMEN = new PotionBadOmen();
 	public static final Potion HERO_OF_THE_VILLAGE = new PotionHeroOfTheVillage();
-	
-	public static Enchantment QUICK_CHARGE;
-	public static Enchantment MULTISHOT;
-	public static Enchantment Piercing;
 
-	public static final SoundEvent CROSSBOW_HIT = new SoundEvent(Constants.loc("item.crossbow.hit"));
+	public static final EnumEnchantmentType CROSSBOW_ENCHANTMENTS = EnumHelper.addEnchantmentType("crossbow", item -> item == CROSSBOW);
+
+	public static Enchantment QUICK_CHARGE = new EnchantmentQuickCharge();
+	public static Enchantment MULTISHOT = new EnchantmentMultishot();
+	public static Enchantment PIERCING = new EnchantmentPiercing();
+
 	public static final SoundEvent CROSSBOW_LOADING_END = new SoundEvent(Constants.loc("item.crossbow.loading_end"));
 	public static final SoundEvent CROSSBOW_LOADING_MIDDLE = new SoundEvent(Constants.loc("item.crossbow.loading_middle"));
 	public static final SoundEvent CROSSBOW_LOADING_START = new SoundEvent(Constants.loc("item.crossbow.loading_start"));
@@ -94,8 +100,9 @@ public class RaidsContent {
 		}
 		ItemStack banner = ItemBanner.makeBanner(EnumDyeColor.WHITE, patterns);
 		ITextComponent name = new TextComponentTranslation("item."+ Constants.name("OminousBanner.name"));
-		name.setStyle(new Style().setColor(TextFormatting.GOLD));
-		banner.setStackDisplayName(name.getFormattedText());
+		name.setStyle(new Style().setColor(TextFormatting.GOLD).setItalic(true));
+		banner.setTranslatableName(name.getFormattedText());
+		banner.getTagCompound().setInteger("HideFlags", 32);
 		return banner;
 	}
 	
@@ -120,7 +127,15 @@ public class RaidsContent {
 	public static void registerItems(RegistryEvent.Register<Item> event) {
 		event.getRegistry().register(CROSSBOW);
 	}
-	
+
+	@SubscribeEvent
+	public static void registerEnchantments(RegistryEvent.Register<Enchantment> event) {
+		IForgeRegistry<Enchantment> registry = event.getRegistry();
+		registry.register(QUICK_CHARGE);
+		registry.register(MULTISHOT);
+		registry.register(PIERCING);
+	}
+
 	@SubscribeEvent
     public static void registerPotions(RegistryEvent.Register<Potion> event) {
 		IForgeRegistry<Potion> registry = event.getRegistry();

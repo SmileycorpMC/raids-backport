@@ -1,6 +1,6 @@
 {
-    "parent": "item/crossbow",
+    "parent": "raids:item/crossbow",
     "textures": {
-        "layer0": "item/crossbow_pulling_1"
+        "layer0": "raids:item/crossbow_pulling_1"
     }
 }

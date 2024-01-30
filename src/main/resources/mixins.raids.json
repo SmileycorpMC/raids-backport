@@ -3,10 +3,15 @@
   "package": "net.smileycorp.raids.mixin",
   "refmap": "mixins.raids.refmap.json",
   "mixins": [
-	"MixinEntityArrow"
+	"MixinEntityArrow",
+    "MixinEntityFireworkRocket",
+    "MixinEntityLivingBase",
+    "MixinItemBanner"
   ],
   "client": [
-    "MixinItemRenderer"
+    "MixinItemRenderer",
+    "MixinModelBiped",
+    "MixinRenderSnowball"
   ],
   "server": []
 }

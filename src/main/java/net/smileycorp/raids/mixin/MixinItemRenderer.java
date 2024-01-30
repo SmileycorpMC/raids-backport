@@ -74,6 +74,7 @@ public abstract class MixinItemRenderer {
             }
         }
         this.renderItemSide(player, stack, flag2 ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag2);
+        GlStateManager.popMatrix();
         ci.cancel();
     }
 
