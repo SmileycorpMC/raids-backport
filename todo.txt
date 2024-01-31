@@ -11,3 +11,4 @@ Add Watchtowers
 Add Hero of the Village Effect
 Add Advancements
 Add Bell
+Customizability and mod support
