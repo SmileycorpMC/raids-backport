@@ -83,21 +83,21 @@ public class EntityAIAttackRangedCrossbow<T extends EntityLiving & ICrossbowAtta
                     entity.setChargingCrossbow(true);
                 }
             } else if (state == State.CHARGING) {
-                if (entity.getActiveItemStack() != ItemStack.EMPTY) {
+                if (!entity.isHandActive()) {
                     state = State.UNCHARGED;
                 }
 
                 int i = entity.getItemInUseCount();
                 ItemStack itemstack = entity.getActiveItemStack();
-                if (i >= ItemCrossbow.getChargeDuration(itemstack)) {
+                if (itemstack.getItem() == RaidsContent.CROSSBOW && i < -itemstack.getMaxItemUseDuration()) {
                     entity.resetActiveHand();
                     state = State.CHARGED;
-                    this.attackDelay = 20 + entity.getRNG().nextInt(20);
+                    itemstack.onPlayerStoppedUsing(entity.world, entity, 0);
+                    attackDelay = 20 + entity.getRNG().nextInt(20);
                     entity.setChargingCrossbow(false);
                 }
             } else if (state == State.CHARGED) {
-                --this.attackDelay;
-                if (this.attackDelay == 0) {
+                if (attackDelay-- == 0) {
                     state = State.READY_TO_ATTACK;
                 }
             } else if (state == State.READY_TO_ATTACK && flag) {

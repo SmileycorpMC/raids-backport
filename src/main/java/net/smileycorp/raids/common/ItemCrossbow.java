@@ -75,7 +75,7 @@ public class ItemCrossbow extends Item {
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entity, int timeLeft) {
 		int duration = getMaxItemUseDuration(stack) - timeLeft;
-		float charge = getPowerForTime(duration, stack);
+		float charge = entity instanceof EntityPlayer ? getPowerForTime(duration, stack) : 1f;
 		if (charge >= 1.0F && !isCharged(stack) && tryLoadProjectiles(entity, stack)) {
 			setCharged(stack, true);
 			SoundCategory soundsource = entity instanceof EntityPlayer ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;

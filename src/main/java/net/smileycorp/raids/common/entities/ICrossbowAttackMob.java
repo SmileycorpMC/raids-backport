@@ -17,9 +17,13 @@ public interface ICrossbowAttackMob extends IRangedAttackMob {
     void setChargingCrossbow(boolean charging);
     
     boolean isChargingCrossbow();
-
-    default void attackEntityWithRangedAttack(EntityLivingBase target, float distance) {
-        EntityLivingBase entity = ((EntityLivingBase)this);
+    
+    @Override
+    default void attackEntityWithRangedAttack(EntityLivingBase entity, float distance) {
+        performCrossbowAttack((EntityLivingBase)this, distance);
+    }
+    
+    default void performCrossbowAttack(EntityLivingBase entity, float distance) {
         EnumHand hand = EnumHand.MAIN_HAND;
         ItemStack stack = ItemStack.EMPTY;
         for (EnumHand h : EnumHand.values()) if (entity.getHeldItem(h).getItem() == RaidsContent.CROSSBOW) {
@@ -28,7 +32,7 @@ public interface ICrossbowAttackMob extends IRangedAttackMob {
             break;
         }
         if (stack.isEmpty()) return;
-        ItemCrossbow.performShooting(target.world, target, hand, stack, distance, (float)(14 - target.getEntityWorld().getDifficulty().getDifficultyId() * 4));
+        ItemCrossbow.performShooting(entity.world, entity, hand, stack, distance, (float)(14 - entity.getEntityWorld().getDifficulty().getDifficultyId() * 4));
         onCrossbowAttackPerformed();
     }
 
