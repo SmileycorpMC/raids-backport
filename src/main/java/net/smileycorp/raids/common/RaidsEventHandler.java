@@ -4,6 +4,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityOwnable;
+import net.minecraft.entity.ai.EntityAIAvoidEntity;
+import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
@@ -12,6 +15,7 @@ import net.minecraft.village.VillageCollection;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -42,6 +46,20 @@ public class RaidsEventHandler {
 			Raids.logInfo("added new raid capability to " + village);
 		}
 	}
+	
+	@SubscribeEvent
+	public void onAddedToWorld(EntityJoinWorldEvent event) {
+		if (event.getEntity() instanceof EntityVillager) {
+			EntityVillager villager = (EntityVillager) event.getEntity();
+			villager.tasks.addTask(1, new EntityAIAvoidEntity(villager, EntityLivingBase.class, RaidHandler.CAPABILITY_ENTITIES::contains,
+					8.0F, 0.8D, 0.8D));
+		}
+		if (event.getEntity() instanceof EntityIronGolem) {
+			EntityIronGolem villager = (EntityIronGolem) event.getEntity();
+			villager.tasks.addTask(1, new EntityAIAvoidEntity(villager, EntityLivingBase.class, RaidHandler.CAPABILITY_ENTITIES::contains,
+					8.0F, 0.8D, 0.8D));
+		}
+	}
 
 	@SubscribeEvent
 	public void worldTick(TickEvent.WorldTickEvent event) {
@@ -67,7 +85,7 @@ public class RaidsEventHandler {
 	public void playerTick(TickEvent.PlayerTickEvent event) {
 		if (event.side == Side.SERVER) {
 			EntityPlayer player = event.player;
-			if (player!=null) {
+			if (player != null) {
 				if (player.isPotionActive(RaidsContent.BAD_OMEN)) {
 					Raids.logInfo("player has bad omen");
 					World world = player.world;
@@ -153,4 +171,5 @@ public class RaidsEventHandler {
 			if (entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).isRaidActive()) event.setResult(Result.DENY);
 		}
 	}
+	
 }

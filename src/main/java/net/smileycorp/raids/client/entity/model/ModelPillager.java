@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelIllager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumHandSide;
-import net.smileycorp.raids.client.CrossbowAnimator;
+import net.smileycorp.raids.client.entity.CrossbowAnimator;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.ICrossbowAttackMob;
 

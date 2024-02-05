@@ -1,11 +1,12 @@
-package net.smileycorp.raids.client;
+package net.smileycorp.raids.client.entity;
 
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
-import net.smileycorp.raids.common.ItemCrossbow;
+import net.smileycorp.raids.common.MathUtils;
+import net.smileycorp.raids.common.item.ItemCrossbow;
 
 public class CrossbowAnimator {
     
@@ -19,8 +20,8 @@ public class CrossbowAnimator {
         float f = (float) ItemCrossbow.getChargeDuration(entity.getActiveItemStack());
         float f1 = -MathHelper.clamp((float)entity.getItemInUseCount(), 0.0F, f);
         float f2 = f1 / f;
-        hand1.rotateAngleY = lerp(f2, 0.4F, 0.85F) * (float)(isRight ? 1 : -1);
-        hand1.rotateAngleX = lerp(f2, hand1.rotateAngleX, (-(float)Math.PI / 2F));
+        hand1.rotateAngleY = MathUtils.lerp(f2, 0.4F, 0.85F) * (float)(isRight ? 1 : -1);
+        hand1.rotateAngleX = MathUtils.lerp(f2, hand1.rotateAngleX, (-(float)Math.PI / 2F));
     }
     
     public static void animateCrossbowHold(ModelRenderer rightArm, ModelRenderer leftArm, ModelRenderer head, boolean isRight) {
@@ -30,10 +31,6 @@ public class CrossbowAnimator {
         hand2.rotateAngleY = (isRight ? 0.6F : -0.6F) + head.rotateAngleY;
         hand1.rotateAngleX= (-(float)Math.PI / 2F) + head.rotateAngleX + 0.1F;
         hand2.rotateAngleX= -1.5F + head.rotateAngleX;
-    }
-    
-    private static float lerp(float p_14180_, float p_14181_, float p_14182_) {
-        return p_14181_ + p_14180_ * (p_14182_ - p_14181_);
     }
     
 }

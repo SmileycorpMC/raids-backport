@@ -7,8 +7,9 @@ import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.Vec3d;
-import net.smileycorp.raids.common.ItemCrossbow;
 import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.RaidsSoundEvents;
+import net.smileycorp.raids.common.item.ItemCrossbow;
 
 import javax.vecmath.Vector3f;
 
@@ -43,7 +44,7 @@ public interface ICrossbowAttackMob extends IRangedAttackMob {
         double d3 = target.posY - p_32325_.posY + d2 * (double)0.2F;
         Vector3f vector3f = this.getProjectileShotVector(entity, new Vec3d(d0, d3, d1), p_32326_);
         ((IProjectile)p_32325_).shoot(vector3f.x, vector3f.y, vector3f.z, p_32327_, (float)(14 - entity.world.getDifficulty().getDifficultyId() * 4));
-        entity.playSound(RaidsContent.CROSSBOW_SHOOT, 1.0F, 1.0F / (entity.getRNG().nextFloat() * 0.4F + 0.8F));
+        entity.playSound(RaidsSoundEvents.CROSSBOW_SHOOT, 1.0F, 1.0F / (entity.getRNG().nextFloat() * 0.4F + 0.8F));
     }
 
     default Vector3f getProjectileShotVector(EntityLivingBase p_32333_, Vec3d p_32334_, float p_32335_) {

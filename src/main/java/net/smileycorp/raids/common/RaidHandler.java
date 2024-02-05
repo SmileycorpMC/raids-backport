@@ -23,14 +23,14 @@ import java.util.Random;
 
 public class RaidHandler {
 
-	protected static final NonNullList<Class<? extends EntityLiving>> CAPABILITY_ENTITIES = NonNullList.create();
+	public static final NonNullList<Class<? extends EntityLiving>> CAPABILITY_ENTITIES = NonNullList.create();
 
 	private static final List<RaidEntry> ENTRIES = new ArrayList();
 
 	public static void registerEntry(Class<? extends EntityLiving> entity, @Nullable Class<? extends EntityLiving> mount, int[] min, int[] max, @Nullable BonusSpawns bonusSpawns) {
 		ENTRIES.add(new RaidEntry(entity, mount, min, max, bonusSpawns));
-		if (!CAPABILITY_ENTITIES.contains(entity) && entity!=null) CAPABILITY_ENTITIES.add(entity);
-		if (!CAPABILITY_ENTITIES.contains(mount) && mount!=null) CAPABILITY_ENTITIES.add(mount);
+		if (!CAPABILITY_ENTITIES.contains(entity) && entity != null) CAPABILITY_ENTITIES.add(entity);
+		if (!CAPABILITY_ENTITIES.contains(mount) && mount != null) CAPABILITY_ENTITIES.add(mount);
 	}
 
 	public static void registerEntry(Class<? extends EntityLiving> entity, int[] min, int[] max, @Nullable BonusSpawns bonusSpawns) {
@@ -152,8 +152,9 @@ public class RaidHandler {
 			}
 		}
 	}
-	@FunctionalInterface
-	public static interface BonusSpawns {
+	
+	public interface BonusSpawns {
 		int apply(EnumDifficulty difficulty, Random rand, Village village, int wave, int count, boolean isBonusWave);
 	}
+	
 }

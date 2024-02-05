@@ -11,10 +11,12 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.smileycorp.raids.client.entity.RenderPillager;
+import net.smileycorp.raids.client.entity.RenderRavager;
 import net.smileycorp.raids.common.CommonProxy;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.EntityPillager;
+import net.smileycorp.raids.common.entities.EntityRavager;
 
 @EventBusSubscriber(value = Side.CLIENT, modid= Constants.MODID)
 public class ClientProxy extends CommonProxy {
@@ -23,6 +25,7 @@ public class ClientProxy extends CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
 		RenderingRegistry.registerEntityRenderingHandler(EntityPillager.class, RenderPillager::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityRavager.class, RenderRavager::new);
 	}
 	
 	@Override

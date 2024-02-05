@@ -8,8 +8,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -29,6 +27,8 @@ import net.smileycorp.raids.common.enchantment.EnchantmentMultishot;
 import net.smileycorp.raids.common.enchantment.EnchantmentPiercing;
 import net.smileycorp.raids.common.enchantment.EnchantmentQuickCharge;
 import net.smileycorp.raids.common.entities.EntityPillager;
+import net.smileycorp.raids.common.entities.EntityRavager;
+import net.smileycorp.raids.common.item.ItemCrossbow;
 import net.smileycorp.raids.common.potion.PotionBadOmen;
 import net.smileycorp.raids.common.potion.PotionHeroOfTheVillage;
 
@@ -50,8 +50,8 @@ public class RaidsContent {
 	private static int ID = 100;
 	public static final EntityEntry PILLAGER = EntityEntryBuilder.create().entity(EntityPillager.class).id(Constants.loc("pillager"), ID++).name(Constants.name("Pillager")).egg(5451574, 9804699)
 			.tracker(64, 3, true).build();
-	public static EntityEntry RAVAGER /*= EntityEntryBuilder.create().entity(EntityRavager.class).id(ModDefinitions.getResource("ravager"), ID++).name(ModDefinitions.getName("Ravager")).egg(7697520, 5984329)
-			.tracker(64, 3, true).build()*/;
+	public static EntityEntry RAVAGER = EntityEntryBuilder.create().entity(EntityRavager.class).id(Constants.loc("ravager"), ID++).name(Constants.name("Ravager")).egg(7697520, 5984329)
+			.tracker(64, 3, true).build();
 	
 	public static final Potion BAD_OMEN = new PotionBadOmen();
 	public static final Potion HERO_OF_THE_VILLAGE = new PotionHeroOfTheVillage();
@@ -61,32 +61,6 @@ public class RaidsContent {
 	public static Enchantment QUICK_CHARGE = new EnchantmentQuickCharge();
 	public static Enchantment MULTISHOT = new EnchantmentMultishot();
 	public static Enchantment PIERCING = new EnchantmentPiercing();
-
-	public static final SoundEvent CROSSBOW_LOADING_END = new SoundEvent(Constants.loc("item.crossbow.loading_end"));
-	public static final SoundEvent CROSSBOW_LOADING_MIDDLE = new SoundEvent(Constants.loc("item.crossbow.loading_middle"));
-	public static final SoundEvent CROSSBOW_LOADING_START = new SoundEvent(Constants.loc("item.crossbow.loading_start"));
-	public static final SoundEvent CROSSBOW_QUICK_CHARGE_1 = new SoundEvent(Constants.loc("item.crossbow.quick_charge_1"));
-	public static final SoundEvent CROSSBOW_QUICK_CHARGE_2 = new SoundEvent(Constants.loc("item.crossbow.quick_charge_2"));
-	public static final SoundEvent CROSSBOW_QUICK_CHARGE_3 = new SoundEvent(Constants.loc("item.crossbow.quick_charge_3"));
-	public static final SoundEvent CROSSBOW_SHOOT = new SoundEvent(Constants.loc("item.crossbow.shoot"));
-	public static final SoundEvent PILLAGER_AMBIENT = new SoundEvent(Constants.loc("entity.pillager.ambient"));
-	public static final SoundEvent PILLAGER_HURT = new SoundEvent(Constants.loc("entity.pillager.hurt"));
-	public static final SoundEvent PILLAGER_DEATH = new SoundEvent(Constants.loc("entity.pillager.death"));
-	public static final SoundEvent PILLAGER_CELEBRATE = new SoundEvent(Constants.loc("entity.pillager.celebrate"));
-	public static final SoundEvent RAVAGER_AMBIENT = new SoundEvent(Constants.loc("entity.ravager.ambient"));
-	public static final SoundEvent RAVAGER_ATTACK = new SoundEvent(Constants.loc("entity.ravager.attack"));
-	public static final SoundEvent RAVAGER_CELEBRATE = new SoundEvent(Constants.loc("entity.ravager.celebrate"));
-	public static final SoundEvent RAVAGER_DEATH = new SoundEvent(Constants.loc("entity.ravager.death"));
-	public static final SoundEvent RAVAGER_HURT = new SoundEvent(Constants.loc("entity.ravager.hurt"));
-	public static final SoundEvent RAVAGER_STEP = new SoundEvent(Constants.loc("entity.ravager.step"));
-	public static final SoundEvent RAVAGER_STUNNED = new SoundEvent(Constants.loc("entity.ravager.stunned"));
-	public static final SoundEvent RAVAGER_ROAR = new SoundEvent(Constants.loc("entity.ravager.roar"));
-	public static final SoundEvent RAID_HORN = new SoundEvent(Constants.loc("event.raid.horn"));
-	
-	public static final ResourceLocation PILLAGER_DROPS = Constants.loc("entities.pillager");
-	public static final ResourceLocation RAVAGER_DROPS = Constants.loc("entities.ravager");
-	public static final ResourceLocation OUTPOST_CHESTS = Constants.loc("chests.pillager_outpost");
-	public static final ResourceLocation POTION_ATLAS = Constants.loc("textures/gui/potions.png");
 	
 	public static ItemStack createOminousBanner() {
 		NBTTagList patterns = new NBTTagList();
@@ -147,6 +121,7 @@ public class RaidsContent {
 	public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
 		IForgeRegistry<EntityEntry> registry = event.getRegistry();
 		registry.register(PILLAGER);
+		registry.register(RAVAGER);
 	}
 	
 }

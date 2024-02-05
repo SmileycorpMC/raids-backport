@@ -6,7 +6,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.smileycorp.raids.common.Constants;
-import net.smileycorp.raids.common.RaidsContent;
 
 public class PotionHeroOfTheVillage extends Potion {
 
@@ -25,7 +24,7 @@ public class PotionHeroOfTheVillage extends Potion {
     @Override
     @SideOnly(Side.CLIENT)
     public int getStatusIconIndex() {
-        Minecraft.getMinecraft().renderEngine.bindTexture(RaidsContent.POTION_ATLAS);
+        Minecraft.getMinecraft().renderEngine.bindTexture(Constants.POTION_ATLAS);
         return super.getStatusIconIndex();
     }
 

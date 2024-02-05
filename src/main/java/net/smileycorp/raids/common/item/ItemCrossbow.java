@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common;
+package net.smileycorp.raids.common.item;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.util.ITooltipFlag;
@@ -27,6 +27,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.smileycorp.raids.common.Constants;
+import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ICrossbowArrow;
 import net.smileycorp.raids.common.entities.ICrossbowAttackMob;
 import net.smileycorp.raids.common.entities.IFireworksProjectile;
@@ -79,7 +82,7 @@ public class ItemCrossbow extends Item {
 		if (charge >= 1.0F && !isCharged(stack) && tryLoadProjectiles(entity, stack)) {
 			setCharged(stack, true);
 			SoundCategory soundsource = entity instanceof EntityPlayer ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
-			world.playSound(null, entity.posX, entity.posX, entity.posZ, RaidsContent.CROSSBOW_LOADING_END, soundsource, 1.0F, 1.0F / (world.rand.nextFloat() * 0.5F + 1.0F) + 0.2F);
+			world.playSound(null, entity.posX, entity.posX, entity.posZ, RaidsSoundEvents.CROSSBOW_LOADING_END, soundsource, 1.0F, 1.0F / (world.rand.nextFloat() * 0.5F + 1.0F) + 0.2F);
 		}
 	}
 
@@ -205,7 +208,7 @@ public class ItemCrossbow extends Item {
 
 			stack.damageItem(isFirework ? 3 : 1, entity);
 			world.spawnEntity(projectile);
-			world.playSound(null, entity.posX, entity.posY, entity.posZ, RaidsContent.CROSSBOW_SHOOT, SoundCategory.PLAYERS, 1.0F, p_40900_);
+			world.playSound(null, entity.posX, entity.posY, entity.posZ, RaidsSoundEvents.CROSSBOW_SHOOT, SoundCategory.PLAYERS, 1.0F, p_40900_);
 		}
 	}
 
@@ -272,7 +275,7 @@ public class ItemCrossbow extends Item {
 	      if (!entity.world.isRemote) {
 	         int i = EnchantmentHelper.getEnchantmentLevel(RaidsContent.QUICK_CHARGE, stack);
 	         SoundEvent soundevent = getStartSound(0);
-	         SoundEvent soundevent1 = i == 0 ? RaidsContent.CROSSBOW_LOADING_MIDDLE : null;
+	         SoundEvent soundevent1 = i == 0 ? RaidsSoundEvents.CROSSBOW_LOADING_MIDDLE : null;
 	         float f = (float)(stack.getMaxItemUseDuration() - count) / (float)getChargeDuration(stack);
 	         if (f < 0.2F) {
 	            startSoundPlayed = false;
@@ -306,13 +309,13 @@ public class ItemCrossbow extends Item {
 	private SoundEvent getStartSound(int p_40852_) {
 		switch(p_40852_) {
 			case 1:
-				return RaidsContent.CROSSBOW_QUICK_CHARGE_1;
+				return RaidsSoundEvents.CROSSBOW_QUICK_CHARGE_1;
 			case 2:
-				return RaidsContent.CROSSBOW_QUICK_CHARGE_2;
+				return RaidsSoundEvents.CROSSBOW_QUICK_CHARGE_2;
 			case 3:
-				return RaidsContent.CROSSBOW_QUICK_CHARGE_3;
+				return RaidsSoundEvents.CROSSBOW_QUICK_CHARGE_3;
 			default:
-				return RaidsContent.CROSSBOW_LOADING_START;
+				return RaidsSoundEvents.CROSSBOW_LOADING_START;
 		}
 	}
 

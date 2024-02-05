@@ -15,12 +15,10 @@ public class RenderPillager extends RenderLiving<EntityMob> {
 	
 	private static final ResourceLocation texture = Constants.loc("textures/entity/illager/pillager.png");
 
-    public RenderPillager(RenderManager p_i47207_1_) {
-        super(p_i47207_1_, new ModelPillager(), 0.5F);
-        this.addLayer(new LayerHeldItem(this) {
-            @Override
-			protected void translateToHand(EnumHandSide hand)
-            {
+    public RenderPillager(RenderManager rm) {
+        super(rm, new ModelPillager(), 0.5F);
+        addLayer(new LayerHeldItem(this) {
+			protected void translateToHand(EnumHandSide hand) {
                 ((ModelIllager)this.livingEntityRenderer.getMainModel()).getArm(hand).postRender(0.0625F);
             }
         });
