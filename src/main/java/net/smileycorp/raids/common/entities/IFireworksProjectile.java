@@ -2,7 +2,6 @@ package net.smileycorp.raids.common.entities;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IProjectile;
-import net.minecraft.item.ItemStack;
 
 public interface IFireworksProjectile extends IProjectile {
 

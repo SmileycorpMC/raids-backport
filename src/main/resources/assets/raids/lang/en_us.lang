@@ -1,8 +1,10 @@
 item.raids.Crossbow.name=Crossbow
 item.raids.crossbow.projectile=Projectile:
 item.raids.OminousBanner.name=Ominous Banner
+
 entity.raids.Pillager.name=Pillager
 entity.raids.Ravager.name=Ravager
+
 subtitles.raids.entity.pillager.ambient=Pillager murmurs
 subtitles.raids.entity.pillager.celebrate=Pillager cheers
 subtitles.raids.entity.pillager.death=Pillager dies
@@ -19,20 +21,27 @@ subtitles.raids.item.crossbow.charge=Crossbow charges up
 subtitles.raids.item.crossbow.load=Crossbow loads
 subtitles.raids.item.crossbow.shoot=Crossbow fires
 subtitles.raids.event.raid.horn=Ominous horn blares
+
 effect.raids.bad_omen=Bad Omen
 effect.raids.hero_of_the_village=Hero of the Village
+
 enchantment.raids.multishot=Multishot
 enchantment.raids.quickcharge=Quick Charge
 enchantment.raids.piercing=Piercing
+
+death.attack.raids.fireworks.player=%1$s went off with a bang whilst fighting %2$s
+
 event.raids.raid=Raid
 event.raids.raid.raiders_remaining=Raiders remaining: %s
 event.raids.raid.victory=Victory
 event.raids.raid.defeat=Defeat
+
 potion.potency.3=IV
 potion.potency.4=V
 potion.potency.5=VI
 potion.potency.6=VII
 potion.potency.7=VIII
+
 advancements.adventure.arbalistic.title=Arbalistic
 advancements.adventure.arbalistic.description=Kill five unique mobs with one crossbow shot 
 advancements.adventure.hero_of_the_village.title=Hero of the Village

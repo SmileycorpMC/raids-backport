@@ -1,6 +1,5 @@
 package net.smileycorp.raids.mixin;
 
-import io.netty.util.internal.MathUtil;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
