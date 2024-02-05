@@ -41,7 +41,7 @@ public abstract class MixinItemRenderer {
         int i = flag2 ? 1 : -1;
         if (!player.getActiveItemStack().isEmpty() && player.getItemInUseMaxCount() > 0 && player.getActiveHand() == hand) {
             transformSideFirstPerson(enumhandside, p_187457_7_);
-            GlStateManager.translate((double)((float)i * -0.4785682F), (double)-0.094387F, (double)0.05731531F);
+            GlStateManager.translate(((float)i * -0.4785682F), -0.094387F, (double)0.05731531F);
             GlStateManager.rotate(-11.935F, 1.0F, 0.0F, 0.0F);
             GlStateManager.rotate(i * 65.3F, 0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(i * -9.785F, 0.0F, 0.0F, 1.0F);
@@ -50,30 +50,28 @@ public abstract class MixinItemRenderer {
             if (f13 > 1.0F) {
                 f13 = 1.0F;
             }
-
             if (f13 > 0.1F) {
                 float f16 = MathHelper.sin((f9 - 0.1F) * 1.3F);
                 float f3 = f13 - 0.1F;
                 float f4 = f16 * f3;
-                GlStateManager.translate((double)(f4 * 0.0F), (double)(f4 * 0.004F), (double)(f4 * 0.0F));
+                GlStateManager.translate(f4 * 0.0F, f4 * 0.004F, (double)(f4 * 0.0F));
             }
-
-            GlStateManager.translate((double)(f13 * 0.0F), (double)(f13 * 0.0F), (double)(f13 * 0.04F));
+            GlStateManager.translate(f13 * 0.0F, f13 * 0.0F, (double)(f13 * 0.04F));
             GlStateManager.scale(1.0F, 1.0F, 1.0F + f13 * 0.2F);
             GlStateManager.rotate(i * 45.0F, 0.0F, -1.0F, 0.0F);
         } else {
             float f = -0.4F * MathHelper.sin(MathHelper.sqrt(p_187457_5_) * (float)Math.PI);
             float f1 = 0.2F * MathHelper.sin(MathHelper.sqrt(p_187457_5_) * ((float)Math.PI * 2F));
             float f2 = -0.2F * MathHelper.sin(p_187457_5_ * (float)Math.PI);
-            GlStateManager.translate((double)((float)i * f), (double)f1, (double)f2);
+            GlStateManager.translate((float)i * f, f1, (double)f2);
             transformSideFirstPerson(enumhandside, p_187457_7_);
             transformFirstPerson(enumhandside, p_187457_5_);
             if (flag1 && p_187457_5_ < 0.001F && flag) {
-                GlStateManager.translate((double)((float)i * -0.641864F), 0.0D, 0.0D);
+                GlStateManager.translate((float)i * -0.641864F, 0.0D, 0.0D);
                 GlStateManager.rotate(i * 10.0F, 0.0F, 1.0F, 0.0F);
             }
         }
-        this.renderItemSide(player, stack, flag2 ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag2);
+        renderItemSide(player, stack, flag2 ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag2);
         GlStateManager.popMatrix();
         ci.cancel();
     }

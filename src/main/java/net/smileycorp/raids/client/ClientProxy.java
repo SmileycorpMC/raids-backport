@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.smileycorp.raids.client.entity.RenderPillager;
 import net.smileycorp.raids.common.CommonProxy;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
@@ -22,7 +22,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
-		RenderingRegistry.registerEntityRenderingHandler(EntityPillager.class, m-> new RenderPillager(m));
+		RenderingRegistry.registerEntityRenderingHandler(EntityPillager.class, RenderPillager::new);
 	}
 	
 	@Override
@@ -36,7 +36,6 @@ public class ClientProxy extends CommonProxy {
 	}
 	
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
 	public static void registerModels(ModelRegistryEvent event) {
 		ModelLoader.setCustomModelResourceLocation(RaidsContent.CROSSBOW, 0, new ModelResourceLocation(Constants.loc("Crossbow"), "normal"));
 	}

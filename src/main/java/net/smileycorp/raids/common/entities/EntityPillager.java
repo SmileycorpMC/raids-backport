@@ -36,7 +36,7 @@ public class EntityPillager extends AbstractIllager implements ICrossbowAttackMo
 
     @Override
     public IllagerArmPose getArmPose() {
-        return IllagerArmPose.BOW_AND_ARROW;
+        return null;
     }
 
     protected void entityInit() {
@@ -121,6 +121,11 @@ public class EntityPillager extends AbstractIllager implements ICrossbowAttackMo
     @Override
     public void setChargingCrossbow(boolean charging) {
         dataManager.set(IS_CHARGING_CROSSBOW, charging);
+    }
+    
+    @Override
+    public boolean isChargingCrossbow() {
+        return dataManager.get(IS_CHARGING_CROSSBOW);
     }
 
     @Override

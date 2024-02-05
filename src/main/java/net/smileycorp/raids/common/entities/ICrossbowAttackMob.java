@@ -15,6 +15,8 @@ import javax.vecmath.Vector3f;
 public interface ICrossbowAttackMob extends IRangedAttackMob {
 
     void setChargingCrossbow(boolean charging);
+    
+    boolean isChargingCrossbow();
 
     default void attackEntityWithRangedAttack(EntityLivingBase target, float distance) {
         EntityLivingBase entity = ((EntityLivingBase)this);

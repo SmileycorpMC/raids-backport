@@ -20,7 +20,7 @@ import net.smileycorp.raids.common.network.RemoveEffectMessage;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientHandler {
-
+	
 	@SubscribeEvent
 	public static void renderHand(RenderSpecificHandEvent event) {
 		EnumHand hand = event.getHand();

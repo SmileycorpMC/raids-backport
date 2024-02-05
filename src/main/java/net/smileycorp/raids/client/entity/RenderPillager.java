@@ -1,4 +1,4 @@
-package net.smileycorp.raids.client;
+package net.smileycorp.raids.client.entity;
 
 import net.minecraft.client.model.ModelIllager;
 import net.minecraft.client.renderer.GlStateManager;
@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
+import net.smileycorp.raids.client.entity.model.ModelPillager;
 import net.smileycorp.raids.common.Constants;
 
 public class RenderPillager extends RenderLiving<EntityMob> {
@@ -15,7 +16,7 @@ public class RenderPillager extends RenderLiving<EntityMob> {
 	private static final ResourceLocation texture = Constants.loc("textures/entity/illager/pillager.png");
 
     public RenderPillager(RenderManager p_i47207_1_) {
-        super(p_i47207_1_, new ModelIllager(0.0F, 0.0F, 64, 64), 0.5F);
+        super(p_i47207_1_, new ModelPillager(), 0.5F);
         this.addLayer(new LayerHeldItem(this) {
             @Override
 			protected void translateToHand(EnumHandSide hand)

@@ -26,6 +26,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.smileycorp.raids.common.entities.ICrossbowArrow;
 import net.smileycorp.raids.common.entities.ICrossbowAttackMob;
 import net.smileycorp.raids.common.entities.IFireworksProjectile;
@@ -224,35 +225,35 @@ public class ItemCrossbow extends Item {
 		return abstractarrow;
 	}
 
-	public static void performShooting(World p_40888_, EntityLivingBase p_40889_, EnumHand p_40890_, ItemStack p_40891_, float p_40892_, float p_40893_) {
-		if (p_40889_ instanceof EntityPlayer && net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_40891_, p_40888_, (EntityPlayer) p_40889_, 1, true) < 0) return;
-		List<ItemStack> list = getChargedProjectiles(p_40891_);
-		float[] afloat = getShotPitches(p_40889_.getRNG());
+	public static void performShooting(World world, EntityLivingBase entity, EnumHand hand, ItemStack stack, float p_40892_, float p_40893_) {
+		if (entity instanceof EntityPlayer && ForgeEventFactory.onArrowLoose(stack, world, (EntityPlayer) entity, 1, true) < 0) return;
+		List<ItemStack> list = getChargedProjectiles(stack);
+		float[] afloat = getShotPitches(entity.getRNG());
 
 		for(int i = 0; i < list.size(); ++i) {
 			ItemStack itemstack = list.get(i);
-			boolean flag = p_40889_ instanceof EntityPlayer && ((EntityPlayer)p_40889_).capabilities.isCreativeMode;
+			boolean flag = entity instanceof EntityPlayer && ((EntityPlayer)entity).capabilities.isCreativeMode;
 			if (!itemstack.isEmpty()) {
 				if (i == 0) {
-					shootProjectile(p_40888_, p_40889_, p_40890_, p_40891_, itemstack, afloat[i], flag, p_40892_, p_40893_, 0.0F);
+					shootProjectile(world, entity, hand, stack, itemstack, afloat[i], flag, p_40892_, p_40893_, 0.0F);
 				} else if (i == 1) {
-					shootProjectile(p_40888_, p_40889_, p_40890_, p_40891_, itemstack, afloat[i], flag, p_40892_, p_40893_, -10.0F);
+					shootProjectile(world, entity, hand, stack, itemstack, afloat[i], flag, p_40892_, p_40893_, -10.0F);
 				} else if (i == 2) {
-					shootProjectile(p_40888_, p_40889_, p_40890_, p_40891_, itemstack, afloat[i], flag, p_40892_, p_40893_, 10.0F);
+					shootProjectile(world, entity, hand, stack, itemstack, afloat[i], flag, p_40892_, p_40893_, 10.0F);
 				}
 			}
 		}
-		onCrossbowShot(p_40888_, p_40889_, p_40891_);
+		onCrossbowShot(world, entity, stack);
 	}
 
-	private static float[] getShotPitches(Random p_40924_) {
-		boolean flag = p_40924_.nextBoolean();
-		return new float[]{1.0F, getRandomShotPitch(flag, p_40924_), getRandomShotPitch(!flag, p_40924_)};
+	private static float[] getShotPitches(Random rand) {
+		boolean flag = rand.nextBoolean();
+		return new float[]{1.0F, getRandomShotPitch(flag, rand), getRandomShotPitch(!flag, rand)};
 	}
 
-	private static float getRandomShotPitch(boolean p_150798_, Random p_150799_) {
-		float f = p_150798_ ? 0.63F : 0.43F;
-		return 1.0F / (p_150799_.nextFloat() * 0.5F + 1.8F) + f;
+	private static float getRandomShotPitch(boolean flag, Random rand) {
+		float f = flag ? 0.63F : 0.43F;
+		return 1.0F / (rand.nextFloat() * 0.5F + 1.8F) + f;
 	}
 
 	private static void onCrossbowShot(World world, EntityLivingBase entity, ItemStack stack) {
