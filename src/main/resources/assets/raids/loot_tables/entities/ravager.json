@@ -1,6 +1,7 @@
 {
   "pools": [
         {
+			"name": "raids:ravager_saddle",
             "rolls": 1,
             "entries": [
                 {

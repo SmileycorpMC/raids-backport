@@ -4,6 +4,7 @@ import net.minecraft.entity.monster.EntityEvoker;
 import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -18,13 +19,15 @@ public class CommonProxy {
 	
 	public void preInit(FMLPreInitializationEvent event) {
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());
-		CapabilityManager.INSTANCE.register(Raid.class, new Raid.Storage(), ()-> new Raid.Impl());
-		CapabilityManager.INSTANCE.register(Raider.class, new Raider.Storage(), ()-> new Raider.Impl());
+		CapabilityManager.INSTANCE.register(Raid.class, new Raid.Storage(), Raid.Impl::new);
+		CapabilityManager.INSTANCE.register(Raider.class, new Raider.Storage(), Raider.Impl::new);
 		registerSpawns();
 	}
 
 	public void init(FMLInitializationEvent event) {
-		
+		LootTableList.register(Constants.PILLAGER_DROPS);
+		LootTableList.register(Constants.RAVAGER_DROPS);
+		LootTableList.register(Constants.OUTPOST_CHESTS);
 	}
 	
 	public void postInit(FMLPostInitializationEvent event) {

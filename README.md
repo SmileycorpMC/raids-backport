@@ -9,14 +9,9 @@ Ravagers
 
 1.14 Fireworks Mechanics
 
-Quick Charge Enchantment
-
-Multishot (mostly, it currently doesn't work completely)
+Quick Charge, Multishot and Piercing Enchantments
 
 ### Future Plans
-Fix Multishot Effect
-
-Add Piercing Effect
 
 Raid Events and Bad Omen
 

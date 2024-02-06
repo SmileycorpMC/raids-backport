@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.smileycorp.raids.client.entity.model.ModelPillager;
@@ -19,7 +20,7 @@ public class RenderPillager extends RenderLiving<EntityMob> {
         super(rm, new ModelPillager(), 0.5F);
         addLayer(new LayerHeldItem(this) {
 			protected void translateToHand(EnumHandSide hand) {
-                ((ModelIllager)this.livingEntityRenderer.getMainModel()).getArm(hand).postRender(0.0625F);
+                ((ModelIllager)livingEntityRenderer.getMainModel()).getArm(hand).postRender(0.0625F);
             }
         });
     }
@@ -30,7 +31,7 @@ public class RenderPillager extends RenderLiving<EntityMob> {
     }
 
     @Override
-	protected void preRenderCallback(EntityMob entitylivingbaseIn, float partialTickTime) {
+	protected void preRenderCallback(EntityMob entity, float partialTicks) {
         GlStateManager.scale(0.9375F, 0.9375F, 0.9375F);
     }
 }
