@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.*;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
@@ -14,7 +15,6 @@ import net.minecraft.village.Village;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.BossInfoServer;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -72,7 +72,7 @@ public interface Raid extends IOngoingEvent {
 		protected Raid impl;
 
 		public Provider(Village village) {
-			impl = FMLCommonHandler.instance().getSide() == Side.CLIENT ? new ClientRaid(village) : new Impl(village);
+			impl = new Impl(village);
 		}
 
 		@Override
@@ -121,6 +121,8 @@ public interface Raid extends IOngoingEvent {
 			this();
 			this.village = village;
 			world = village.world;
+			for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class, player -> player.getDistanceSqToCenter(village.getCenter()) <= 9216))
+				bossInfo.addPlayer(player);
 		}
 
 		@Override
@@ -139,7 +141,7 @@ public interface Raid extends IOngoingEvent {
 				if (nbt.hasKey("participants") && !world.isRemote) {
 					for (NBTBase tag : nbt.getTagList("participants", 8)) {
 						String uuid = ((NBTTagString)tag).getString();
-						if (DataUtils.isValidUUID(uuid)) participants.add(((WorldServer) world).getPlayerEntityByUUID(UUID.fromString(uuid)));
+						if (DataUtils.isValidUUID(uuid)) participants.add(world.getPlayerEntityByUUID(UUID.fromString(uuid)));
 					}
 				}
 			}
@@ -190,7 +192,7 @@ public interface Raid extends IOngoingEvent {
 
 		@Override
 		public boolean isActive(World world) {
-			return !village.world.isRemote && isActive ;
+			return isActive ;
 		}
 
 		@Override
@@ -225,7 +227,7 @@ public interface Raid extends IOngoingEvent {
 			boolean isBonusWave = wave > maxWaves;
 			entities.addAll(RaidHandler.createNewWave(village, isBonusWave ? maxWaves : wave, level , isBonusWave));
 			health = 0;
-			for (EntityLiving entity : entities) health+=entity.getHealth();
+			for (EntityLiving entity : entities) health += entity.getHealth();
 			totalHealth = health;
 		}
 
@@ -280,6 +282,13 @@ public interface Raid extends IOngoingEvent {
 		public Village getVillage() {
 			return village;
 		}
-
+		
+		@Override
+		public String toString() {
+			return "Raid@" + Integer.toHexString(hashCode()) + "[village=" + (village == null ? "null" : village.getCenter()) + ", isActive=" + isActive +
+					", cooldown=" + cooldown + ", wave=" + wave + ", maxWaves=" + maxWaves + ", bonusWaves=" + bonusWaves +  ", level=" + level +
+					", entityCount="+ entities.size()+", villagers="+villagers + ", participants="+participants+"]";
+		}
+		
 	}
 }

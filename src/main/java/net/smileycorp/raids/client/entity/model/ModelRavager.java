@@ -96,9 +96,7 @@ public class ModelRavager extends ModelBase {
         EntityRavager ravager = (EntityRavager) entity;
         int i = ravager.getStunnedTick();
         int j = ravager.getRoarTick();
-        int k = 20;
         int l = ravager.getAttackTick();
-        int i1 = 10;
         if (l > 0) {
             float f = MathUtils.triangleWave((float) l - partialTicks, 10.0F);
             float f1 = (1.0F + f) * 0.5F;
@@ -106,14 +104,9 @@ public class ModelRavager extends ModelBase {
             float f3 = f2 * MathHelper.sin(neck.rotateAngleX);
             neck.rotationPointZ = -6.5F + f2;
             neck.rotationPointY = -7.0F - f3;
-            float f4 = MathHelper.sin(((float) l - partialTicks) / 10.0F * (float) Math.PI * 0.25F);
-            if (l > 5) {
-                mouth.rotateAngleX = MathHelper.sin(((float) (-4 + l) - partialTicks) / 4.0F) * (float) Math.PI * 0.4F;
-            } else {
-                mouth.rotateAngleX = 0.15707964F * MathHelper.sin((float) Math.PI * ((float) l - partialTicks) / 10.0F);
-            }
+            if (l > 5) mouth.rotateAngleX = MathHelper.sin(((float) (-4 + l) - partialTicks) / 4.0F) * (float) Math.PI * 0.4F;
+            else mouth.rotateAngleX = 0.15707964F * MathHelper.sin((float) Math.PI * ((float) l - partialTicks) / 10.0F);
         } else {
-            float f5 = -1.0F;
             float f6 = -1.0F * MathHelper.sin(neck.rotateAngleX);
             neck.rotationPointX = 0.0F;
             neck.rotationPointY = -7.0F - f6;

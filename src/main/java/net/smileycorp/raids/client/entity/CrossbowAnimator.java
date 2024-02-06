@@ -29,8 +29,8 @@ public class CrossbowAnimator {
         ModelRenderer hand2 = isRight ? leftArm : rightArm;
         hand1.rotateAngleY = (isRight ? -0.3F : 0.3F) + head.rotateAngleY;
         hand2.rotateAngleY = (isRight ? 0.6F : -0.6F) + head.rotateAngleY;
-        hand1.rotateAngleX= (-(float)Math.PI / 2F) + head.rotateAngleX + 0.1F;
-        hand2.rotateAngleX= -1.5F + head.rotateAngleX;
+        hand1.rotateAngleX = (-(float)Math.PI / 2F) + head.rotateAngleX + 0.1F;
+        hand2.rotateAngleX = -1.5F + head.rotateAngleX;
     }
     
 }

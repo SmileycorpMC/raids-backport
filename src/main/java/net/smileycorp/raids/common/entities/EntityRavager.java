@@ -134,20 +134,15 @@ public class EntityRavager extends EntityMob {
 				}
 				if (!flag && onGround) jump();
 			}
-			if (roarTick > 0) {
-				roarTick--;
-				if (roarTick == 10) roar();
-			}
+			if (roarTick > 0) if (roarTick-- == 10) roar();
 			if (attackTick > 0) attackTick--;
 			if (stunnedTick > 0) {
-				--stunnedTick;
 				stunEffect();
-				if (stunnedTick == 0) {
+				if (stunnedTick-- == 0) {
 					playSound(RaidsSoundEvents.RAVAGER_ROAR, 1.0F, 1.0F);
 					roarTick = 20;
 				}
 			}
-			
 		}
 	}
 	
@@ -161,15 +156,14 @@ public class EntityRavager extends EntityMob {
 	}
 	
 	protected void blockUsingShield(EntityLivingBase entity) {
-		if (roarTick == 0) {
-			if (rand.nextDouble() < 0.5D) {
-				stunnedTick = 40;
-				playSound(RaidsSoundEvents.RAVAGER_STUNNED, 1.0F, 1.0F);
-				//world.(this, (byte)39);
-				entity.applyEntityCollision(this);
-			} else strongKnockback(entity);
-			entity.velocityChanged = true;
-		}
+		if (roarTick > 0) return;
+		if (rand.nextDouble() < 0.5D) {
+			stunnedTick = 40;
+			playSound(RaidsSoundEvents.RAVAGER_STUNNED, 1.0F, 1.0F);
+			//world.(this, (byte)39);
+			entity.applyEntityCollision(this);
+		} else strongKnockback(entity);
+		entity.velocityChanged = true;
 	}
 	
 	protected boolean isImmobile() {
@@ -184,13 +178,11 @@ public class EntityRavager extends EntityMob {
 	private void roar() {
 		if (!isEntityAlive()) return;
 		for(EntityLiving livingentity : world.getEntitiesWithinAABB(EntityLiving.class, getEntityBoundingBox().grow(4.0D), NO_RAVAGER_AND_ALIVE)) {
-			if (!(livingentity instanceof AbstractIllager)) {
-				livingentity.attackEntityFrom(DamageSource.causeMobDamage(this), 6.0F);
-			}
+			if (!(livingentity instanceof AbstractIllager)) livingentity.attackEntityFrom(DamageSource.causeMobDamage(this), 6.0F);
 			strongKnockback(livingentity);
 		}
 		Vec3d vec3 = getEntityBoundingBox().getCenter();
-		for(int i = 0; i < 40; ++i) {
+		for(int i = 0; i < 40; i++) {
 			double d0 = rand.nextGaussian() * 0.2D;
 			double d1 = rand.nextGaussian() * 0.2D;
 			double d2 = rand.nextGaussian() * 0.2D;

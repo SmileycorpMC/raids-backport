@@ -2,7 +2,7 @@
   "parent": "hordes:adventure/ol_betsy",
   "display": {
     "icon": {
-      "item": "minecraft:crossbow",
+      "item": "raids:crossbow",
       "nbt": "{Damage:0}"
     },
     "title": {

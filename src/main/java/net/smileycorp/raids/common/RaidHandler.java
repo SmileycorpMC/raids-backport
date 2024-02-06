@@ -140,11 +140,11 @@ public class RaidHandler {
 			world.spawnEntity(entity);
 			entity.setGlowing(true);
 			entities.add(entity);
-			if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && raid!=null) entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setRaid(raid);
-			if (mount!=null) {
+			if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && raid != null) entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setRaid(raid);
+			if (mount != null) {
 				EntityLiving mount = this.mount.getConstructor(World.class).newInstance(world);
 				mount.setPosition(pos.getX(), pos.getY(), pos.getZ());
-				if (mount.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && raid!=null) mount.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setRaid(raid);
+				if (mount.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && raid != null) mount.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setRaid(raid);
 				world.spawnEntity(mount);
 				entity.setGlowing(true);
 				entity.startRiding(mount, true);

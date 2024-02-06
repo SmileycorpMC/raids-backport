@@ -8,7 +8,7 @@
             },
             "entries": [
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "name": "raids:crossbow"
                 }
             ]
@@ -21,7 +21,7 @@
             },
             "entries": [
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "weight": 7,
                     "functions": [
                         {
@@ -35,7 +35,7 @@
                     "name": "minecraft:wheat"
                 },
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "weight": 5,
                     "functions": [
                         {
@@ -49,7 +49,7 @@
                     "name": "minecraft:potato"
                 },
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "weight": 5,
                     "functions": [
                         {
@@ -72,7 +72,7 @@
             },
             "entries": [
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "functions": [
                         {
                             "function": "minecraft:set_count",
@@ -94,12 +94,12 @@
             },
             "entries": [
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "weight": 7,
                     "name": "minecraft:experience_bottle"
                 },
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "weight": 4,
                     "functions": [
                         {
@@ -113,7 +113,7 @@
                     "name": "minecraft:string"
                 },
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "weight": 4,
                     "functions": [
                         {
@@ -127,7 +127,7 @@
                     "name": "minecraft:arrow"
                 },
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "weight": 3,
                     "functions": [
                         {
@@ -141,7 +141,7 @@
                     "name": "minecraft:tripwire_hook"
                 },
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "weight": 3,
                     "functions": [
                         {
@@ -155,7 +155,7 @@
                     "name": "minecraft:iron_ingot"
                 },
                 {
-                    "type": "minecraft:item",
+                    "type": "item",
                     "functions": [
                         {
                             "function": "minecraft:enchant_randomly"

@@ -29,8 +29,7 @@ import net.smileycorp.raids.common.enchantment.EnchantmentQuickCharge;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.item.ItemCrossbow;
-import net.smileycorp.raids.common.potion.PotionBadOmen;
-import net.smileycorp.raids.common.potion.PotionHeroOfTheVillage;
+import net.smileycorp.raids.common.potion.RaidsPotion;
 
 import java.util.Random;
 
@@ -53,8 +52,8 @@ public class RaidsContent {
 	public static EntityEntry RAVAGER = EntityEntryBuilder.create().entity(EntityRavager.class).id(Constants.loc("ravager"), ID++).name(Constants.name("Ravager")).egg(7697520, 5984329)
 			.tracker(64, 3, true).build();
 	
-	public static final Potion BAD_OMEN = new PotionBadOmen();
-	public static final Potion HERO_OF_THE_VILLAGE = new PotionHeroOfTheVillage();
+	public static final Potion BAD_OMEN = new RaidsPotion(true, 0x0b6138, "bad_omen");
+	public static final Potion HERO_OF_THE_VILLAGE = new RaidsPotion(false, 0x44FF44, "hero_of_the_village");
 
 	public static final EnumEnchantmentType CROSSBOW_ENCHANTMENTS = EnumHelper.addEnchantmentType("crossbow", item -> item == CROSSBOW);
 

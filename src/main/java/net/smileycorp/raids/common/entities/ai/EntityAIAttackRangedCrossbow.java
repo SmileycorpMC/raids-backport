@@ -49,21 +49,13 @@ public class EntityAIAttackRangedCrossbow<T extends EntityLiving & ICrossbowAtta
         if (target != null) {
             boolean flag = entity.getEntitySenses().canSee(target);
             boolean flag1 = this.seeTime > 0;
-            if (flag != flag1) {
-                this.seeTime = 0;
-            }
-
-            if (flag) {
-                ++this.seeTime;
-            } else {
-                --this.seeTime;
-            }
-
+            if (flag != flag1) seeTime = 0;
+            if (flag) seeTime++;
+            else seeTime--;
             double d0 = entity.getDistanceSq(target);
             boolean flag2 = (d0 > (double)this.attackRadiusSqr || this.seeTime < 5) && this.attackDelay == 0;
             if (flag2) {
-                --updatePathDelay;
-                if (updatePathDelay <= 0) {
+                if (updatePathDelay-- <= 0) {
                     entity.getNavigator().tryMoveToEntityLiving(target, state == State.UNCHARGED ? this.speedModifier : this.speedModifier * 0.5D);
                     updatePathDelay = entity.getRNG().nextInt(20) + 20;
                 }
@@ -71,7 +63,6 @@ public class EntityAIAttackRangedCrossbow<T extends EntityLiving & ICrossbowAtta
                 this.updatePathDelay = 0;
                 entity.getNavigator().clearPath();
             }
-
             entity.getLookHelper().setLookPositionWithEntity(target, 30.0F, 30.0F);
             if (state == State.UNCHARGED) {
                 if (!flag2) {
@@ -83,10 +74,7 @@ public class EntityAIAttackRangedCrossbow<T extends EntityLiving & ICrossbowAtta
                     entity.setChargingCrossbow(true);
                 }
             } else if (state == State.CHARGING) {
-                if (!entity.isHandActive()) {
-                    state = State.UNCHARGED;
-                }
-
+                if (!entity.isHandActive()) state = State.UNCHARGED;
                 int i = entity.getItemInUseCount();
                 ItemStack itemstack = entity.getActiveItemStack();
                 if (itemstack.getItem() == RaidsContent.CROSSBOW && i < -itemstack.getMaxItemUseDuration()) {
@@ -97,9 +85,7 @@ public class EntityAIAttackRangedCrossbow<T extends EntityLiving & ICrossbowAtta
                     entity.setChargingCrossbow(false);
                 }
             } else if (state == State.CHARGED) {
-                if (attackDelay-- == 0) {
-                    state = State.READY_TO_ATTACK;
-                }
+                if (attackDelay-- == 0) state = State.READY_TO_ATTACK;
             } else if (state == State.READY_TO_ATTACK && flag) {
                 entity.attackEntityWithRangedAttack(target, 1.0F);
                 ItemStack stack = ItemStack.EMPTY;
@@ -110,7 +96,6 @@ public class EntityAIAttackRangedCrossbow<T extends EntityLiving & ICrossbowAtta
                 ItemCrossbow.setCharged(stack, false);
                 state = State.UNCHARGED;
             }
-
         }
     }
 
