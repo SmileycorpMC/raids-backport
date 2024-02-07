@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common.capability;
+package net.smileycorp.raids.common.raid.capabilities;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityFireworkRocket;
@@ -22,9 +22,9 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.smileycorp.atlas.api.IOngoingEvent;
 import net.smileycorp.atlas.api.util.DataUtils;
-import net.smileycorp.raids.common.RaidHandler;
 import net.smileycorp.raids.common.Raids;
 import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.raid.RaidHandler;
 
 import java.util.ArrayList;
 import java.util.List;

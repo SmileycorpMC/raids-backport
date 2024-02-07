@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumHandSide;
 import net.smileycorp.raids.client.entity.CrossbowAnimator;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.entities.ICrossbowAttackMob;
+import net.smileycorp.raids.common.entities.interfaces.ICrossbowAttackMob;
 
 public class ModelPillager extends ModelIllager {
     

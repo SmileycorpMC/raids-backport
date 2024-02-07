@@ -3,7 +3,7 @@ package net.smileycorp.raids.mixin;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.Entity;
-import net.smileycorp.raids.common.entities.IFireworksProjectile;
+import net.smileycorp.raids.common.entities.interfaces.IFireworksProjectile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

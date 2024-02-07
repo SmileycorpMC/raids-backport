@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common.capability;
+package net.smileycorp.raids.common.raid.capabilities;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.inventory.EntityEquipmentSlot;

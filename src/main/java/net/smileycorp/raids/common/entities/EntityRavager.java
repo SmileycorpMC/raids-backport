@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.monster.AbstractIllager;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntityMob;
@@ -27,9 +28,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.MathUtils;
-import net.smileycorp.raids.common.RaidHandler;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.EntityAIRavagerAttackMelee;
+import net.smileycorp.raids.common.raid.RaidHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -51,7 +52,7 @@ public class EntityRavager extends EntityMob {
 	
 	@Override
 	public void setAttackTarget(@Nullable EntityLivingBase target) {
-		if (RaidHandler.CAPABILITY_ENTITIES.contains(target)) return;
+		if (RaidHandler.isRaider(target)) return;
 		super.setAttackTarget(target);
 	}
 	
@@ -99,7 +100,10 @@ public class EntityRavager extends EntityMob {
 	public Entity getControllingPassenger() {
 		if (!isAIDisabled()) {
 			List<Entity> list = getPassengers();
-			if (!list.isEmpty()) return list.get(0);
+			if (!list.isEmpty()) {
+				Entity entity = list.get(0);
+				return RaidHandler.isRaider(entity) ? null : entity;
+			}
 		}
 		return null;
 	}

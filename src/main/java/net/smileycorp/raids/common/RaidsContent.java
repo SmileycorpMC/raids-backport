@@ -21,8 +21,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.smileycorp.raids.common.capability.Raid;
-import net.smileycorp.raids.common.capability.Raider;
 import net.smileycorp.raids.common.enchantment.EnchantmentMultishot;
 import net.smileycorp.raids.common.enchantment.EnchantmentPiercing;
 import net.smileycorp.raids.common.enchantment.EnchantmentQuickCharge;
@@ -30,6 +28,8 @@ import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.item.ItemCrossbow;
 import net.smileycorp.raids.common.potion.RaidsPotion;
+import net.smileycorp.raids.common.raid.capabilities.Raid;
+import net.smileycorp.raids.common.raid.capabilities.Raider;
 
 import java.util.Random;
 

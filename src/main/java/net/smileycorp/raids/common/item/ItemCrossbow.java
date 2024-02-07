@@ -30,9 +30,9 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
-import net.smileycorp.raids.common.entities.ICrossbowArrow;
-import net.smileycorp.raids.common.entities.ICrossbowAttackMob;
-import net.smileycorp.raids.common.entities.IFireworksProjectile;
+import net.smileycorp.raids.common.entities.interfaces.ICrossbowArrow;
+import net.smileycorp.raids.common.entities.interfaces.ICrossbowAttackMob;
+import net.smileycorp.raids.common.entities.interfaces.IFireworksProjectile;
 
 import java.util.List;
 import java.util.Random;

@@ -6,7 +6,7 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.entities.ICrossbowAttackMob;
+import net.smileycorp.raids.common.entities.interfaces.ICrossbowAttackMob;
 import net.smileycorp.raids.common.item.ItemCrossbow;
 
 public class EntityAIAttackRangedCrossbow<T extends EntityLiving & ICrossbowAttackMob> extends EntityAIBase {

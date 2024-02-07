@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common.entities;
+package net.smileycorp.raids.common.entities.interfaces;
 
 public interface ICrossbowArrow {
 

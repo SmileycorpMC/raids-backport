@@ -10,10 +10,12 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.smileycorp.raids.common.capability.Raid;
-import net.smileycorp.raids.common.capability.Raider;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
+import net.smileycorp.raids.common.raid.RaidHandler;
+import net.smileycorp.raids.common.raid.RaidsEventHandler;
+import net.smileycorp.raids.common.raid.capabilities.Raid;
+import net.smileycorp.raids.common.raid.capabilities.Raider;
 
 public class CommonProxy {
 	

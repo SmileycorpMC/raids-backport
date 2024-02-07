@@ -19,10 +19,11 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import net.smileycorp.raids.common.Constants;
-import net.smileycorp.raids.common.RaidHandler;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.EntityAIAttackRangedCrossbow;
+import net.smileycorp.raids.common.entities.interfaces.ICrossbowAttackMob;
+import net.smileycorp.raids.common.raid.RaidHandler;
 
 import javax.annotation.Nullable;
 
@@ -50,7 +51,7 @@ public class EntityPillager extends AbstractIllager implements ICrossbowAttackMo
     
     @Override
     public void setAttackTarget(@Nullable EntityLivingBase target) {
-        if (RaidHandler.CAPABILITY_ENTITIES.contains(target)) return;
+        if (RaidHandler.isRaider(target)) return;
         super.setAttackTarget(target);
     }
 	

@@ -11,7 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.registry.RegistryDefaulted;
-import net.smileycorp.raids.common.entities.IFireworksProjectile;
+import net.smileycorp.raids.common.entities.interfaces.IFireworksProjectile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;

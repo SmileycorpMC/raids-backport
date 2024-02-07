@@ -1,11 +1,10 @@
-package net.smileycorp.raids.common;
+package net.smileycorp.raids.common.raid;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
-import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
@@ -22,8 +21,11 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.smileycorp.raids.common.capability.Raid;
-import net.smileycorp.raids.common.capability.Raider;
+import net.smileycorp.raids.common.Constants;
+import net.smileycorp.raids.common.Raids;
+import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.raid.capabilities.Raid;
+import net.smileycorp.raids.common.raid.capabilities.Raider;
 
 public class RaidsEventHandler {
 
@@ -32,7 +34,7 @@ public class RaidsEventHandler {
 		Entity entity = event.getObject();
 		if (!(entity instanceof EntityLiving) || entity == null) return;
 		if (entity.world.isRemote) return;
-		if (RaidHandler.CAPABILITY_ENTITIES.contains(entity.getClass())) {
+		if (RaidHandler.isRaider((EntityLivingBase) entity)) {
 			event.addCapability(Constants.loc("Raider"), new Raider.Provider((EntityLiving) entity));
 		}
 	}
@@ -50,13 +52,7 @@ public class RaidsEventHandler {
 	public void onAddedToWorld(EntityJoinWorldEvent event) {
 		if (event.getEntity() instanceof EntityVillager) {
 			EntityVillager villager = (EntityVillager) event.getEntity();
-			villager.tasks.addTask(1, new EntityAIAvoidEntity(villager, EntityLivingBase.class, RaidHandler.CAPABILITY_ENTITIES::contains,
-					8.0F, 0.8D, 0.8D));
-		}
-		if (event.getEntity() instanceof EntityIronGolem) {
-			EntityIronGolem villager = (EntityIronGolem) event.getEntity();
-			villager.tasks.addTask(1, new EntityAIAvoidEntity(villager, EntityLivingBase.class, RaidHandler.CAPABILITY_ENTITIES::contains,
-					8.0F, 0.8D, 0.8D));
+			villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class, RaidHandler::isRaider, 8.0F, 0.8D, 0.8D));
 		}
 	}
 
