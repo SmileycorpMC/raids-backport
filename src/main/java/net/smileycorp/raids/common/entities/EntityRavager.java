@@ -10,7 +10,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.monster.AbstractIllager;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntityMob;
@@ -31,6 +30,7 @@ import net.smileycorp.raids.common.MathUtils;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.EntityAIRavagerAttackMelee;
 import net.smileycorp.raids.common.raid.RaidHandler;
+import net.smileycorp.raids.config.EntityConfig;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -73,11 +73,7 @@ public class EntityRavager extends EntityMob {
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
-		getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
-		getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(12.0D);
-		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100.0D);
-		getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.75D);
+		EntityConfig.ravager.applyAttributes(this);
 	}
 	
 	@Override

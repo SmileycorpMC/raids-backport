@@ -2,7 +2,6 @@ package net.smileycorp.raids.common.entities;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.AbstractIllager;
 import net.minecraft.entity.monster.EntityIronGolem;
@@ -24,6 +23,7 @@ import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.EntityAIAttackRangedCrossbow;
 import net.smileycorp.raids.common.entities.interfaces.ICrossbowAttackMob;
 import net.smileycorp.raids.common.raid.RaidHandler;
+import net.smileycorp.raids.config.EntityConfig;
 
 import javax.annotation.Nullable;
 
@@ -58,10 +58,7 @@ public class EntityPillager extends AbstractIllager implements ICrossbowAttackMo
 	@Override
 	protected void applyEntityAttributes() {
         super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
-        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
-        getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5.0D);
-        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(24.0D);
+        EntityConfig.pillager.applyAttributes(this);
     }
     
     @Override

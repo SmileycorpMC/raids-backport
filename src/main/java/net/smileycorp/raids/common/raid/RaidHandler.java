@@ -2,7 +2,6 @@ package net.smileycorp.raids.common.raid;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.AbstractIllager;
 import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.util.NonNullList;
@@ -53,7 +52,7 @@ public class RaidHandler {
 		BlockPos center = village.getCenter();
 		BlockPos pos = DirectionUtils.getClosestLoadedPos(village.world, center,  dir, 64);
 		for (RaidEntry entry : ENTRIES) {
-			for (int i = 0; i<entry.getCount(rand, village, wave, isBonusWave); i++) {
+			for (int i = 0; i < entry.getCount(rand, village, wave, isBonusWave); i++) {
 				try {
 					entry.spawnEntity(rand, village, pos.north(rand.nextInt(6)-3).east(rand.nextInt(6)-3), entities, level);
 				} catch (Exception e) {

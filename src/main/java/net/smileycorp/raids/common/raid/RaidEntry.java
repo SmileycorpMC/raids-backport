@@ -3,7 +3,6 @@ package net.smileycorp.raids.common.raid;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.Village;
 import net.minecraft.world.EnumDifficulty;
