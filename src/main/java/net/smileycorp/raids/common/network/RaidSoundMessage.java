@@ -11,7 +11,7 @@ public class RaidSoundMessage implements IMessage {
 	public RaidSoundMessage() {}
 	
 	public RaidSoundMessage(BlockPos pos) {
-		this.pos=pos;
+		this.pos = pos;
 	}
 
 	@Override

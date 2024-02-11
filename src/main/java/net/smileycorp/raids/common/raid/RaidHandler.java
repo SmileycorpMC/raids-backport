@@ -68,20 +68,20 @@ public class RaidHandler {
 
 	private static void chooseRaidLeader(List<EntityLiving> entities) {
 		for (EntityLiving entity : entities) {
-			if (entity instanceof EntityVindicator && entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
-				entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setLeader();
+			if (entity instanceof EntityVindicator && entity.hasCapability(RaidsContent.RAIDER, null)) {
+				entity.getCapability(RaidsContent.RAIDER, null).setLeader();
 				return;
 			}
 		}
 		for (EntityLiving entity : entities) {
-			if ((entity instanceof AbstractIllager) && entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
-				entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setLeader();
+			if ((entity instanceof AbstractIllager) && entity.hasCapability(RaidsContent.RAIDER, null)) {
+				entity.getCapability(RaidsContent.RAIDER, null).setLeader();
 				return;
 			}
 		}
 		for (EntityLiving entity : entities) {
-			if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
-				entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setLeader();
+			if (entity.hasCapability(RaidsContent.RAIDER, null)) {
+				entity.getCapability(RaidsContent.RAIDER, null).setLeader();
 				return;
 			}
 		}

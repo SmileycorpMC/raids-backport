@@ -1,18 +1,22 @@
 package net.smileycorp.raids.common.raid;
 
+import ibxm.Player;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.village.Village;
-import net.minecraft.village.VillageCollection;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -22,9 +26,9 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.smileycorp.raids.common.Constants;
+import net.smileycorp.raids.common.MathUtils;
 import net.smileycorp.raids.common.Raids;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.raid.capabilities.Raid;
 import net.smileycorp.raids.common.raid.capabilities.Raider;
 
 public class RaidsEventHandler {
@@ -34,18 +38,7 @@ public class RaidsEventHandler {
 		Entity entity = event.getObject();
 		if (!(entity instanceof EntityLiving) || entity == null) return;
 		if (entity.world.isRemote) return;
-		if (RaidHandler.isRaider((EntityLivingBase) entity)) {
-			event.addCapability(Constants.loc("Raider"), new Raider.Provider((EntityLiving) entity));
-		}
-	}
-
-	@SubscribeEvent
-	public void attachVillageCapabilities(AttachCapabilitiesEvent<Village> event) {
-		Village village = event.getObject();
-		if (!village.hasCapability(RaidsContent.RAID_CAPABILITY, null)) {
-			event.addCapability(Constants.loc("Raid"), new Raid.Provider(village));
-			Raids.logInfo("added new raid capability to " + village);
-		}
+		if (RaidHandler.isRaider(entity)) event.addCapability(Constants.loc("Raider"), new Raider.Provider((EntityLiving) entity));
 	}
 	
 	@SubscribeEvent
@@ -58,47 +51,8 @@ public class RaidsEventHandler {
 
 	@SubscribeEvent
 	public void worldTick(TickEvent.WorldTickEvent event) {
-		World world = event.world;
-		if (world == null || world.isRemote) return;
-		VillageCollection villages = world.getVillageCollection();
-		for (Village village : villages.getVillageList()) {
-			Raids.logInfo(village + " at " + village.getCenter());
-			Raids.logInfo("isLoaded " + world.isBlockLoaded(village.getCenter()));
-			if (world.isBlockLoaded(village.getCenter()) && village.hasCapability(RaidsContent.RAID_CAPABILITY, null)) {
-				Raid raid = village.getCapability(RaidsContent.RAID_CAPABILITY, null);
-				Raids.logInfo("hasCapability " + raid);
-				if (raid.isActive(world)) {
-					Raids.logInfo("isActive " + raid.isActive(world));
-					raid.update(world);
-				}
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public void playerTick(TickEvent.PlayerTickEvent event) {
-		EntityPlayer player = event.player;
-		if (player == null) return;
-		World world = player.world;
-		if (world.isRemote) return;
-		if (!player.isPotionActive(RaidsContent.BAD_OMEN)) return;
-		Raids.logInfo("player has bad omen");
-		if (world.getDifficulty() == EnumDifficulty.PEACEFUL) return;
-		Raids.logInfo("difficulty is not peaceful ");
-		Village village = world.getVillageCollection().getNearestVillage(player.getPosition(), 64);
-		if (village == null) return;
-		if (!village.hasCapability(RaidsContent.RAID_CAPABILITY, null)) return;
-		Raids.logInfo("player is in " + village);
-		Raid raid = village.getCapability(RaidsContent.RAID_CAPABILITY, null);
-		if (raid.isActive(world)) return;
-		Raids.logInfo("no active raid at " + village);
-		int amplifier = player.getActivePotionEffect(RaidsContent.BAD_OMEN).getAmplifier();
-		int waves = RaidHandler.getWaveCount(world);
-		if (amplifier > 0) waves++;
-		if (waves > 0) {
-			Raids.logInfo("starting raid with " + waves +" waves and level "+amplifier+" at " + village);
-			raid.startEvent(waves, amplifier > 0 ? 1 : 0, amplifier);
-			player.removeActivePotionEffect(RaidsContent.BAD_OMEN);
+		if (event.phase == TickEvent.Phase.END && event.world instanceof WorldServer) {
+			WorldDataRaids.getData((WorldServer) event.world).tick();
 		}
 	}
 
@@ -108,51 +62,51 @@ public class RaidsEventHandler {
 		if (entity == null) return;
 		World world = entity.world;
 		if (world.isRemote |!(entity instanceof EntityLiving)) return;
-		if (!entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) return;
-		Raider raider = entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null);
-		if (raider.hasRaid()) {
-			Raid raid = raider.getRaid();
-			if (raid.isActive(world)) raid.takeDamage((EntityLiving) entity, event.getSource(), event.getAmount());
-		}
+		if (!entity.hasCapability(RaidsContent.RAIDER, null)) return;
+		Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
+		if (raider.hasActiveRaid()) raider.getCurrentRaid().updateBossbar();
 	}
 
 	@SubscribeEvent
 	public void onDeath(LivingDeathEvent event) {
-		EntityLivingBase entity = event.getEntityLiving();
-		if (entity != null) {
-			World world = entity.world;
-			if (!world.isRemote && entity instanceof EntityLiving) {
-				if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
-					Raider raider = entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null);
-					if (raider.hasRaid()) {
-						Raid raid = raider.getRaid();
-						if (raid.isActive(world)) raid.entityDie((EntityLiving) entity);
-					} else if (raider.isLeader()) {
-						DamageSource source = event.getSource();
-						Entity attacker = source.getTrueSource() == null ? source.getImmediateSource() == null ? null : source.getImmediateSource() : source.getTrueSource();
-						if (attacker!=null) {
-							if (attacker instanceof IEntityOwnable) attacker = ((IEntityOwnable) attacker).getOwner();
-							if (attacker instanceof EntityPlayer) {
-								EntityPlayer player = (EntityPlayer) entity;
-								if (player.isPotionActive(RaidsContent.BAD_OMEN)) {
-									int amplifier = player.getActivePotionEffect(RaidsContent.BAD_OMEN).getAmplifier();
-									if (amplifier < 4) player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000, amplifier+1));
-									player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000));
-								} else player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000));
-								//if (player instanceof EntityPlayerMP) ((EntityPlayerMP) player).getAdvancements().grantCriterion(Advancement, p_192750_2_)
-							}
-						}
-					}
+		if (!(event.getEntity() instanceof EntityLiving)) return;
+		EntityLiving entity = (EntityLiving) event.getEntityLiving();
+		World world = entity.world;
+		if (world.isRemote |!entity.hasCapability(RaidsContent.RAIDER, null)) return;
+		Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
+		if (world instanceof WorldServer) {
+			Entity attacker = event.getSource().getTrueSource();
+			Raid raid = raider.getCurrentRaid();
+			if (raid != null) {
+				if (raider.isPatrolLeader()) raid.removeLeader(raider.getWave());
+				if (attacker instanceof EntityPlayer) raid.addHeroOfTheVillage(attacker);
+				raid.removeFromRaid(entity, false);
+			}
+			if (raider.isPatrolLeader() && raid == null && WorldDataRaids.getData((WorldServer) world).getRaidAt(entity.getPosition()) == null) {
+				ItemStack itemstack = event.getEntityLiving().getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+				EntityPlayer player = null;
+				if (attacker instanceof EntityPlayer) player = (EntityPlayer) attacker;
+				else if (attacker instanceof EntityTameable) {
+					EntityLivingBase owner = ((EntityTameable) attacker).getOwner();
+					if (owner instanceof EntityPlayer) player = (EntityPlayer) owner;
+				}
+				if (!itemstack.isEmpty() && ItemStack.areItemStacksEqual(itemstack, RaidsContent.createOminousBanner()) && player != null) {
+					PotionEffect effect = player.getActivePotionEffect(RaidsContent.BAD_OMEN);
+					int i = 1;
+					if (effect != null) i += effect.getAmplifier();
+					else i--;
+					i = MathUtils.clamp(i, 0, 4);
+					player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000, i, false, true));
 				}
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public void worldTick(LivingSpawnEvent.AllowDespawn event) {
+	public void allowDespawn(LivingSpawnEvent.AllowDespawn event) {
 		EntityLivingBase entity = event.getEntityLiving();
-		if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null)) {
-			if (entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).isRaidActive()) event.setResult(Result.DENY);
+		if (entity.hasCapability(RaidsContent.RAIDER, null)) {
+			if (entity.getCapability(RaidsContent.RAIDER, null).isRaidActive()) event.setResult(Result.DENY);
 		}
 	}
 	

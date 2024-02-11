@@ -9,7 +9,6 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.smileycorp.atlas.api.entity.ai.EntityAIGoToPos;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.raid.capabilities.Raid;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -62,13 +61,13 @@ public class RaidEntry {
         entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
         entity.tasks.addTask(4, new EntityAIMoveThroughVillage((EntityCreature) entity, 1.0D, false));
         entity.tasks.addTask(5, new EntityAIGoToPos(entity, village.getCenter()));
-        if (entity.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && raid != null)
-            entity.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setRaid(raid);
+        if (entity.hasCapability(RaidsContent.RAIDER, null) && raid != null)
+            entity.getCapability(RaidsContent.RAIDER, null).setCurrentRaid(raid);
         if (mount != null) {
             EntityLiving mount = this.mount.getConstructor(World.class).newInstance(world);
             mount.setPosition(pos.getX(), pos.getY(), pos.getZ());
-            if (mount.hasCapability(RaidsContent.RAIDER_CAPABILITY, null) && raid != null)
-                mount.getCapability(RaidsContent.RAIDER_CAPABILITY, null).setRaid(raid);
+            if (mount.hasCapability(RaidsContent.RAIDER, null) && raid != null)
+                mount.getCapability(RaidsContent.RAIDER, null).setCurrentRaid(raid);
             world.spawnEntity(mount);
             mount.onInitialSpawn(world.getDifficultyForLocation(pos), null);
             entity.startRiding(mount, true);

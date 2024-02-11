@@ -14,7 +14,6 @@ import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.raid.RaidsEventHandler;
-import net.smileycorp.raids.common.raid.capabilities.Raid;
 import net.smileycorp.raids.common.raid.capabilities.Raider;
 import net.smileycorp.raids.config.EntityConfig;
 
@@ -23,7 +22,6 @@ public class CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		EntityConfig.syncConfig(event);
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());
-		CapabilityManager.INSTANCE.register(Raid.class, new Raid.Storage(), Raid.Impl::new);
 		CapabilityManager.INSTANCE.register(Raider.class, new Raider.Storage(), Raider.Impl::new);
 		registerSpawns();
 	}
