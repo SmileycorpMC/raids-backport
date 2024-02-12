@@ -14,7 +14,10 @@
   "client": [
     "MixinItemRenderer",
     "MixinModelBiped",
-    "MixinRenderSnowball"
+    "MixinRenderEvoker",
+    "MixinRenderIllusionIllager",
+    "MixinRenderSnowball",
+    "MixinRenderVindicator"
   ],
   "server": []
 }

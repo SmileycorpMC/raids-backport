@@ -16,7 +16,6 @@ public class PacketHandler {
 
 	public static void initPackets() {
 		NETWORK_INSTANCE.registerMessage(SoundMessageHandler.class, RaidSoundMessage.class, 0, Side.CLIENT);
-		NETWORK_INSTANCE.registerMessage(RemoveEffectHandler.class, RemoveEffectMessage.class, 1, Side.CLIENT);
 	}
 
 	public static class SoundMessageHandler implements IMessageHandler<RaidSoundMessage, IMessage> {
@@ -30,23 +29,6 @@ public class PacketHandler {
 				Minecraft mc = Minecraft.getMinecraft();
 				mc.addScheduledTask(() -> {
 					ClientHandler.playRaidSound(message.getPos());
-				});
-			}
-			return null;
-		}
-	}
-
-	public static class RemoveEffectHandler implements IMessageHandler<RemoveEffectMessage, IMessage> {
-
-		public RemoveEffectHandler() {}
-
-		@Override
-		public IMessage onMessage(RemoveEffectMessage message, MessageContext ctx) {
-
-			if (ctx.side == Side.CLIENT) {
-				Minecraft mc = Minecraft.getMinecraft();
-				mc.addScheduledTask(() -> {
-					ClientHandler.removeEffect(message);
 				});
 			}
 			return null;

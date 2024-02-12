@@ -4,6 +4,7 @@ import net.minecraft.client.model.ModelIllager;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.layers.LayerCustomHead;
 import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.util.EnumHandSide;
@@ -22,6 +23,7 @@ public class RenderPillager extends RenderLiving<EntityMob> {
                 ((ModelIllager)livingEntityRenderer.getMainModel()).getArm(hand).postRender(0.0625F);
             }
         });
+        addLayer(new LayerCustomHead(((ModelPillager)getMainModel()).head));
     }
     
     @Override

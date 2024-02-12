@@ -73,7 +73,7 @@ public class RaidsEventHandler {
 			if (raid != null) {
 				if (raider.isPatrolLeader()) raid.removeLeader(raider.getWave());
 				if (attacker instanceof EntityPlayer) raid.addHeroOfTheVillage(attacker);
-				raid.removeFromRaid(entity, false);
+				raid.removeFromRaid(entity, true);
 			}
 			if (raider.isPatrolLeader() && raid == null && WorldDataRaids.getData((WorldServer) world).getRaidAt(entity.getPosition()) == null) {
 				ItemStack itemstack = event.getEntityLiving().getItemStackFromSlot(EntityEquipmentSlot.HEAD);

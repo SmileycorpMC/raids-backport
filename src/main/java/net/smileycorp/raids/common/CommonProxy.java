@@ -10,8 +10,11 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
+import net.smileycorp.raids.common.network.PacketHandler;
+import net.smileycorp.raids.common.raid.CommandDebugRaid;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.raid.Raider;
 import net.smileycorp.raids.common.raid.RaidsEventHandler;
@@ -21,6 +24,7 @@ public class CommonProxy {
 	
 	public void preInit(FMLPreInitializationEvent event) {
 		EntityConfig.syncConfig(event);
+		PacketHandler.initPackets();
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());
 		CapabilityManager.INSTANCE.register(Raider.class, new Raider.Storage(), Raider.Impl::new);
 		registerSpawns();
@@ -34,6 +38,10 @@ public class CommonProxy {
 	
 	public void postInit(FMLPostInitializationEvent event) {
 		
+	}
+	
+	public void serverStart(FMLServerStartingEvent event) {
+			event.registerServerCommand(new CommandDebugRaid());
 	}
 	
 	private void registerSpawns() {

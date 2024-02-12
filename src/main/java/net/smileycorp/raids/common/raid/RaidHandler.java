@@ -7,8 +7,8 @@ import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.smileycorp.raids.common.Raids;
 import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.RaidsLogger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,32 +45,32 @@ public class RaidHandler {
 		for (RaidEntry entry : ENTRIES) {
 			for (int i = 0; i < entry.getCount(raid, rand, wave, isBonusWave); i++) {
 				try {
-					entry.spawnEntity(raid, wave, pos.north(rand.nextInt(6)-3).east(rand.nextInt(6)-3), entities);
+					entry.spawnEntity(raid, wave, raid.getWorld().getHeight(pos.north(rand.nextInt(6)-3).east(rand.nextInt(6)-3)), entities);
 				} catch (Exception e) {
-					Raids.logError("Could not spawn entity for entry " + entry, e);
+					RaidsLogger.logError("Could not spawn entity for entry " + entry, e);
 				}
 			}
 		}
 		Collections.shuffle(entities);
-		chooseRaidLeader(entities);
+		chooseRaidLeader(raid, wave, entities);
 	}
 
-	private static void chooseRaidLeader(List<EntityLiving> entities) {
+	private static void chooseRaidLeader(Raid raid, int wave, List<EntityLiving> entities) {
 		for (EntityLiving entity : entities) {
-			if (entity instanceof EntityVindicator && entity.hasCapability(RaidsContent.RAIDER, null)) {
-				entity.getCapability(RaidsContent.RAIDER, null).setLeader();
+			if (entity instanceof EntityVindicator) {
+				raid.setLeader(wave, entity);
 				return;
 			}
 		}
 		for (EntityLiving entity : entities) {
-			if ((entity instanceof AbstractIllager) && entity.hasCapability(RaidsContent.RAIDER, null)) {
-				entity.getCapability(RaidsContent.RAIDER, null).setLeader();
+			if (entity instanceof AbstractIllager) {
+				raid.setLeader(wave, entity);
 				return;
 			}
 		}
 		for (EntityLiving entity : entities) {
-			if (entity.hasCapability(RaidsContent.RAIDER, null)) {
-				entity.getCapability(RaidsContent.RAIDER, null).setLeader();
+		if (entity.hasCapability(RaidsContent.RAIDER, null)) {
+				raid.setLeader(wave, entity);
 				return;
 			}
 		}

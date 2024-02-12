@@ -4,7 +4,6 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
-import net.smileycorp.raids.common.RaidsContent;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -48,24 +47,22 @@ public class RaidEntry {
         World world = raid.getWorld();
         EntityLiving entity = this.entity.getConstructor(World.class).newInstance(world);
         entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
-        world.spawnEntity(entity);
-        entities.add(entity);
-        entity.setGlowing(true);
-        entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-        raid.joinRaid(wave, entity, pos, false);
-        if (entity.hasCapability(RaidsContent.RAIDER, null) && raid != null)
-            entity.getCapability(RaidsContent.RAIDER, null).setCurrentRaid(raid);
+        if (world.spawnEntity(entity)) {
+            entities.add(entity);
+            entity.setGlowing(true);
+            entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+            raid.joinRaid(wave, entity, pos, false);
+        }
         if (mount != null) {
             EntityLiving mount = this.mount.getConstructor(World.class).newInstance(world);
             mount.setPosition(pos.getX(), pos.getY(), pos.getZ());
-            if (mount.hasCapability(RaidsContent.RAIDER, null) && raid != null)
-                mount.getCapability(RaidsContent.RAIDER, null).setCurrentRaid(raid);
-            world.spawnEntity(mount);
-            mount.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-            mount.setGlowing(true);
-            entity.startRiding(mount, true);
-            entities.add(mount);
-            raid.joinRaid(wave, entity, pos, false);
+            if (world.spawnEntity(mount)) {
+                mount.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+                mount.setGlowing(true);
+                entity.startRiding(mount, true);
+                entities.add(mount);
+                raid.joinRaid(wave, entity, pos, false);
+            }
         }
     }
     

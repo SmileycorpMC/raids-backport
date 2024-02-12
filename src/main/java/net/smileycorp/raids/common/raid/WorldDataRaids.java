@@ -1,5 +1,6 @@
 package net.smileycorp.raids.common.raid;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -11,9 +12,11 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.WorldSavedData;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.RaidsLogger;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class WorldDataRaids extends WorldSavedData {
@@ -32,6 +35,11 @@ public class WorldDataRaids extends WorldSavedData {
     public WorldDataRaids() {
         this(DATA);
         nextAvailableID = 1;
+    }
+    
+    private void setWorld(WorldServer world) {
+        this.world = world;
+        for (Raid raid : raidMap.values()) raid.setWorld(world);
     }
     
     public Raid get(int id) {
@@ -130,6 +138,18 @@ public class WorldDataRaids extends WorldSavedData {
         return raid;
     }
     
+    public void logDebug() {
+        List<String> out = Lists.newArrayList();
+        out.add(toString());
+        out.add("Existing raids: {");
+        for (Raid raid : raidMap.values()) {
+            out.add("	" + raid.toString());
+            out.addAll(raid.getEntityStrings());
+        }
+        out.add("}");
+        RaidsLogger.writeToFile(out);
+    }
+    
     public static WorldDataRaids getData(WorldServer world) {
         WorldDataRaids data = (WorldDataRaids) world.getMapStorage().getOrLoadData(WorldDataRaids.class, DATA);
         if (data == null) {
@@ -137,7 +157,7 @@ public class WorldDataRaids extends WorldSavedData {
             world.getMapStorage().setData(DATA, data);
         }
         if (data.world == null) {
-            data.world = world;
+            data.setWorld(world);
             data.setDirty(true);
         }
         return data;

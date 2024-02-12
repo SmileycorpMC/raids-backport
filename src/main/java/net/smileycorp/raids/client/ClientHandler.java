@@ -17,7 +17,6 @@ import net.smileycorp.atlas.api.util.DirectionUtils;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.item.ItemCrossbow;
-import net.smileycorp.raids.common.network.RemoveEffectMessage;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientHandler {
@@ -46,11 +45,6 @@ public class ClientHandler {
 		BlockPos soundPos = new BlockPos(player.posX + (13*dir.x), player.posY, player.posZ + (13*dir.z));
 		float pitch = 1+((world.rand.nextInt(6)-3)/10);
 		world.playSound(player, soundPos, RaidsSoundEvents.RAID_HORN, SoundCategory.HOSTILE, 0.3f, pitch);
-	}
-
-	public static void removeEffect(RemoveEffectMessage message) {
-
-
 	}
 
 }
