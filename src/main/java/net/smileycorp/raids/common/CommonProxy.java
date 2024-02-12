@@ -13,8 +13,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.raid.RaidHandler;
+import net.smileycorp.raids.common.raid.Raider;
 import net.smileycorp.raids.common.raid.RaidsEventHandler;
-import net.smileycorp.raids.common.raid.capabilities.Raider;
 import net.smileycorp.raids.config.EntityConfig;
 
 public class CommonProxy {

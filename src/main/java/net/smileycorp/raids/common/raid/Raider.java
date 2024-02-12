@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common.raid.capabilities;
+package net.smileycorp.raids.common.raid;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -9,7 +9,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.raid.Raid;
 
 public interface Raider {
 	

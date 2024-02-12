@@ -21,15 +21,17 @@ public class WorldDataRaids extends WorldSavedData {
     public static final String DATA = Constants.MODID;
     
     private final Map<Integer, Raid> raidMap = Maps.newHashMap();
-    private final WorldServer world;
+    private WorldServer world;
     private int nextAvailableID;
     private int tick;
     
-    public WorldDataRaids(WorldServer world) {
-        super(DATA);
-        this.world = world;
-        this.nextAvailableID = 1;
-        this.setDirty(true);
+    public WorldDataRaids(String data) {
+        super(data);
+    }
+    
+    public WorldDataRaids() {
+        this(DATA);
+        nextAvailableID = 1;
     }
     
     public Raid get(int id) {
@@ -131,8 +133,12 @@ public class WorldDataRaids extends WorldSavedData {
     public static WorldDataRaids getData(WorldServer world) {
         WorldDataRaids data = (WorldDataRaids) world.getMapStorage().getOrLoadData(WorldDataRaids.class, DATA);
         if (data == null) {
-            data = new WorldDataRaids(world);
+            data = new WorldDataRaids();
             world.getMapStorage().setData(DATA, data);
+        }
+        if (data.world == null) {
+            data.world = world;
+            data.setDirty(true);
         }
         return data;
     }

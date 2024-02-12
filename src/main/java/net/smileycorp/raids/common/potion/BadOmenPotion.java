@@ -15,6 +15,11 @@ public class BadOmenPotion extends RaidsPotion{
     }
     
     @Override
+    public boolean isReady(int duration, int amplifier) {
+        return true;
+    }
+    
+    @Override
     public void performEffect(EntityLivingBase entity, int amplifier) {
         if (entity instanceof EntityPlayerMP && !((EntityPlayerMP)entity).isSpectator()) {
             EntityPlayerMP player = (EntityPlayerMP)entity;

@@ -30,7 +30,7 @@ import net.smileycorp.raids.common.item.ItemCrossbow;
 import net.smileycorp.raids.common.potion.BadOmenPotion;
 import net.smileycorp.raids.common.potion.RaidsPotion;
 import net.smileycorp.raids.common.raid.Raid;
-import net.smileycorp.raids.common.raid.capabilities.Raider;
+import net.smileycorp.raids.common.raid.Raider;
 
 import java.util.Random;
 

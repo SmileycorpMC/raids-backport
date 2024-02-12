@@ -6,15 +6,9 @@ import net.minecraft.entity.monster.AbstractIllager;
 import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.village.Village;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
-import net.smileycorp.atlas.api.util.DirectionUtils;
 import net.smileycorp.raids.common.Raids;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.network.PacketHandler;
-import net.smileycorp.raids.common.network.RaidSoundMessage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,13 +21,13 @@ public class RaidHandler {
 
 	private static final List<RaidEntry> ENTRIES = new ArrayList();
 
-	public static void registerEntry(Class<? extends EntityLiving> entity, Class<? extends EntityLiving> mount, int[] min, int[] max, BonusSpawns bonusSpawns) {
+	public static void registerEntry(Class<? extends EntityLiving> entity, Class<? extends EntityLiving> mount, int[] min, int[] max, RaidEntry.BonusSpawns bonusSpawns) {
 		ENTRIES.add(new RaidEntry(entity, mount, min, max, bonusSpawns));
 		if (!RAIDERS.contains(entity) && entity != null) RAIDERS.add(entity);
 		if (!RAIDERS.contains(mount) && mount != null) RAIDERS.add(mount);
 	}
 
-	public static void registerEntry(Class<? extends EntityLiving> entity, int[] min, int[] max, BonusSpawns bonusSpawns) {
+	public static void registerEntry(Class<? extends EntityLiving> entity, int[] min, int[] max, RaidEntry.BonusSpawns bonusSpawns) {
 		registerEntry(entity, null, min, max, bonusSpawns);
 	}
 
@@ -45,16 +39,13 @@ public class RaidHandler {
 		registerEntry(entity, null, min, max, null);
 	}
 
-	public static List<EntityLiving> createNewWave(Village village, int wave, int level, boolean isBonusWave) {
+	public static void spawnNewWave(Raid raid, BlockPos pos, int wave, boolean isBonusWave) {
 		List<EntityLiving> entities = new ArrayList<EntityLiving>();
-		Random rand = village.world.rand;
-		Vec3d dir = DirectionUtils.getRandomDirectionVecXZ(rand);
-		BlockPos center = village.getCenter();
-		BlockPos pos = DirectionUtils.getClosestLoadedPos(village.world, center,  dir, 64);
+		Random rand = raid.getWorld().rand;
 		for (RaidEntry entry : ENTRIES) {
-			for (int i = 0; i < entry.getCount(rand, village, wave, isBonusWave); i++) {
+			for (int i = 0; i < entry.getCount(raid, rand, wave, isBonusWave); i++) {
 				try {
-					entry.spawnEntity(rand, village, pos.north(rand.nextInt(6)-3).east(rand.nextInt(6)-3), entities, level);
+					entry.spawnEntity(raid, wave, pos.north(rand.nextInt(6)-3).east(rand.nextInt(6)-3), entities);
 				} catch (Exception e) {
 					Raids.logError("Could not spawn entity for entry " + entry, e);
 				}
@@ -62,8 +53,6 @@ public class RaidHandler {
 		}
 		Collections.shuffle(entities);
 		chooseRaidLeader(entities);
-		PacketHandler.NETWORK_INSTANCE.sendToAllAround(new RaidSoundMessage(), new TargetPoint(village.world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 96));
-		return entities;
 	}
 
 	private static void chooseRaidLeader(List<EntityLiving> entities) {

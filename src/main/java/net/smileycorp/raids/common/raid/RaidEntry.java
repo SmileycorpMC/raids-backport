@@ -1,13 +1,9 @@
 package net.smileycorp.raids.common.raid;
 
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.village.Village;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
-import net.smileycorp.atlas.api.entity.ai.EntityAIGoToPos;
 import net.smileycorp.raids.common.RaidsContent;
 
 import javax.annotation.Nullable;
@@ -29,15 +25,14 @@ public class RaidEntry {
         this.bonusSpawns = bonusSpawns;
     }
     
-    public int getCount(Random rand, Village village, int wave, boolean isBonusWave) {
-        EnumDifficulty difficulty = village.world.getDifficulty();
-        int count = getCountWithoutBonus(difficulty, rand, village, wave);
-        if (bonusSpawns != null) count = bonusSpawns.apply(difficulty, rand, village, count, wave, isBonusWave);
+    public int getCount(Raid raid, Random rand, int wave, boolean isBonusWave) {
+        EnumDifficulty difficulty = raid.getWorld().getDifficulty();
+        int count = getCountWithoutBonus(difficulty, rand, raid, wave);
+        if (bonusSpawns != null) count = bonusSpawns.apply(difficulty, rand, raid, count, wave, isBonusWave);
         return count;
     }
     
-    private int getCountWithoutBonus(EnumDifficulty difficulty, Random rand, Village village, int wave) {
-        wave--;
+    private int getCountWithoutBonus(EnumDifficulty difficulty, Random rand, Raid raid, int wave) {
         if (min.length <= wave || max.length <= wave) wave = Math.min(min.length, max.length);
         int min = this.min[wave];
         int max = this.max[wave];
@@ -49,18 +44,15 @@ public class RaidEntry {
         return count;
     }
     
-    public void spawnEntity(Random rand, Village village, BlockPos pos, List<EntityLiving> entities, int level) throws Exception {
-        World world = village.world;
-        Raid raid = null;
-        if (village.hasCapability(RaidsContent.RAID_CAPABILITY, null))
-            raid = village.getCapability(RaidsContent.RAID_CAPABILITY, null);
+    public void spawnEntity(Raid raid, int wave, BlockPos pos, List<EntityLiving> entities) throws Exception {
+        World world = raid.getWorld();
         EntityLiving entity = this.entity.getConstructor(World.class).newInstance(world);
         entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
         world.spawnEntity(entity);
         entities.add(entity);
+        entity.setGlowing(true);
         entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-        entity.tasks.addTask(4, new EntityAIMoveThroughVillage((EntityCreature) entity, 1.0D, false));
-        entity.tasks.addTask(5, new EntityAIGoToPos(entity, village.getCenter()));
+        raid.joinRaid(wave, entity, pos, false);
         if (entity.hasCapability(RaidsContent.RAIDER, null) && raid != null)
             entity.getCapability(RaidsContent.RAIDER, null).setCurrentRaid(raid);
         if (mount != null) {
@@ -70,11 +62,16 @@ public class RaidEntry {
                 mount.getCapability(RaidsContent.RAIDER, null).setCurrentRaid(raid);
             world.spawnEntity(mount);
             mount.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+            mount.setGlowing(true);
             entity.startRiding(mount, true);
-            mount.tasks.addTask(4, new EntityAIMoveThroughVillage((EntityCreature) entity, 1.0D, false));
-            mount.tasks.addTask(5, new EntityAIGoToPos(entity, village.getCenter()));
             entities.add(mount);
+            raid.joinRaid(wave, entity, pos, false);
         }
     }
     
+    public interface BonusSpawns {
+        
+        int apply(EnumDifficulty difficulty, Random rand, Raid raid, int wave, int count, boolean isBonusWave);
+        
+    }
 }

@@ -21,34 +21,16 @@ import net.minecraft.village.Village;
 import net.minecraft.world.*;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.smileycorp.raids.common.MathUtils;
+import net.smileycorp.raids.common.Raids;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.network.RaidSoundMessage;
-import net.smileycorp.raids.common.raid.capabilities.Raider;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
 public class Raid {
 	
-	private static final int SECTION_RADIUS_FOR_FINDING_NEW_VILLAGE_CENTER = 2;
-	private static final int ATTEMPT_RAID_FARTHEST = 0;
-	private static final int ATTEMPT_RAID_CLOSE = 1;
-	private static final int ATTEMPT_RAID_INSIDE = 2;
-	private static final int VILLAGE_SEARCH_RADIUS = 32;
-	private static final int RAID_TIMEOUT_TICKS = 48000;
-	private static final int NUM_SPAWN_ATTEMPTS = 3;
-	private static final String OMINOUS_BANNER_PATTERN_NAME = "block.minecraft.ominous_banner";
-	private static final String EntityLivingS_REMAINING = "event.raids.raid.EntityLivings_remaining";
-	public static final int VILLAGE_RADIUS_BUFFER = 16;
-	private static final int POST_RAID_TICK_LIMIT = 40;
-	private static final int DEFAULT_PRE_RAID_TICKS = 300;
-	public static final int MAX_NO_ACTION_TIME = 2400;
-	public static final int MAX_CELEBRATION_TICKS = 600;
-	private static final int OUTSIDE_RAID_BOUNDS_TIMEOUT = 30;
-	public static final int TICKS_PER_DAY = 24000;
-	public static final int DEFAULT_MAX_BAD_OMEN_world = 5;
-	private static final int LOW_MOB_THRESHOLD = 2;
 	private static final ITextComponent RAID_NAME_COMPONENT = new TextComponentTranslation("event.raids.raid");
 	private static final ITextComponent VICTORY = new TextComponentTranslation("event.raids.raid.victory");
 	private static final ITextComponent DEFEAT = new TextComponentTranslation("event.raids.raid.defeat");
@@ -56,9 +38,6 @@ public class Raid {
 			.appendSibling(new TextComponentString(" - ")).appendSibling(VICTORY);
 	private static final ITextComponent RAID_BAR_DEFEAT_COMPONENT = RAID_NAME_COMPONENT.createCopy()
 			.appendSibling(new TextComponentString(" - ")).appendSibling(DEFEAT);
-	private static final int HERO_OF_THE_VILLAGE_DURATION = 48000;
-	public static final int VALID_RAID_RADIUS_SQR = 9216;
-	public static final int RAID_REMOVAL_THRESHOLD_SQR = 12544;
 	private final Map<Integer, EntityLiving> groupToLeaderMap = Maps.newHashMap();
 	private final Map<Integer, Set<EntityLiving>> groupEntityLivingMap = Maps.newHashMap();
 	private final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
@@ -164,7 +143,7 @@ public class Raid {
 	private Predicate<EntityPlayerMP> validPlayer() {
 		return (player) -> {
 			BlockPos blockpos = player.getPosition();
-			return player.isEntityAlive() /*&& world.getRaidAt(blockpos) == this*/;
+			return player.isEntityAlive() && WorldDataRaids.getData(world).getRaidAt(blockpos) == this;
 		};
 	}
 	
@@ -266,7 +245,10 @@ public class Raid {
 					BlockPos blockpos = waveSpawnPos.isPresent() ? waveSpawnPos.get() : findRandomSpawnPos(k, 20);
 					if (blockpos != null) {
 						started = true;
-						spawnGroup(blockpos);
+						totalHealth = 0;
+						RaidHandler.spawnNewWave(this, blockpos, groupsSpawned++, shouldSpawnBonusGroup());
+						updateBossbar();
+						setDirty();
 						if (!flag3) {
 							playSound(blockpos);
 							flag3 = true;
@@ -402,38 +384,17 @@ public class Raid {
 			if ((d0 <= 64.0D || collection.contains(player)) && player instanceof EntityPlayerMP)
 				PacketHandler.NETWORK_INSTANCE.sendTo(new RaidSoundMessage(new BlockPos(d0, d1, d2)), (EntityPlayerMP)player);
 		}
-		
 	}
 	
-	private void spawnGroup(BlockPos pos) {
-		boolean flag = false;
-		int i = groupsSpawned + 1;
-		totalHealth = 0.0F;
-		DifficultyInstance difficultyinstance = world.getDifficultyForLocation(pos);
-		boolean flag1 = shouldSpawnBonusGroup();
-		waveSpawnPos = Optional.empty();
-		++groupsSpawned;
-		updateBossbar();
-		setDirty();
-	}
 	
-	/*public void joinRaid(int wave, EntityLiving entity, @Nullable BlockPos pos, boolean p_37717_) {
+	public void joinRaid(int wave, EntityLiving entity, @Nullable BlockPos pos, boolean p_37717_) {
 		if (addWaveMob(wave, entity)) {
 			Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
 			raider.setCurrentRaid(this);
 			raider.setWave(wave);
-			//raider.setCanJoinRaid(true);
 			raider.setTicksOutsideRaid(0);
-			if (!p_37717_ && pos != null) {
-				entity.setPosition((double)pos.getX() + 0.5D, (double)pos.getY() + 1.0D, (double)pos.getZ() + 0.5D);
-				entity.finalizeSpawn(world, world.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, (SpawnGroupData)null, (NBTTagCompound)null);
-				entity.applyRaidBuffs(wave, false);
-				entity.setOnGround(true);
-				world.addFreshEntityWithPassengers(entity);
-			}
 		}
-		
-	}*/
+	}
 	
 	public void updateBossbar() {
 		raidEvent.setPercent(MathUtils.clamp(getHealthOfEntityLivingLivings() / totalHealth, 0.0F, 1.0F));
@@ -497,32 +458,27 @@ public class Raid {
 		return null;
 	}
 	
-	private boolean addWaveMob(int p_37753_, EntityLiving p_37754_) {
-		return addWaveMob(p_37753_, p_37754_, true);
+	private boolean addWaveMob(int index, EntityLiving entity) {
+		return addWaveMob(index, entity, true);
 	}
 	
-	public boolean addWaveMob(int p_37719_, EntityLiving p_37720_, boolean p_37721_) {
-		groupEntityLivingMap.computeIfAbsent(p_37719_, (p_37746_) -> Sets.newHashSet());
-		Set<EntityLiving> set = groupEntityLivingMap.get(p_37719_);
+	public boolean addWaveMob(int index, EntityLiving entity, boolean addHealth) {
+		if (!entity.hasCapability(RaidsContent.RAIDER, null)) return false;
+		groupEntityLivingMap.computeIfAbsent(index, v -> Sets.newHashSet());
+		Set<EntityLiving> set = groupEntityLivingMap.get(index);
 		EntityLiving EntityLiving = null;
-		
 		for(EntityLiving EntityLiving1 : set) {
-			if (EntityLiving1.getUniqueID().equals(p_37720_.getUniqueID())) {
+			if (EntityLiving1.getUniqueID().equals(entity.getUniqueID())) {
 				EntityLiving = EntityLiving1;
 				break;
 			}
 		}
-		
 		if (EntityLiving != null) {
 			set.remove(EntityLiving);
-			set.add(p_37720_);
+			set.add(entity);
 		}
-		
-		set.add(p_37720_);
-		if (p_37721_) {
-			totalHealth += p_37720_.getHealth();
-		}
-		
+		set.add(entity);
+		if (addHealth) totalHealth += entity.getHealth();
 		updateBossbar();
 		setDirty();
 		return true;
