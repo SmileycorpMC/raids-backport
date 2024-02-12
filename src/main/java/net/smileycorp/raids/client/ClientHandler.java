@@ -13,7 +13,6 @@ import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.smileycorp.atlas.api.util.DirectionUtils;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.item.ItemCrossbow;
@@ -41,8 +40,11 @@ public class ClientHandler {
 		Minecraft mc = Minecraft.getMinecraft();
 		World world = mc.world;
 		EntityPlayer player = mc.player;
-		Vec3d dir = DirectionUtils.getDirectionVecXZ(player.getPosition(), pos);
-		BlockPos soundPos = new BlockPos(player.posX + (13*dir.x), player.posY, player.posZ + (13*dir.z));
+		double dx = pos.getX()  + 0.5f - player.posX;
+		double dz = pos.getZ()  + 0.5f  - player.posZ;
+		double angle = Math.atan2(dz, dx);
+		Vec3d dir =  new Vec3d(Math.cos(angle), 0, Math.sin(angle));
+		BlockPos soundPos = new BlockPos(player.posX + (13 * dir.x), player.posY, player.posZ + (13 * dir.z));
 		float pitch = 1+((world.rand.nextInt(6)-3)/10);
 		world.playSound(player, soundPos, RaidsSoundEvents.RAID_HORN, SoundCategory.HOSTILE, 0.3f, pitch);
 	}
