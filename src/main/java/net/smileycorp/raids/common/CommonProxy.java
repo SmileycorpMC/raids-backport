@@ -7,6 +7,7 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -23,6 +24,7 @@ import net.smileycorp.raids.config.EntityConfig;
 public class CommonProxy {
 	
 	public void preInit(FMLPreInitializationEvent event) {
+		if (Loader.isModLoaded("crossbows")) Constants.CROSSBOWS_LOADED = true;
 		EntityConfig.syncConfig(event);
 		PacketHandler.initPackets();
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());

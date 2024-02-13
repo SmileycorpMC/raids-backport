@@ -1,9 +1,10 @@
 package net.smileycorp.raids.common;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Items;
-import net.minecraft.item.*;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemBanner;
+import net.minecraft.item.ItemDye;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
@@ -14,22 +15,16 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.smileycorp.raids.common.enchantment.EnchantmentMultishot;
-import net.smileycorp.raids.common.enchantment.EnchantmentPiercing;
-import net.smileycorp.raids.common.enchantment.EnchantmentQuickCharge;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
-import net.smileycorp.raids.common.item.ItemCrossbow;
 import net.smileycorp.raids.common.potion.BadOmenPotion;
 import net.smileycorp.raids.common.potion.RaidsPotion;
-import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.Raider;
 
 import java.util.Random;
@@ -37,13 +32,8 @@ import java.util.Random;
 @EventBusSubscriber(modid = Constants.MODID)
 public class RaidsContent {
 	
-	@CapabilityInject(Raid.class)
-	public static Capability<Raid> RAID_CAPABILITY = null;
-	
 	@CapabilityInject(Raider.class)
 	public static Capability<Raider> RAIDER = null;
-	
-	public static final Item CROSSBOW = new ItemCrossbow();
 	
 	public static final ItemStack OMINOUS_BANNER = createOminousBanner();
 	
@@ -55,12 +45,6 @@ public class RaidsContent {
 	
 	public static final Potion BAD_OMEN = new BadOmenPotion();
 	public static final Potion HERO_OF_THE_VILLAGE = new RaidsPotion(false, 0x44FF44, "hero_of_the_village");
-
-	public static final EnumEnchantmentType CROSSBOW_ENCHANTMENTS = EnumHelper.addEnchantmentType("crossbow", item -> item == CROSSBOW);
-
-	public static Enchantment QUICK_CHARGE = new EnchantmentQuickCharge();
-	public static Enchantment MULTISHOT = new EnchantmentMultishot();
-	public static Enchantment PIERCING = new EnchantmentPiercing();
 	
 	public static ItemStack createOminousBanner() {
 		NBTTagList patterns = new NBTTagList();
@@ -95,19 +79,6 @@ public class RaidsContent {
 		nbt.setTag("Fireworks", fireworks);
 		firework.setTagCompound(nbt);
 		return firework;
-	}
-
-	@SubscribeEvent
-	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().register(CROSSBOW);
-	}
-
-	@SubscribeEvent
-	public static void registerEnchantments(RegistryEvent.Register<Enchantment> event) {
-		IForgeRegistry<Enchantment> registry = event.getRegistry();
-		registry.register(QUICK_CHARGE);
-		registry.register(MULTISHOT);
-		registry.register(PIERCING);
 	}
 
 	@SubscribeEvent

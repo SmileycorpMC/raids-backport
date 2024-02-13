@@ -3,17 +3,9 @@
   "package": "net.smileycorp.raids.mixin",
   "refmap": "mixins.raids.refmap.json",
   "mixins": [
-    "MixinBootstrap",
-    "MixinDamageSource",
-	"MixinEntityArrow",
-    "MixinEntityFireworkRocket",
-    "MixinEntityLivingBase",
-    "MixinItemBanner",
-    "MixinItemFirework"
+    "MixinItemBanner"
   ],
   "client": [
-    "MixinItemRenderer",
-    "MixinModelBiped",
     "MixinRenderEvoker",
     "MixinRenderIllusionIllager",
     "MixinRenderSnowball",

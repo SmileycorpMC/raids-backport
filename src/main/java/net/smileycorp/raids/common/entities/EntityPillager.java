@@ -2,11 +2,16 @@ package net.smileycorp.raids.common.entities;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.AbstractIllager;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityTippedArrow;
+import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
@@ -15,19 +20,18 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import net.smileycorp.raids.common.Constants;
-import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
-import net.smileycorp.raids.common.entities.ai.EntityAIAttackRangedCrossbow;
-import net.smileycorp.raids.common.entities.interfaces.ICrossbowAttackMob;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.config.EntityConfig;
+import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
 
 import javax.annotation.Nullable;
 
-public class EntityPillager extends AbstractIllager implements ICrossbowAttackMob {
+public class EntityPillager extends AbstractIllager implements IRangedAttackMob {
 
     private static final DataParameter<Boolean> IS_CHARGING_CROSSBOW = EntityDataManager.createKey(EntityPillager.class, DataSerializers.BOOLEAN);
 
@@ -39,7 +43,8 @@ public class EntityPillager extends AbstractIllager implements ICrossbowAttackMo
 	protected void initEntityAI() {
 		super.initEntityAI();
 		tasks.addTask(0, new EntityAISwimming(this));
-		tasks.addTask(3, new EntityAIAttackRangedCrossbow(this, 1.0D, 20));
+        if (Constants.CROSSBOWS_LOADED) CrossbowsIntegration.addTask(this);
+        else tasks.addTask(4, new EntityAIAttackRangedBow(this, 1.0D, 20, 15.0F));
         tasks.addTask(8, new EntityAIWanderAvoidWater(this, 1.0D));
         tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 15F, 1F));
         tasks.addTask(10, new EntityAIWatchClosest(this, EntityLivingBase.class, 15F));
@@ -67,19 +72,20 @@ public class EntityPillager extends AbstractIllager implements ICrossbowAttackMo
         dataManager.register(IS_CHARGING_CROSSBOW, false);
     }
     
-    @Override
     public boolean isChargingCrossbow() {
         return dataManager.get(IS_CHARGING_CROSSBOW);
     }
     
-    @Override
     public void setChargingCrossbow(boolean charging) {
         dataManager.set(IS_CHARGING_CROSSBOW, charging);
     }
     
     @Override
     public IllagerArmPose getArmPose() {
-        return null;
+        if (Constants.CROSSBOWS_LOADED && CrossbowsIntegration.isCrossbow(getHeldItemMainhand())) return null;
+        if (!getHeldItemMainhand().isEmpty()) return IllagerArmPose.BOW_AND_ARROW;
+        if (Constants.CROSSBOWS_LOADED && CrossbowsIntegration.isCrossbow(getHeldItemOffhand())) return null;
+        return getHeldItemOffhand().isEmpty() ? IllagerArmPose.ATTACKING : IllagerArmPose.BOW_AND_ARROW;
     }
 	
 	@Override
@@ -92,7 +98,7 @@ public class EntityPillager extends AbstractIllager implements ICrossbowAttackMo
     @Override
     protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty) {
         super.setEquipmentBasedOnDifficulty(difficulty);
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(RaidsContent.CROSSBOW));
+        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, Constants.CROSSBOWS_LOADED ? CrossbowsIntegration.getCrossbow() : new ItemStack(Items.BOW));
     }
     
     @Override
@@ -110,7 +116,27 @@ public class EntityPillager extends AbstractIllager implements ICrossbowAttackMo
         return RaidsSoundEvents.PILLAGER_HURT;
     }
     
-	@Override
+    @Override
+    public void attackEntityWithRangedAttack(EntityLivingBase target, float distance) {
+        EntityArrow entityarrow = getArrow(distance);
+        if (getHeldItemMainhand().getItem() instanceof net.minecraft.item.ItemBow)
+            entityarrow = ((net.minecraft.item.ItemBow) this.getHeldItemMainhand().getItem()).customizeArrow(entityarrow);
+        double d0 = target.posX - posX;
+        double d1 = target.getEntityBoundingBox().minY + (double)(target.height / 3.0F) - entityarrow.posY;
+        double d2 = target.posZ - posZ;
+        double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
+        entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(14 - world.getDifficulty().getDifficultyId() * 4));
+        playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
+        world.spawnEntity(entityarrow);
+    }
+    
+    protected EntityArrow getArrow(float distance) {
+        EntityTippedArrow entitytippedarrow = new EntityTippedArrow(world, this);
+        entitytippedarrow.setEnchantmentEffectsFromEntity(this, distance);
+        return entitytippedarrow;
+    }
+    
+    @Override
 	public void setSwingingArms(boolean swingingArms) {
         setAggressive(1, swingingArms);
     }
@@ -119,14 +145,10 @@ public class EntityPillager extends AbstractIllager implements ICrossbowAttackMo
 	protected ResourceLocation getLootTable() {
         return Constants.PILLAGER_DROPS;
     }
-
-    @Override
+    
     public void onCrossbowAttackPerformed() {
         idleTime = 0;
     }
-    @Override
-    public EntityLivingBase getTarget() {
-        return getAttackTarget();
-    }
+    
 
 }

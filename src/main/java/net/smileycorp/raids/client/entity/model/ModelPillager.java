@@ -4,9 +4,10 @@ import net.minecraft.client.model.ModelIllager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumHandSide;
-import net.smileycorp.raids.client.entity.CrossbowAnimator;
-import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.entities.interfaces.ICrossbowAttackMob;
+import net.smileycorp.raids.common.Constants;
+import net.smileycorp.raids.common.entities.EntityPillager;
+import net.smileycorp.raids.integration.crossbows.CrossbowsClientIntegration;
+import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
 
 public class ModelPillager extends ModelIllager {
     
@@ -17,16 +18,16 @@ public class ModelPillager extends ModelIllager {
     @Override
     public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entity) {
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
-        if (entity instanceof ICrossbowAttackMob && entity instanceof EntityLivingBase) {
-            if (((ICrossbowAttackMob) entity).isChargingCrossbow()) {
-                CrossbowAnimator.animateCharge((EntityLivingBase) entity, rightArm, leftArm);
+        if (entity instanceof EntityPillager) {
+            if (Constants.CROSSBOWS_LOADED && ((EntityPillager) entity).isChargingCrossbow()) {
+                CrossbowsClientIntegration.animateCharge((EntityLivingBase) entity, rightArm, leftArm);
                 return;
             }
-            if (((EntityLivingBase) entity).getHeldItemOffhand().getItem() == RaidsContent.CROSSBOW) {
-                CrossbowAnimator.animateCrossbowHold(rightArm, leftArm, head, ((EntityLivingBase) entity).getPrimaryHand() == EnumHandSide.LEFT);
+            if (Constants.CROSSBOWS_LOADED && CrossbowsIntegration.isCrossbow(((EntityLivingBase) entity).getHeldItemOffhand())) {
+                CrossbowsClientIntegration.animateCrossbowHold(rightArm, leftArm, head, ((EntityLivingBase) entity).getPrimaryHand() == EnumHandSide.LEFT);
             }
-            if (((EntityLivingBase) entity).getHeldItemMainhand().getItem() == RaidsContent.CROSSBOW) {
-                CrossbowAnimator.animateCrossbowHold(rightArm, leftArm, head, ((EntityLivingBase) entity).getPrimaryHand() == EnumHandSide.RIGHT);
+            if (Constants.CROSSBOWS_LOADED && CrossbowsIntegration.isCrossbow(((EntityLivingBase) entity).getHeldItemMainhand()))  {
+                CrossbowsClientIntegration.animateCrossbowHold(rightArm, leftArm, head, ((EntityLivingBase) entity).getPrimaryHand() == EnumHandSide.RIGHT);
             }
         }
     }
