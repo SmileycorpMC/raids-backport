@@ -27,6 +27,7 @@ public class WorldDataRaids extends WorldSavedData {
     private WorldServer world;
     private int nextAvailableID;
     private int tick;
+    private NBTTagList raidNBT;
     
     public WorldDataRaids(String data) {
         super(data);
@@ -39,6 +40,14 @@ public class WorldDataRaids extends WorldSavedData {
     
     private void setWorld(WorldServer world) {
         this.world = world;
+        if (raidNBT != null) {
+            for(NBTBase base : raidNBT) {
+                NBTTagCompound compound = (NBTTagCompound) base;
+                Raid raid = new Raid(world, compound);
+                raidMap.put(raid.getId(), raid);
+            }
+            raidNBT = null;
+        }
         for (Raid raid : raidMap.values()) raid.setWorld(world);
     }
     
@@ -99,7 +108,8 @@ public class WorldDataRaids extends WorldSavedData {
     public void readFromNBT(NBTTagCompound nbt) {
         nextAvailableID = nbt.getInteger("NextAvailableID");
         tick = nbt.getInteger("Tick");
-        for(NBTBase base : nbt.getTagList("Raids", 10)) {
+        if (world == null) raidNBT = nbt.getTagList("Raids", 10);
+        else for(NBTBase base : nbt.getTagList("Raids", 10)) {
             NBTTagCompound compound = (NBTTagCompound) base;
             Raid raid = new Raid(world, compound);
             raidMap.put(raid.getId(), raid);
@@ -111,7 +121,7 @@ public class WorldDataRaids extends WorldSavedData {
         nbt.setInteger("NextAvailableID", this.nextAvailableID);
         nbt.setInteger("Tick", this.tick);
         NBTTagList list = new NBTTagList();
-        for(Raid raid : this.raidMap.values()) {
+        for(Raid raid : raidMap.values()) {
             NBTTagCompound compound = new NBTTagCompound();
             raid.save(compound);
             list.appendTag(compound);
@@ -121,7 +131,7 @@ public class WorldDataRaids extends WorldSavedData {
     }
     
     private int getUniqueId() {
-        return ++this.nextAvailableID;
+        return this.nextAvailableID++;
     }
     
     @Nullable
