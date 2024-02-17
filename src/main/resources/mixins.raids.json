@@ -3,7 +3,9 @@
   "package": "net.smileycorp.raids.mixin",
   "refmap": "mixins.raids.refmap.json",
   "mixins": [
-    "MixinItemBanner"
+    "MixinItemBanner",
+    "MixinListEnchantedBookForEmeralds",
+    "MixinMerchantRecipe"
   ],
   "client": [
     "MixinRenderEvoker",

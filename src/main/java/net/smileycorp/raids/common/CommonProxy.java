@@ -18,7 +18,6 @@ import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.raid.CommandDebugRaid;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.raid.Raider;
-import net.smileycorp.raids.common.raid.RaidsEventHandler;
 import net.smileycorp.raids.config.EntityConfig;
 
 public class CommonProxy {

@@ -49,7 +49,6 @@ public class RaidEntry {
         entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
         if (world.spawnEntity(entity)) {
             entities.add(entity);
-            entity.setGlowing(true);
             entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
             raid.joinRaid(wave, entity, pos, false);
         }
@@ -58,10 +57,9 @@ public class RaidEntry {
             mount.setPosition(pos.getX(), pos.getY(), pos.getZ());
             if (world.spawnEntity(mount)) {
                 mount.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-                mount.setGlowing(true);
                 entity.startRiding(mount, true);
                 entities.add(mount);
-                raid.joinRaid(wave, entity, pos, false);
+                raid.joinRaid(wave, mount, pos, false);
             }
         }
     }

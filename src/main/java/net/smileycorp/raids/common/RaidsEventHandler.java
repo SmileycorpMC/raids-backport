@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common.raid;
+package net.smileycorp.raids.common;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -7,9 +7,12 @@ import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.village.MerchantRecipe;
+import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -17,12 +20,15 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.village.MerchantTradeOffersEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.smileycorp.raids.common.Constants;
-import net.smileycorp.raids.common.MathUtils;
-import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.interfaces.ITradeDiscount;
+import net.smileycorp.raids.common.raid.Raid;
+import net.smileycorp.raids.common.raid.RaidHandler;
+import net.smileycorp.raids.common.raid.Raider;
+import net.smileycorp.raids.common.raid.WorldDataRaids;
 
 public class RaidsEventHandler {
 
@@ -36,8 +42,9 @@ public class RaidsEventHandler {
 	
 	@SubscribeEvent
 	public void onAddedToWorld(EntityJoinWorldEvent event) {
-		if (event.getEntity() instanceof EntityVillager) {
-			EntityVillager villager = (EntityVillager) event.getEntity();
+		Entity entity = event.getEntity();
+		if (entity instanceof EntityVillager) {
+			EntityVillager villager = (EntityVillager) entity;
 			villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class, RaidHandler::isRaider, 8.0F, 0.8D, 0.8D));
 		}
 	}
@@ -90,6 +97,7 @@ public class RaidsEventHandler {
 					else i--;
 					i = MathUtils.clamp(i, 0, 4);
 					player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000, i, false, true));
+					if (player instanceof EntityPlayerMP) RaidsContent.VOLUNTARY_EXILE.trigger((EntityPlayerMP) player);
 				}
 			}
 		}
@@ -101,6 +109,25 @@ public class RaidsEventHandler {
 		if (entity.hasCapability(RaidsContent.RAIDER, null)) {
 			if (entity.getCapability(RaidsContent.RAIDER, null).isRaidActive()) event.setResult(Result.DENY);
 		}
+	}
+	
+	@SubscribeEvent
+	public void addTrades(MerchantTradeOffersEvent event) {
+		if (!(event.getMerchant() instanceof EntityVillager) || event.getList() == null || event.getPlayer() == null) return;
+		EntityPlayer player = event.getPlayer();
+		if (!player.isPotionActive(RaidsContent.HERO_OF_THE_VILLAGE)) return;
+		int amplifier = player.getActivePotionEffect(RaidsContent.HERO_OF_THE_VILLAGE).getAmplifier();
+		MerchantRecipeList newList = new MerchantRecipeList();
+		for (MerchantRecipe recipe : event.getList()) {
+			MerchantRecipe newRecipe = new MerchantRecipe(recipe.getItemToBuy(), recipe.getSecondItemToBuy(), recipe.getItemToSell(), recipe.getToolUses(), recipe.getMaxTradeUses());
+			ITradeDiscount trade = (ITradeDiscount) newRecipe;
+			double d0 = 0.3D + 0.0625D * (double)amplifier;
+			int j = (int)Math.floor(d0 * (double)newRecipe.getItemToBuy().getCount());
+			trade.setDiscountedPrice(-Math.max(j, 1));
+			RaidsLogger.logInfo(trade.getDiscountedPrice());
+			newList.add(newRecipe);
+		}
+		event.setList(newList);
 	}
 	
 }

@@ -14,20 +14,12 @@ public class MathUtils {
         return (Math.abs(p_217167_1_ % p_217167_2_ - p_217167_2_ * 0.5F) - p_217167_2_ * 0.25F) / (p_217167_2_ * 0.25F);
     }
     
-    public static int clamp(int p_14046_, int p_14047_, int p_14048_) {
-        if (p_14046_ < p_14047_) {
-            return p_14047_;
-        } else {
-            return p_14046_ > p_14048_ ? p_14048_ : p_14046_;
-        }
+    public static int clamp(int val, int min, int max) {
+        return val < min ? min : val > max ? max : val;
     }
     
-    public static float clamp(float p_14037_, float p_14038_, float p_14039_) {
-        if (p_14037_ < p_14038_) {
-            return p_14038_;
-        } else {
-            return p_14037_ > p_14039_ ? p_14039_ : p_14037_;
-        }
+    public static float clamp(float val, float min, float max) {
+        return val < min ? min : val > max ? max : val;
     }
     
 }

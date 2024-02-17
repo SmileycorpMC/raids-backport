@@ -48,11 +48,10 @@ public class WorldDataRaids extends WorldSavedData {
             }
             raidNBT = null;
         }
-        for (Raid raid : raidMap.values()) raid.setWorld(world);
     }
     
     public Raid get(int id) {
-        return this.raidMap.get(id);
+        return raidMap.get(id);
     }
     
     public void tick() {
@@ -65,7 +64,7 @@ public class WorldDataRaids extends WorldSavedData {
                 setDirty(true);
             } else raid.tick();
         }
-        if (this.tick % 200 == 0) setDirty(true);
+        if (tick % 200 == 0) setDirty(true);
     }
     
     public static boolean canJoinRaid(EntityLiving entity, Raid raid) {
@@ -90,14 +89,14 @@ public class WorldDataRaids extends WorldSavedData {
                 flag = true;
             } else player.removeActivePotionEffect(RaidsContent.BAD_OMEN);
             if (flag) raid.absorbBadOmen(player);
-            this.setDirty(true);
+            setDirty(true);
             return raid;
         }
     }
     
     private Raid getOrCreateRaid(WorldServer world, BlockPos pos) {
         Raid raid = getRaidAt(pos);
-        return raid != null ? raid : new Raid(this.getUniqueId(), world, pos);
+        return raid != null ? raid : new Raid(getUniqueId(), world, pos);
     }
     
     public Raid getRaidAt(BlockPos pos) {
@@ -118,8 +117,8 @@ public class WorldDataRaids extends WorldSavedData {
     
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("NextAvailableID", this.nextAvailableID);
-        nbt.setInteger("Tick", this.tick);
+        nbt.setInteger("NextAvailableID", nextAvailableID);
+        nbt.setInteger("Tick", tick);
         NBTTagList list = new NBTTagList();
         for(Raid raid : raidMap.values()) {
             NBTTagCompound compound = new NBTTagCompound();
@@ -131,14 +130,14 @@ public class WorldDataRaids extends WorldSavedData {
     }
     
     private int getUniqueId() {
-        return this.nextAvailableID++;
+        return nextAvailableID++;
     }
     
     @Nullable
     public Raid getNearbyRaid(BlockPos p_37971_, int p_37972_) {
         Raid raid = null;
         double d0 = p_37972_;
-        for(Raid raid1 : this.raidMap.values()) {
+        for(Raid raid1 : raidMap.values()) {
             double d1 = raid1.getCenter().distanceSq(p_37971_);
             if (raid1.isActive() && d1 < d0) {
                 raid = raid1;

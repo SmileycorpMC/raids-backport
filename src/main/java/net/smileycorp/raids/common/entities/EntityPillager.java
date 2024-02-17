@@ -8,6 +8,7 @@ import net.minecraft.entity.monster.AbstractIllager;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
@@ -24,6 +25,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import net.smileycorp.raids.common.Constants;
+import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.config.EntityConfig;
@@ -150,5 +152,11 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
         idleTime = 0;
     }
     
-
+    @Override
+    public void onDeath(DamageSource source) {
+        super.onDeath(source);
+        if (!Constants.CROSSBOWS_LOADED |! (source.getTrueSource() instanceof EntityPlayerMP)) return;
+        if (CrossbowsIntegration.isCrossbowProjectile(source.getImmediateSource()))
+            RaidsContent.WHOS_THE_PILLAGER.trigger((EntityPlayerMP) source.getTrueSource());
+    }
 }

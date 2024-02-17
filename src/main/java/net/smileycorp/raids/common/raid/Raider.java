@@ -5,6 +5,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -53,7 +54,7 @@ public interface Raider {
 		}
 
 		public Impl(EntityLiving entity) {
-			this.entity=entity;
+			this.entity = entity;
 		}
 
 		@Override
@@ -74,12 +75,18 @@ public interface Raider {
 		@Override
 		public NBTTagCompound writeNBT(NBTTagCompound nbt) {
 			nbt.setBoolean("PatrolLeader", patrolLeader);
+			nbt.setInteger("Wave", wave);
+			if (raid != null) nbt.setInteger("RaidId", raid.getId());
 			return nbt;
 		}
 
 		@Override
 		public void readNBT(NBTTagCompound nbt) {
 			if (nbt.hasKey("PatrolLeader")) patrolLeader = nbt.getBoolean("PatrolLeader");
+			if (nbt.hasKey("Wave")) wave = nbt.getInteger("Wave");
+			if (nbt.hasKey("RaidId") && entity != null && entity.world instanceof WorldServer)
+				raid = WorldDataRaids.getData((WorldServer) entity.world).get(nbt.getInteger("RaidId"));
+			if (raid != null) raid.addWaveMob(wave, entity, false);
 		}
 
 		@Override

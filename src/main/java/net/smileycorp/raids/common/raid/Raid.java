@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -22,6 +23,7 @@ import net.minecraft.world.*;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.smileycorp.raids.common.MathUtils;
 import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.RaidsLogger;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.network.RaidSoundMessage;
 
@@ -228,7 +230,6 @@ public class Raid {
 						}
 						if (raidCooldownTicks == 300 || raidCooldownTicks % 20 == 0) updatePlayers();
 						raidCooldownTicks--;
-						raidEvent.setPercent(MathUtils.clamp((float)(300 - raidCooldownTicks) / 300.0F, 0.0F, 1.0F));
 					}
 				}
 				if (ticksActive % 20L == 0L) {
@@ -266,13 +267,15 @@ public class Raid {
 						status = Status.VICTORY;
 						for(UUID uuid : heroesOfTheVillage) {
 							Entity entity = world.getEntityFromUuid(uuid);
-							if (entity instanceof EntityLiving) {
-								EntityLiving EntityLiving = (EntityLiving)entity;
-								EntityLiving.addPotionEffect(new PotionEffect(RaidsContent.HERO_OF_THE_VILLAGE, 48000, badOmenLevel - 1, false, true));
+							if (entity instanceof EntityLivingBase) {
+								EntityLivingBase living = (EntityLivingBase)entity;
+								living.addPotionEffect(new PotionEffect(RaidsContent.HERO_OF_THE_VILLAGE, 48000, badOmenLevel - 1, false, true));
 							}
+							if (entity instanceof EntityPlayerMP) RaidsContent.RAID_VICTORY.trigger((EntityPlayerMP) entity);
 						}
 					}
 				}
+				updateBossbar();
 				setDirty();
 			} else if (isOver()) {
 				if (celebrationTicks++ >= 600) {
@@ -352,22 +355,17 @@ public class Raid {
 			Set<EntityLiving> set1 = iterator.next();
 			for(EntityLiving entity : set1) {
 				BlockPos blockpos = entity.getPosition();
-				if (entity.isEntityAlive() && entity.world.provider.getDimension() == world.provider.getDimension() && !(center.distanceSq(blockpos) >= 12544.0D)) {
+				if (entity.isEntityAlive() && entity.isAddedToWorld() && entity.hasCapability(RaidsContent.RAIDER, null)
+						&& entity.world.provider.getDimension() == world.provider.getDimension() && !(center.distanceSq(blockpos) >= 12544.0D)) {
+					Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
 					if (entity.ticksExisted > 600) {
 						if (world.getEntityFromUuid(entity.getUniqueID()) == null) set.add(entity);
-						if (!isVillage(world, blockpos) && entity.getIdleTime() > 2400) {
-							if (entity.hasCapability(RaidsContent.RAIDER, null)) {
-								Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
-								raider.setTicksOutsideRaid(raider.getTicksOutsideRaid() + 1);
-							}
-						}
-						if (entity.hasCapability(RaidsContent.RAIDER, null) &&
-								entity.getCapability(RaidsContent.RAIDER, null).getTicksOutsideRaid() >= 30) set.add(entity);
+						if (!isVillage(world, blockpos) && entity.getIdleTime() > 2400) raider.setTicksOutsideRaid(raider.getTicksOutsideRaid() + 1);
+						if (entity.hasCapability(RaidsContent.RAIDER, null) && raider.getTicksOutsideRaid() >= 30) set.add(entity);
 					}
 				} else set.add(entity);
 			}
 		}
-		
 		for (EntityLiving EntityLiving1 : set) removeFromRaid(EntityLiving1, true);
 	}
 	
@@ -397,6 +395,10 @@ public class Raid {
 	}
 	
 	public void updateBossbar() {
+		if (getTotalEntityLivingsAlive() <= 0 && hasMoreWaves() && raidCooldownTicks > 0) {
+			raidEvent.setPercent(MathUtils.clamp((float)(300 - raidCooldownTicks) / 300.0F, 0.0F, 1.0F));
+			return;
+		}
 		Set toRemove = Sets.newHashSet();
 		for (Set<EntityLiving> set : groupEntityLivingMap.values()) {
 			for (EntityLiving entity : set) {
@@ -407,10 +409,10 @@ public class Raid {
 			}
 			set.removeAll(toRemove);
 		}
-		raidEvent.setPercent(MathUtils.clamp(getHealthOfEntityLivingLivings() / totalHealth, 0.0F, 1.0F));
+		raidEvent.setPercent(MathUtils.clamp(getHealthOfEntities() / totalHealth, 0.0F, 1.0F));
 	}
 	
-	public float getHealthOfEntityLivingLivings() {
+	public float getHealthOfEntities() {
 		float f = 0.0F;
 		for (Set<EntityLiving> set : groupEntityLivingMap.values()) for (EntityLiving entity : set) f += entity.getHealth();
 		return f;
@@ -421,7 +423,7 @@ public class Raid {
 	}
 	
 	public int getTotalEntityLivingsAlive() {
-		return groupEntityLivingMap.values().stream().mapToInt(Set::size).sum();
+		return getAllEntityLivings().size();
 	}
 	
 	public void removeFromRaid(EntityLiving entity, boolean update) {
@@ -473,18 +475,20 @@ public class Raid {
 	}
 	
 	public boolean addWaveMob(int index, EntityLiving entity, boolean addHealth) {
+		RaidsLogger.logInfo("Adding entity " + entity + ", " + entity.hasCapability(RaidsContent.RAIDER, null) + ", " + entity.isAddedToWorld()+ ", " + entity.isEntityAlive());
 		if (!entity.hasCapability(RaidsContent.RAIDER, null) |! entity.isAddedToWorld()) return false;
+		entity.setGlowing(true);
 		groupEntityLivingMap.computeIfAbsent(index, v -> Sets.newHashSet());
 		Set<EntityLiving> set = groupEntityLivingMap.get(index);
-		EntityLiving EntityLiving = null;
-		for(EntityLiving EntityLiving1 : set) {
-			if (EntityLiving1.getUniqueID().equals(entity.getUniqueID())) {
-				EntityLiving = EntityLiving1;
+		EntityLiving entity0 = null;
+		for(EntityLiving entity1 : set) {
+			if (entity1.getUniqueID().equals(entity.getUniqueID())) {
+				entity0 = entity1;
 				break;
 			}
 		}
-		if (EntityLiving != null) {
-			set.remove(EntityLiving);
+		if (entity0 != null) {
+			set.remove(entity0);
 			set.add(entity);
 		}
 		set.add(entity);
@@ -582,6 +586,7 @@ public class Raid {
 	
 	public List<String> getEntityStrings() {
 		List<String> result = new ArrayList<>();
+		result.add("totalHealth=" + totalHealth + ", currentHealth="+ getHealthOfEntities());
 		result.add("	entities: {");
 		List<EntityLiving> entitylist = new ArrayList<>();
 		for (Set<EntityLiving> set : groupEntityLivingMap.values()) for (EntityLiving entity : set) entitylist.add(entity);
@@ -593,7 +598,7 @@ public class Raid {
 				builder.append(entity.getClass().getSimpleName() + "@");
 				builder.append(Integer.toHexString(entity.hashCode()));
 				builder.append(entity.getPosition());
-				if (entitylist.indexOf(entity) < entitylist.size()-1) builder.append(", ");
+				if (entitylist.indexOf(entity) < entitylist.size() - 1) builder.append(", ");
 			}
 			builder.append("}");
 			result.add(builder.toString());

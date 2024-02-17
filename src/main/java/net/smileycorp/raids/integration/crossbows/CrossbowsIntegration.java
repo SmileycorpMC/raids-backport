@@ -1,9 +1,11 @@
 package net.smileycorp.raids.integration.crossbows;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.smileycorp.crossbows.common.CrossbowsContent;
 import net.smileycorp.crossbows.common.ai.EntityAIAttackRangedCrossbow;
 import net.smileycorp.raids.common.entities.EntityPillager;
+import net.smileycorp.raids.common.interfaces.ICrossbowArrow;
 
 public class CrossbowsIntegration {
     
@@ -18,6 +20,10 @@ public class CrossbowsIntegration {
     
     public static boolean isCrossbow(ItemStack stack) {
         return stack.getItem() == CrossbowsContent.CROSSBOW;
+    }
+    
+    public static boolean isCrossbowProjectile(Entity entity) {
+        return entity instanceof ICrossbowArrow && ((ICrossbowArrow)entity).shotFromCrossbow();
     }
     
 }

@@ -1,5 +1,5 @@
 {
-  "parent": "hordes:adventure/voluntary_exile",
+  "parent": "raids:voluntary_exile",
   "display": {
     "icon": {
       "item": "minecraft:white_banner",
@@ -21,7 +21,7 @@
   },
   "criteria": {
     "hero_of_the_village": {
-      "trigger": "minecraft:hero_of_the_village",
+      "trigger": "raids:raid_victory",
       "conditions": {}
     }
   },
