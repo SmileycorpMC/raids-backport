@@ -6,13 +6,15 @@ Pillagers
 
 Ravagers
 
+Raid Events and Bad Omen (Except AI)
+
+Pillager Patrols (Except AI)
+
+Advancements (Mostly)
+
 ### Future Plans
 
-Raid Events and Bad Omen
-
 Watchtowers
-
-Pillager Patrols
 
 Hero of the Village Effects
 
