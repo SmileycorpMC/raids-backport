@@ -149,6 +149,10 @@ public class WorldDataRaids extends WorldSavedData {
         return raid;
     }
     
+    public PatrolSpawner getPatrolSpawner() {
+        return patrols;
+    }
+    
     public void logDebug() {
         List<String> out = Lists.newArrayList();
         out.add(toString());

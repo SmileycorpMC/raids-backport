@@ -34,7 +34,7 @@ public class RaidsContent {
 	
 	public static final RaidsCriterionTrigger WHOS_THE_PILLAGER = new RaidsCriterionTrigger("whos_the_pillager");
 	public static final RaidsCriterionTrigger VOLUNTARY_EXILE = new RaidsCriterionTrigger("voluntary_exile");
-	public static final RaidsCriterionTrigger RAID_VICTORY = new RaidsCriterionTrigger("hero_of_the_village");
+	public static final RaidsCriterionTrigger RAID_VICTORY = new RaidsCriterionTrigger("raid_victory");
 	
 	@CapabilityInject(Raider.class)
 	public static Capability<Raider> RAIDER = null;

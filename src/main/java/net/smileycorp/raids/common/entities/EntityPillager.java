@@ -155,8 +155,8 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
     @Override
     public void onDeath(DamageSource source) {
         super.onDeath(source);
-        if (!Constants.CROSSBOWS_LOADED |! (source.getTrueSource() instanceof EntityPlayerMP)) return;
-        if (CrossbowsIntegration.isCrossbowProjectile(source.getImmediateSource()))
+        if (!Constants.CROSSBOWS_LOADED) return;
+        if (CrossbowsIntegration.isCrossbowProjectile(source.getImmediateSource()) && source.getTrueSource() instanceof EntityPlayerMP)
             RaidsContent.WHOS_THE_PILLAGER.trigger((EntityPlayerMP) source.getTrueSource());
     }
 }

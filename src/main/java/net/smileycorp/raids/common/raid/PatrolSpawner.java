@@ -25,9 +25,13 @@ public class PatrolSpawner {
         if ((i < 5 &! world.isDaytime()) || rand.nextInt(5) != 0 || world.playerEntities.isEmpty()) return;
         EntityPlayer player = world.playerEntities.get(rand.nextInt(world.playerEntities.size()));
         if (player.isSpectator() || Raid.isVillage(world, player.getPosition())) return;
+        spawnPatrol(world, player.getPosition(), rand);
+    }
+    
+    public void spawnPatrol(WorldServer world, BlockPos source, Random rand) {
         int k = (24 + rand.nextInt(24)) * (rand.nextBoolean() ? -1 : 1);
         int l = (24 + rand.nextInt(24)) * (rand.nextBoolean() ? -1 : 1);
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(player.getPosition().add(k, 0, l));
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(source.add(k, 0, l));
         if (!world.isAreaLoaded(pos.add(-10, 0, -10), pos.add(10, 0, 10))
                 || BiomeDictionary.hasType(world.getBiome(pos), BiomeDictionary.Type.MUSHROOM)) return;
         int k1 = (int) Math.ceil(world.getDifficultyForLocation(pos).getAdditionalDifficulty()) + 1;
@@ -50,6 +54,7 @@ public class PatrolSpawner {
         }
         pillager.setPosition(pos.getX(), pos.getY(), pos.getZ());
         pillager.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+        pillager.setGlowing(true);
         return world.spawnEntity(pillager);
     }
 }

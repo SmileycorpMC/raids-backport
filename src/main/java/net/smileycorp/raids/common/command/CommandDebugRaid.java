@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common.raid;
+package net.smileycorp.raids.common.command;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -6,6 +6,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 import net.smileycorp.raids.common.Constants;
+import net.smileycorp.raids.common.raid.WorldDataRaids;
 
 public class CommandDebugRaid extends CommandBase {
     

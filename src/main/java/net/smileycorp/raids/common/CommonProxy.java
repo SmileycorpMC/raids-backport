@@ -13,11 +13,11 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.smileycorp.crossbows.common.CrossbowsContent;
+import net.smileycorp.raids.common.command.CommandDebugRaid;
+import net.smileycorp.raids.common.command.CommandSpawnPatrol;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.network.PacketHandler;
-import net.smileycorp.raids.common.raid.CommandDebugRaid;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.raid.Raider;
 import net.smileycorp.raids.config.EntityConfig;
@@ -47,7 +47,8 @@ public class CommonProxy {
 	}
 	
 	public void serverStart(FMLServerStartingEvent event) {
-			event.registerServerCommand(new CommandDebugRaid());
+		event.registerServerCommand(new CommandDebugRaid());
+		event.registerServerCommand(new CommandSpawnPatrol());
 	}
 	
 	private void registerSpawns() {
