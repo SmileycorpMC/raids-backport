@@ -2,8 +2,9 @@
   "parent": "raids:voluntary_exile",
   "display": {
     "icon": {
-      "item": "minecraft:white_banner",
-      "nbt": "{BlockEntityTag:{Patterns:[{Color:9,Pattern:\"mr\"},{Color:8,Pattern:\"bs\"},{Color:7,Pattern:\"cs\"},{Color:8,Pattern:\"bo\"},{Color:15,Pattern:\"ms\"},{Color:8,Pattern:\"hh\"},{Color:8,Pattern:\"mc\"},{Color:15,Pattern:\"bo\"}]},HideFlags:32,display:{Name:\u0027{\"color\":\"gold\",\"translate\":\"block.minecraft.ominous_banner\"}\u0027}}"
+      "item": "minecraft:banner",
+	  "data": 15,
+      "nbt": "{HideFlags: 32, BlockEntityTag: {Patterns: [{Pattern: \"mr\", Color: 6}, {Pattern: \"bs\", Color: 7}, {Pattern: \"cs\", Color: 8}, {Pattern: \"ms\", Color: 0}, {Pattern: \"hh\", Color: 7}, {Pattern: \"mc\", Color: 7}, {Pattern: \"bo\", Color: 0}]}, display:{Name:{\"color\":\"gold\",\"translate\":\"block.raids.ominous_banner\"}}}"
     },
     "title": {
       "translate": "advancements.adventure.hero_of_the_village.title"

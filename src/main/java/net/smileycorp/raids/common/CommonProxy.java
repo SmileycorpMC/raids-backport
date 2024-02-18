@@ -1,5 +1,6 @@
 package net.smileycorp.raids.common;
 
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.entity.monster.EntityEvoker;
 import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.monster.EntityWitch;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.smileycorp.crossbows.common.CrossbowsContent;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.network.PacketHandler;
@@ -35,6 +37,9 @@ public class CommonProxy {
 		LootTableList.register(Constants.PILLAGER_DROPS);
 		LootTableList.register(Constants.RAVAGER_DROPS);
 		LootTableList.register(Constants.OUTPOST_CHESTS);
+		CriteriaTriggers.register(RaidsContent.WHOS_THE_PILLAGER);
+		CriteriaTriggers.register(RaidsContent.VOLUNTARY_EXILE);
+		CriteriaTriggers.register(RaidsContent.RAID_VICTORY);
 	}
 	
 	public void postInit(FMLPostInitializationEvent event) {

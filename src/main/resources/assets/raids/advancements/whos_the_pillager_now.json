@@ -20,6 +20,7 @@
     "kill_pillager": {
       "trigger": "raids:whos_the_pillager",
       "conditions": {}
+	}
   },
   "requirements": [
     [

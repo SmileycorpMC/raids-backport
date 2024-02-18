@@ -3,12 +3,13 @@ Fix Fireworks momentum ✓
 Add Piercing effect ✓
 Fix Pillager AI ✓
 Backport Pillager Animations ✓
-Finish Raid spawning mechanics
-Finish Raid Boss Bar
+Finish Raid spawning mechanics ✓ (needs ai and fix spawn tables)
+Finish Raid Boss Bar ✓
 Add Ravagers ✓
-Add Patrols
+Add Patrols ✓ (Mostly)
 Add Watchtowers
 Add Hero of the Village Effect
-Add Advancements
+Add Advancements ✓ (needs fixing)
 Add Bell
+Add Allays
 Customizability and mod support

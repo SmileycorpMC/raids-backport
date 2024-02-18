@@ -27,6 +27,7 @@ public class WorldDataRaids extends WorldSavedData {
     private WorldServer world;
     private int nextAvailableID;
     private int tick;
+    private PatrolSpawner patrols = new PatrolSpawner();
     private NBTTagList raidNBT;
     
     public WorldDataRaids(String data) {
@@ -56,6 +57,7 @@ public class WorldDataRaids extends WorldSavedData {
     
     public void tick() {
         tick++;
+        patrols.tick(world);
         Iterator<Raid> iterator = raidMap.values().iterator();
         while (iterator.hasNext()) {
             Raid raid = iterator.next();
