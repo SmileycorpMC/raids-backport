@@ -141,6 +141,10 @@ public class Raid {
 		return groupsSpawned;
 	}
 	
+	public int getNumGroups() {
+		return numGroups;
+	}
+	
 	private Predicate<EntityPlayerMP> validPlayer() {
 		return (player) -> {
 			BlockPos blockpos = player.getPosition();
@@ -248,7 +252,9 @@ public class Raid {
 					if (blockpos != null) {
 						started = true;
 						totalHealth = 0;
-						RaidHandler.spawnNewWave(this, blockpos, groupsSpawned++, shouldSpawnBonusGroup());
+						RaidHandler.spawnNewWave(this, blockpos, groupsSpawned + 1, shouldSpawnBonusGroup());
+						waveSpawnPos = Optional.empty();
+						groupsSpawned++;
 						updateBossbar();
 						setDirty();
 						if (!flag3) {
@@ -391,6 +397,7 @@ public class Raid {
 			raider.setCurrentRaid(this);
 			raider.setWave(wave);
 			raider.setTicksOutsideRaid(0);
+			RaidHandler.applyRaidBuffs(entity, this, wave, random);
 		}
 	}
 	
@@ -456,9 +463,9 @@ public class Raid {
 		int i = p_37708_ == 0 ? 2 : 2 - p_37708_;
 		BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
 		for(int i1 = 0; i1 < p_37709_; ++i1) {
-			float f = world.rand.nextFloat() * ((float)Math.PI * 2F);
-			int j = center.getX() + (int)Math.floor(Math.cos(f) * 32.0F * (float)i) + world.rand.nextInt(5);
-			int l = center.getZ() + (int)Math.floor(Math.sin(f) * 32.0F * (float)i) + world.rand.nextInt(5);
+			float f = random.nextFloat() * ((float)Math.PI * 2F);
+			int j = center.getX() + (int)Math.floor(Math.cos(f) * 32.0F * (float)i) + random.nextInt(5);
+			int l = center.getZ() + (int)Math.floor(Math.sin(f) * 32.0F * (float)i) + random.nextInt(5);
 			int k = world.getHeight(j, l);
 			blockpos$mutableblockpos.setPos(j, k, l);
 			if (isVillage(world, blockpos$mutableblockpos) || p_37708_ >= 2) {
