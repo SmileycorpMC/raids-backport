@@ -6,11 +6,11 @@ Pillagers
 
 Ravagers
 
-Raid Events and Bad Omen (Except AI)
+Raid Events and Bad Omen
 
-Pillager Patrols (Except AI)
+Pillager Patrols
 
-Advancements (Mostly)
+Advancements
 
 ### Future Plans
 
