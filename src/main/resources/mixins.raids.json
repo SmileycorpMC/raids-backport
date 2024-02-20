@@ -3,6 +3,7 @@
   "package": "net.smileycorp.raids.mixin",
   "refmap": "mixins.raids.refmap.json",
   "mixins": [
+    "MixinEntityAIMoveIndoors",
     "MixinItemBanner",
     "MixinListEnchantedBookForEmeralds",
     "MixinMerchantRecipe"

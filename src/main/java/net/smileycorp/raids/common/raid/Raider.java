@@ -1,15 +1,23 @@
 package net.smileycorp.raids.common.raid;
 
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.RaidsLogger;
+import net.smileycorp.raids.common.entities.ai.EntityAILongDistancePatrol;
+import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
 
 public interface Raider {
 	
@@ -22,8 +30,6 @@ public interface Raider {
 	NBTTagCompound writeNBT(NBTTagCompound nbtTagCompound);
 
 	void readNBT(NBTTagCompound nbt);
-	
-	boolean isRaidActive();
 	
 	boolean isLeader();
 	
@@ -40,7 +46,16 @@ public interface Raider {
 	boolean isPatrolLeader();
 	
 	void setPatrolLeader(boolean patrolLeader);
-
+	
+	void findPatrolTarget();
+	
+	void setPatrolTarget(BlockPos blockpos);
+	
+	BlockPos getPatrolTarget();
+	
+	boolean isPatrolling();
+	
+	
 	class Impl implements Raider {
 
 		protected final EntityLiving entity;
@@ -48,7 +63,9 @@ public interface Raider {
 		protected boolean patrolLeader;
 		private int ticksOutsideRaid;
 		private int wave;
-
+		private BlockPos patrolTarget;
+		private boolean hasAI = false;
+		
 		public Impl() {
 			entity = null;
 		}
@@ -77,6 +94,7 @@ public interface Raider {
 			nbt.setBoolean("PatrolLeader", patrolLeader);
 			nbt.setInteger("Wave", wave);
 			if (raid != null) nbt.setInteger("RaidId", raid.getId());
+			if (patrolTarget != null) nbt.setTag("PatrolTarget", NBTUtil.createPosTag(patrolTarget));
 			return nbt;
 		}
 
@@ -86,13 +104,14 @@ public interface Raider {
 			if (nbt.hasKey("Wave")) wave = nbt.getInteger("Wave");
 			if (nbt.hasKey("RaidId") && entity != null && entity.world instanceof WorldServer)
 				raid = WorldDataRaids.getData((WorldServer) entity.world).get(nbt.getInteger("RaidId"));
-			if (raid != null) raid.addWaveMob(wave, entity, false);
-		}
-
-		@Override
-		public boolean isRaidActive() {
-			if (hasActiveRaid() && entity != null) return raid.isActive();
-			return false;
+			if (raid != null) {
+				raid.addWaveMob(wave, entity, false);
+				if (entity instanceof EntityCreature) {
+					entity.tasks.addTask(3, new EntityAIPathfindToRaid(this, (EntityCreature) entity));
+					entity.tasks.addTask(4, new EntityAIMoveThroughVillage((EntityCreature) entity, 1, false));
+				}
+			}
+			if (nbt.hasKey("PatrolTarget")) setPatrolTarget(NBTUtil.getPosFromTag(nbt.getCompoundTag("PatrolTarget")));
 		}
 
 		@Override
@@ -138,6 +157,39 @@ public interface Raider {
 		@Override
 		public void setPatrolLeader(boolean patrolLeader) {
 			this.patrolLeader = patrolLeader;
+		}
+		
+		@Override
+		public void findPatrolTarget() {
+			if (entity == null) return;
+			/*EntityPlayer player = entity.world.getClosestPlayer(entity.posX, entity.posY, entity.posZ, 128, false);
+			if (player == null) {
+				RaidsLogger.logError("Player is null for " + entity, new NullPointerException());
+				return;
+			}
+			double angle = Math.atan2(player.posZ - entity.posZ, player.posX - entity.posX) + (entity.getRNG().nextFloat() - 0.5f) * 0.01f;
+			patrolTarget = new BlockPos(entity.getPositionVector().addVector(Math.cos(angle) * 128, 0, Math.sin(angle) * 128));*/
+			setPatrolTarget(entity.getPosition().add(-500 + entity.getRNG().nextInt(1000), 0, -500 + entity.getRNG().nextInt(1000)));
+			
+		}
+		
+		@Override
+		public void setPatrolTarget(BlockPos patrolTarget) {
+			this.patrolTarget = patrolTarget;
+			if (!hasAI && entity != null) {
+				entity.tasks.addTask(4, new EntityAILongDistancePatrol(this, entity));
+				hasAI = true;
+			}
+		}
+		
+		@Override
+		public BlockPos getPatrolTarget() {
+			return patrolTarget;
+		}
+		
+		@Override
+		public boolean isPatrolling() {
+			return patrolTarget != null && !hasActiveRaid();
 		}
 		
 	}

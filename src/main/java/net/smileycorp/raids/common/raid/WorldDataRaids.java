@@ -136,11 +136,11 @@ public class WorldDataRaids extends WorldSavedData {
     }
     
     @Nullable
-    public Raid getNearbyRaid(BlockPos p_37971_, int p_37972_) {
+    public Raid getNearbyRaid(BlockPos pos, int range) {
         Raid raid = null;
-        double d0 = p_37972_;
+        double d0 = range;
         for(Raid raid1 : raidMap.values()) {
-            double d1 = raid1.getCenter().distanceSq(p_37971_);
+            double d1 = raid1.getCenter().distanceSq(pos);
             if (raid1.isActive() && d1 < d0) {
                 raid = raid1;
                 d0 = d1;

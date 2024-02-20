@@ -4,8 +4,10 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -24,6 +26,7 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.smileycorp.raids.common.MathUtils;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsLogger;
+import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.network.RaidSoundMessage;
 
@@ -77,7 +80,7 @@ public class Raid {
 		started = nbt.getBoolean("Started");
 		active = nbt.getBoolean("Active");
 		ticksActive = nbt.getLong("TicksActive");
-		badOmenLevel = nbt.getInteger("BadOmenworld");
+		badOmenLevel = nbt.getInteger("BadOmenLevel");
 		groupsSpawned = nbt.getInteger("GroupsSpawned");
 		raidCooldownTicks = nbt.getInteger("PreRaidTicks");
 		postRaidTicks = nbt.getInteger("PostRaidTicks");
@@ -159,7 +162,7 @@ public class Raid {
 		for(EntityPlayerMP EntityPlayerMP1 : set) if (!list.contains(EntityPlayerMP1)) raidEvent.removePlayer(EntityPlayerMP1);
 	}
 	
-	public int getMaxBadOmenworld() {
+	public int getMaxBadOmenLevel() {
 		return 5;
 	}
 	
@@ -174,7 +177,7 @@ public class Raid {
 	public void absorbBadOmen(EntityPlayerMP player) {
 		if (player.isPotionActive(RaidsContent.BAD_OMEN)) {
 			badOmenLevel += player.getActivePotionEffect(RaidsContent.BAD_OMEN).getAmplifier() + 1;
-			badOmenLevel = MathUtils.clamp(badOmenLevel, 0, getMaxBadOmenworld());
+			badOmenLevel = MathUtils.clamp(badOmenLevel, 0, getMaxBadOmenLevel());
 		}
 		player.removePotionEffect(RaidsContent.BAD_OMEN);
 	}
@@ -306,7 +309,7 @@ public class Raid {
 	public static boolean isVillage(World world, BlockPos center) {
 		for (Village village : world.getVillageCollection().getVillageList()){
 			BlockPos vilCenter = village.getCenter();
-			if (vilCenter.getDistance(center.getX(), center.getY(), center.getZ()) < 40) return true;
+			if (vilCenter.getDistance(center.getX(), center.getY(), center.getZ()) < village.getVillageRadius()) return true;
 		}
 		return false;
 	}
@@ -326,7 +329,6 @@ public class Raid {
 				return Optional.of(blockpos);
 			}
 		}
-		
 		return Optional.empty();
 	}
 	
@@ -391,13 +393,17 @@ public class Raid {
 	}
 	
 	
-	public void joinRaid(int wave, EntityLiving entity, @Nullable BlockPos pos, boolean p_37717_) {
+	public void joinRaid(int wave, EntityLiving entity, boolean recruited) {
 		if (addWaveMob(wave, entity)) {
 			Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
 			raider.setCurrentRaid(this);
 			raider.setWave(wave);
 			raider.setTicksOutsideRaid(0);
-			RaidHandler.applyRaidBuffs(entity, this, wave, random);
+			if (entity instanceof EntityCreature) {
+				entity.tasks.addTask(3, new EntityAIPathfindToRaid(raider, (EntityCreature) entity));
+				entity.tasks.addTask(4, new EntityAIMoveThroughVillage((EntityCreature) entity, 1, false));
+			}
+			if (!recruited) RaidHandler.applyRaidBuffs(entity, this, wave, random);
 		}
 	}
 	
@@ -536,7 +542,7 @@ public class Raid {
 		nbt.setBoolean("Started", started);
 		nbt.setBoolean("Active", active);
 		nbt.setLong("TicksActive", ticksActive);
-		nbt.setInteger("BadOmenworld", badOmenLevel);
+		nbt.setInteger("BadOmenLevel", badOmenLevel);
 		nbt.setInteger("GroupsSpawned", groupsSpawned);
 		nbt.setInteger("PreRaidTicks", raidCooldownTicks);
 		nbt.setInteger("PostRaidTicks", postRaidTicks);
@@ -585,10 +591,6 @@ public class Raid {
 	
 	public void addHeroOfTheVillage(Entity entity) {
 		heroesOfTheVillage.add(entity.getUniqueID());
-	}
-	
-	public int getMaxBadOmenLevel() {
-		return 5;
 	}
 	
 	public List<String> getEntityStrings() {

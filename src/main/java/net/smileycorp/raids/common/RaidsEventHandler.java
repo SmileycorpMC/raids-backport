@@ -45,7 +45,7 @@ public class RaidsEventHandler {
 		Entity entity = event.getEntity();
 		if (entity instanceof EntityVillager) {
 			EntityVillager villager = (EntityVillager) entity;
-			villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class, RaidHandler::isRaider, 8.0F, 0.8D, 0.8D));
+			villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class, RaidHandler::isRaider, 16.0F, 0.8D, 0.8D));
 		}
 	}
 
@@ -107,7 +107,8 @@ public class RaidsEventHandler {
 	public void allowDespawn(LivingSpawnEvent.AllowDespawn event) {
 		EntityLivingBase entity = event.getEntityLiving();
 		if (entity.hasCapability(RaidsContent.RAIDER, null)) {
-			if (entity.getCapability(RaidsContent.RAIDER, null).isRaidActive()) event.setResult(Result.DENY);
+			Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
+			if (raider.hasActiveRaid() || raider.isPatrolling()) event.setResult(Result.DENY);
 		}
 	}
 	

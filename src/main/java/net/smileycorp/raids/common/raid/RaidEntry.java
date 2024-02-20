@@ -48,7 +48,7 @@ public class RaidEntry {
         if (world.spawnEntity(entity)) {
             entities.add(entity);
             entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-            raid.joinRaid(wave, entity, pos, false);
+            raid.joinRaid(wave, entity, false);
         }
         if (rider != null) {
             EntityLiving rider = this.rider.apply(raid, world, numSpawned);
@@ -58,9 +58,9 @@ public class RaidEntry {
             rider.setPosition(pos.getX(), pos.getY(), pos.getZ());
             if (world.spawnEntity(rider)) {
                 rider.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-                rider.startRiding(entity, true);
                 entities.add(rider);
-                raid.joinRaid(wave, rider, pos, false);
+                raid.joinRaid(wave, rider, false);
+                rider.startRiding(entity, true);
             }
         }
     }
