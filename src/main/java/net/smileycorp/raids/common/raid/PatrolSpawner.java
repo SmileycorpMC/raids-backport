@@ -52,7 +52,6 @@ public class PatrolSpawner {
         EntityPillager pillager = new EntityPillager(world);
         pillager.setPosition(pos.getX(), pos.getY(), pos.getZ());
         pillager.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-        pillager.setGlowing(true);
         if (pillager.hasCapability(RaidsContent.RAIDER, null)) {
             Raider raider = pillager.getCapability(RaidsContent.RAIDER, null);
             raider.findPatrolTarget();

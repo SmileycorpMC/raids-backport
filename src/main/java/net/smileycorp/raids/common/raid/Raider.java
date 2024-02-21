@@ -162,13 +162,6 @@ public interface Raider {
 		@Override
 		public void findPatrolTarget() {
 			if (entity == null) return;
-			/*EntityPlayer player = entity.world.getClosestPlayer(entity.posX, entity.posY, entity.posZ, 128, false);
-			if (player == null) {
-				RaidsLogger.logError("Player is null for " + entity, new NullPointerException());
-				return;
-			}
-			double angle = Math.atan2(player.posZ - entity.posZ, player.posX - entity.posX) + (entity.getRNG().nextFloat() - 0.5f) * 0.01f;
-			patrolTarget = new BlockPos(entity.getPositionVector().addVector(Math.cos(angle) * 128, 0, Math.sin(angle) * 128));*/
 			setPatrolTarget(entity.getPosition().add(-500 + entity.getRNG().nextInt(1000), 0, -500 + entity.getRNG().nextInt(1000)));
 			
 		}

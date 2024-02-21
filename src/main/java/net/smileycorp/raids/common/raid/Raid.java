@@ -14,7 +14,9 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
@@ -23,6 +25,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.Village;
 import net.minecraft.world.*;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraftforge.fml.common.Loader;
 import net.smileycorp.raids.common.MathUtils;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsLogger;
@@ -91,11 +94,9 @@ public class Raid {
 		heroesOfTheVillage.clear();
 		if (nbt.hasKey("HeroesOfTheVillage", 9)) {
 			NBTTagList listtag = nbt.getTagList("HeroesOfTheVillage", 10);
-			for(NBTBase nbtBase : listtag) {
-				NBTTagCompound compound = (NBTTagCompound) nbtBase;
-				heroesOfTheVillage.add(new UUID(compound.getLong("Most"), compound.getLong("Least")));
-			}
+			for(NBTBase nbtBase : listtag) heroesOfTheVillage.add(NBTUtil.getUUIDFromTag((NBTTagCompound) nbtBase));
 		}
+		RaidsLogger.logInfo(this);
 	}
 	
 	public boolean isOver() {
@@ -415,7 +416,7 @@ public class Raid {
 		Set toRemove = Sets.newHashSet();
 		for (Set<EntityLiving> set : groupEntityLivingMap.values()) {
 			for (EntityLiving entity : set) {
-				if (!entity.isAddedToWorld() |! entity.isEntityAlive()) {
+				if (!entity.isEntityAlive()) {
 					toRemove.add(entity);
 					totalHealth -= entity.getHealth();
 				}
@@ -488,9 +489,8 @@ public class Raid {
 	}
 	
 	public boolean addWaveMob(int index, EntityLiving entity, boolean addHealth) {
-		RaidsLogger.logInfo("Adding entity " + entity + ", " + entity.hasCapability(RaidsContent.RAIDER, null) + ", " + entity.isAddedToWorld()+ ", " + entity.isEntityAlive());
-		if (!entity.hasCapability(RaidsContent.RAIDER, null) |! entity.isAddedToWorld()) return false;
-		entity.setGlowing(true);
+		RaidsLogger.logInfo("Adding entity " + entity + ", " + entity.hasCapability(RaidsContent.RAIDER, null) + ", " + entity.isAddedToWorld()+ ", " + entity.isEntityAlive() + ", " + addHealth);
+		if (!entity.hasCapability(RaidsContent.RAIDER, null)) return false;
 		groupEntityLivingMap.computeIfAbsent(index, v -> Sets.newHashSet());
 		Set<EntityLiving> set = groupEntityLivingMap.get(index);
 		EntityLiving entity0 = null;
@@ -553,12 +553,7 @@ public class Raid {
 		nbt.setInteger("CY", center.getY());
 		nbt.setInteger("CZ", center.getZ());
 		NBTTagList listtag = new NBTTagList();
-		for(UUID uuid : heroesOfTheVillage) {
-			NBTTagCompound uuidnbt = new NBTTagCompound();
-			uuidnbt.setLong("Most", uuid.getMostSignificantBits());
-			uuidnbt.setLong("Least", uuid.getLeastSignificantBits());
-			listtag.appendTag(uuidnbt);
-		}
+		for(UUID uuid : heroesOfTheVillage) listtag.appendTag(NBTUtil.createUUIDTag(uuid));
 		nbt.setTag("HeroesOfTheVillage", listtag);
 		return nbt;
 	}
