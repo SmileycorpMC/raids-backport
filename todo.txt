@@ -1,6 +1,3 @@
-Fix Multishot spread ✓
-Fix Fireworks momentum ✓
-Add Piercing effect ✓
 Fix Pillager AI ✓
 Backport Pillager Animations ✓
 Finish Raid spawning mechanics ✓
