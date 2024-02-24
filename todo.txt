@@ -9,8 +9,11 @@ Add Ravagers ✓
 Add Patrols ✓
 Add Advancements ✓
 Fix Raid Save Data Not Saving properly ✓
+Fix Raid AI for Vindicators, Evokers and Witches
 Add Hero of the Village Effect
 Add Watchtowers
-Add Bell
+### First Release
+Add Bell / FutureMC Support
 Add Allays
-Customizability and mod support
+Raid and Patrol Customizability
+Mod Support (Tinkers Construct, Spartan Weapons, Crossbow?)
