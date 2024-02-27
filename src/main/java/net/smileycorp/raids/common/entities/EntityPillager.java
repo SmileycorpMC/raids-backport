@@ -29,6 +29,7 @@ import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.config.EntityConfig;
+import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
 
 import javax.annotation.Nullable;
@@ -45,7 +46,7 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
 	protected void initEntityAI() {
 		super.initEntityAI();
 		tasks.addTask(0, new EntityAISwimming(this));
-        if (Constants.CROSSBOWS_LOADED) CrossbowsIntegration.addTask(this);
+        if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.addTask(this);
         else tasks.addTask(4, new EntityAIAttackRangedBow(this, 1.0D, 20, 15.0F));
         tasks.addTask(8, new EntityAIWanderAvoidWater(this, 1.0D));
         tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 15F, 1F));
@@ -84,9 +85,9 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
     
     @Override
     public IllagerArmPose getArmPose() {
-        if (Constants.CROSSBOWS_LOADED && CrossbowsIntegration.isCrossbow(getHeldItemMainhand())) return null;
+        if (ModIntegration.CROSSBOWS_LOADED && CrossbowsIntegration.isCrossbow(getHeldItemMainhand())) return null;
         if (!getHeldItemMainhand().isEmpty()) return IllagerArmPose.BOW_AND_ARROW;
-        if (Constants.CROSSBOWS_LOADED && CrossbowsIntegration.isCrossbow(getHeldItemOffhand())) return null;
+        if (ModIntegration.CROSSBOWS_LOADED && CrossbowsIntegration.isCrossbow(getHeldItemOffhand())) return null;
         return getHeldItemOffhand().isEmpty() ? IllagerArmPose.ATTACKING : IllagerArmPose.BOW_AND_ARROW;
     }
 	
@@ -100,7 +101,7 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
     @Override
     protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty) {
         super.setEquipmentBasedOnDifficulty(difficulty);
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, Constants.CROSSBOWS_LOADED ? CrossbowsIntegration.getCrossbow() : new ItemStack(Items.BOW));
+        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ModIntegration.CROSSBOWS_LOADED ? CrossbowsIntegration.getCrossbow() : new ItemStack(Items.BOW));
     }
     
     @Override
@@ -155,7 +156,7 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
     @Override
     public void onDeath(DamageSource source) {
         super.onDeath(source);
-        if (!Constants.CROSSBOWS_LOADED) return;
+        if (!ModIntegration.CROSSBOWS_LOADED) return;
         if (CrossbowsIntegration.isCrossbowProjectile(source.getImmediateSource()) && source.getTrueSource() instanceof EntityPlayerMP)
             RaidsContent.WHOS_THE_PILLAGER.trigger((EntityPlayerMP) source.getTrueSource());
     }

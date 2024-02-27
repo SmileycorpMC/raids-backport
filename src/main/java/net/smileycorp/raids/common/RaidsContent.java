@@ -41,7 +41,7 @@ public class RaidsContent {
 	
 	public static final ItemStack OMINOUS_BANNER = createOminousBanner();
 	
-	private static int ID = 100;
+	private static int ID = 154;
 	public static final EntityEntry PILLAGER = EntityEntryBuilder.create().entity(EntityPillager.class).id(Constants.loc("pillager"), ID++).name(Constants.name("Pillager")).egg(5451574, 9804699)
 			.tracker(64, 3, true).build();
 	public static EntityEntry RAVAGER = EntityEntryBuilder.create().entity(EntityRavager.class).id(Constants.loc("ravager"), ID++).name(Constants.name("Ravager")).egg(7697520, 5984329)

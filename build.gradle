@@ -78,6 +78,9 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 	implementation "org.spongepowered:mixin:0.8"
 	implementation "curse.maven:crossbows-973881:5108261"
+	implementation "curse.maven:futuremc-310059:5013081"
+	implementation "curse.maven:tconstruct-74072:2902483"
+	implementation "curse.maven:spartan-weaponry-278141:4467344"
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

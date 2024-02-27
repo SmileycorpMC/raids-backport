@@ -4,8 +4,12 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.village.MerchantRecipe;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import net.smileycorp.raids.common.MathUtils;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
+import net.smileycorp.raids.integration.ModIntegration;
+import net.smileycorp.raids.integration.futuremc.FutureMCClientIntegration;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,12 +31,18 @@ public class MixinMerchantRecipe implements ITradeDiscount {
     
     @Override
     public void setDiscountedPrice(int price) {
-        discountedPrice = MathUtils.clamp(itemToBuy.getCount() + price, 1, 64);
+        discountedPrice = MathUtils.clamp(price, 0, 64);
     }
     
     @Override
     public boolean hasDiscount() {
-        return discountedPrice != 0;
+        return discountedPrice != itemToBuy.getCount() && discountedPrice > 0;
+    }
+    
+    @Inject(at = @At("TAIL"), method = "getItemToBuy")
+    public void getItemToBuy(CallbackInfoReturnable<ItemStack> callback) {
+        if (ModIntegration.FUTUREMC_LOADED && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            FutureMCClientIntegration.setCachedStack(callback.getReturnValue(), discountedPrice);
     }
     
     @Inject(at = @At("TAIL"), method = "readFromTags")

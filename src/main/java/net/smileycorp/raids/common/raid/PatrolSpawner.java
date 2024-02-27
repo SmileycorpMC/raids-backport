@@ -25,7 +25,7 @@ public class PatrolSpawner {
         long i = world.getWorldTime() / 24000L;
         if ((i < 5 &! world.isDaytime()) || rand.nextInt(5) != 0 || world.playerEntities.isEmpty()) return;
         EntityPlayer player = world.playerEntities.get(rand.nextInt(world.playerEntities.size()));
-        if (player.isSpectator() || Raid.isVillage(world, player.getPosition())) return;
+        if (player.func_175149_v() || Raid.isVillage(world, player.getPosition())) return;
         spawnPatrol(world, player.getPosition(), rand);
     }
     

@@ -15,7 +15,6 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -28,6 +27,7 @@ import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.raid.Raider;
 import net.smileycorp.raids.config.EntityConfig;
+import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
 
 import java.util.Map;
@@ -35,7 +35,6 @@ import java.util.Map;
 public class CommonProxy {
 	
 	public void preInit(FMLPreInitializationEvent event) {
-		if (Loader.isModLoaded("crossbows")) Constants.CROSSBOWS_LOADED = true;
 		EntityConfig.syncConfig(event);
 		PacketHandler.initPackets();
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());
@@ -76,7 +75,7 @@ public class CommonProxy {
 		RaidHandler.registerEntry(EntityEvoker.class, new int[]{0, 0, 0, 1, 0, 1, 0, 2}, null, null);
 		RaidHandler.registerRaidBuffs(EntityPillager.class, (entity, raid, wave, rand) -> {
 			if (rand.nextFloat() <= raid.getEnchantOdds()) {
-				if (Constants.CROSSBOWS_LOADED) CrossbowsIntegration.applyRaidBuffs(entity, raid, wave);
+				if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.applyRaidBuffs(entity, raid, wave);
 			}
 		});
 		RaidHandler.registerRaidBuffs(EntityVindicator.class, (entity, raid, wave, rand) -> {

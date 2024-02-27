@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderVindicator;
 import net.minecraft.client.renderer.entity.layers.LayerCustomHead;
 import net.minecraft.entity.monster.EntityMob;
+import net.smileycorp.raids.common.RaidsLogger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,6 +23,7 @@ public abstract class MixinRenderVindicator extends RenderLiving<EntityMob> {
     @Inject(at =@At("TAIL"), method = "<init>")
     public void init(RenderManager renderManager, CallbackInfo callbackInfo)  {
         addLayer(new LayerCustomHead(((ModelIllager)getMainModel()).head));
+        RaidsLogger.logInfo("brrrap");
     }
     
 }

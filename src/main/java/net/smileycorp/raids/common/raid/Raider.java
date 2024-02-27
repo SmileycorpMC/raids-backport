@@ -3,7 +3,6 @@ package net.smileycorp.raids.common.raid;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,7 +14,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.RaidsLogger;
 import net.smileycorp.raids.common.entities.ai.EntityAILongDistancePatrol;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
 

@@ -16,7 +16,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
@@ -25,7 +24,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.Village;
 import net.minecraft.world.*;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraftforge.fml.common.Loader;
 import net.smileycorp.raids.common.MathUtils;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsLogger;
@@ -93,18 +91,13 @@ public class Raid {
 		status = Status.getByName(nbt.getString("Status"));
 		heroesOfTheVillage.clear();
 		if (nbt.hasKey("HeroesOfTheVillage", 9)) {
-			NBTTagList listtag = nbt.getTagList("HeroesOfTheVillage", 10);
-			for(NBTBase nbtBase : listtag) heroesOfTheVillage.add(NBTUtil.getUUIDFromTag((NBTTagCompound) nbtBase));
+			NBTTagList list = nbt.getTagList("HeroesOfTheVillage", 10);
+			for(NBTBase nbtBase : list) heroesOfTheVillage.add(NBTUtil.getUUIDFromTag((NBTTagCompound) nbtBase));
 		}
-		RaidsLogger.logInfo(this);
 	}
 	
 	public boolean isOver() {
 		return isVictory() || isLoss();
-	}
-	
-	public boolean isBetweenWaves() {
-		return hasFirstWaveSpawned() && getTotalEntityLivingsAlive() == 0 && raidCooldownTicks > 0;
 	}
 	
 	public boolean hasFirstWaveSpawned() {
@@ -121,10 +114,6 @@ public class Raid {
 	
 	public boolean isLoss() {
 		return status == Status.LOSS;
-	}
-	
-	public float getTotalHealth() {
-		return totalHealth;
 	}
 	
 	public Set<EntityLiving> getAllEntityLivings() {
@@ -211,7 +200,7 @@ public class Raid {
 						status = Status.LOSS;
 					} else stop();
 				}
-				if (ticksActive++ >= 48000L) {
+				if (ticksActive++ >= 48000) {
 					stop();
 					return;
 				}
@@ -240,7 +229,7 @@ public class Raid {
 						raidCooldownTicks--;
 					}
 				}
-				if (ticksActive % 20L == 0L) {
+				if (ticksActive % 20 == 0) {
 					updatePlayers();
 					updateEntityLivings();
 					if (i > 0) {
@@ -296,14 +285,13 @@ public class Raid {
 					updatePlayers();
 					raidEvent.setVisible(true);
 					if (isVictory()) {
-						raidEvent.setPercent(0.0F);
+						raidEvent.setPercent(0);
 						raidEvent.setName(RAID_BAR_VICTORY_COMPONENT);
 					} else {
 						raidEvent.setName(RAID_BAR_DEFEAT_COMPONENT);
 					}
 				}
 			}
-			
 		}
 	}
 	
@@ -324,21 +312,15 @@ public class Raid {
 	}
 	
 	private Optional<BlockPos> getValidSpawnPos(int p_37764_) {
-		for(int i = 0; i < 3; ++i) {
+		for(int i = 0; i < 3; i++) {
 			BlockPos blockpos = findRandomSpawnPos(p_37764_, 1);
-			if (blockpos != null) {
-				return Optional.of(blockpos);
-			}
+			if (blockpos != null) return Optional.of(blockpos);
 		}
 		return Optional.empty();
 	}
 	
 	private boolean hasMoreWaves() {
-		if (hasBonusWave()) {
-			return !hasSpawnedBonusWave();
-		} else {
-			return !isFinalWave();
-		}
+		return !(hasBonusWave() ? hasSpawnedBonusWave() : isFinalWave());
 	}
 	
 	private boolean isFinalWave() {
@@ -365,7 +347,7 @@ public class Raid {
 			for(EntityLiving entity : set1) {
 				BlockPos blockpos = entity.getPosition();
 				if (entity.isEntityAlive() && entity.isAddedToWorld() && entity.hasCapability(RaidsContent.RAIDER, null)
-						&& entity.world.provider.getDimension() == world.provider.getDimension() && !(center.distanceSq(blockpos) >= 12544.0D)) {
+						&& entity.world.provider.getDimension() == world.provider.getDimension() && !(center.distanceSq(blockpos) >= 12544)) {
 					Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
 					if (entity.ticksExisted > 600) {
 						if (world.getEntityFromUuid(entity.getUniqueID()) == null) set.add(entity);
@@ -386,9 +368,9 @@ public class Raid {
 			Vec3d vec3 = player.getPositionVector();
 			Vec3d vec31 = new Vec3d(pos);
 			double d0 = Math.sqrt((vec31.x - vec3.x) * (vec31.x - vec3.x) + (vec31.z - vec3.z) * (vec31.z - vec3.z));
-			double d1 = vec3.x + 13.0D / d0 * (vec31.x - vec3.x);
-			double d2 = vec3.z + 13.0D / d0 * (vec31.z - vec3.z);
-			if ((d0 <= 64.0D || collection.contains(player)) && player instanceof EntityPlayerMP)
+			double d1 = vec3.x + 13 / d0 * (vec31.x - vec3.x);
+			double d2 = vec3.z + 13 / d0 * (vec31.z - vec3.z);
+			if ((d0 <= 64 || collection.contains(player)) && player instanceof EntityPlayerMP)
 				PacketHandler.NETWORK_INSTANCE.sendTo(new RaidSoundMessage(new BlockPos(d0, d1, d2)), (EntityPlayerMP)player);
 		}
 	}
@@ -410,7 +392,7 @@ public class Raid {
 	
 	public void updateBossbar() {
 		if (getTotalEntityLivingsAlive() <= 0 && hasMoreWaves() && raidCooldownTicks > 0) {
-			raidEvent.setPercent(MathUtils.clamp((float)(300 - raidCooldownTicks) / 300.0F, 0.0F, 1.0F));
+			raidEvent.setPercent(MathUtils.clamp((float)(300 - raidCooldownTicks) / 300, 0, 1));
 			return;
 		}
 		Set toRemove = Sets.newHashSet();
@@ -423,13 +405,13 @@ public class Raid {
 			}
 			set.removeAll(toRemove);
 		}
-		raidEvent.setPercent(MathUtils.clamp(getHealthOfEntities() / totalHealth, 0.0F, 1.0F));
+		raidEvent.setPercent(MathUtils.clamp(getHealthOfEntities() / totalHealth, 0, 1));
 	}
 	
 	public float getHealthOfEntities() {
-		float f = 0.0F;
-		for (Set<EntityLiving> set : groupEntityLivingMap.values()) for (EntityLiving entity : set) f += entity.getHealth();
-		return f;
+		float health = 0;
+		for (Set<EntityLiving> set : groupEntityLivingMap.values()) for (EntityLiving entity : set) health += entity.getHealth();
+		return health;
 	}
 	
 	private boolean shouldSpawnGroup() {
@@ -453,7 +435,6 @@ public class Raid {
 				setDirty();
 			}
 		}
-		
 	}
 	
 	private void setDirty() {
@@ -461,25 +442,18 @@ public class Raid {
 	}
 	
 	@Nullable
-	public EntityLiving getLeader(int p_37751_) {
-		return groupToLeaderMap.get(p_37751_);
-	}
-	
-	@Nullable
 	private BlockPos findRandomSpawnPos(int p_37708_, int p_37709_) {
 		int i = p_37708_ == 0 ? 2 : 2 - p_37708_;
-		BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 		for(int i1 = 0; i1 < p_37709_; ++i1) {
-			float f = random.nextFloat() * ((float)Math.PI * 2F);
-			int j = center.getX() + (int)Math.floor(Math.cos(f) * 32.0F * (float)i) + random.nextInt(5);
-			int l = center.getZ() + (int)Math.floor(Math.sin(f) * 32.0F * (float)i) + random.nextInt(5);
-			int k = world.getHeight(j, l);
-			blockpos$mutableblockpos.setPos(j, k, l);
-			if (isVillage(world, blockpos$mutableblockpos) || p_37708_ >= 2) {
-				if (world.isAreaLoaded(new StructureBoundingBox(blockpos$mutableblockpos.getX() - 10, blockpos$mutableblockpos.getZ() - 10,
-						blockpos$mutableblockpos.getX() + 10, blockpos$mutableblockpos.getZ() + 10))
-						&& world.isAirBlock(blockpos$mutableblockpos)) return blockpos$mutableblockpos;
-			}
+			float f = random.nextFloat() * ((float)Math.PI * 2);
+			int x = center.getX() + (int)Math.floor(Math.cos(f) * 32 * (float)i) + random.nextInt(5);
+			int z = center.getZ() + (int)Math.floor(Math.sin(f) * 32 * (float)i) + random.nextInt(5);
+			int y = world.getHeight(x, z);
+			pos.setPos(x, y, z);
+			if ((isVillage(world, pos) || p_37708_ >= 2) && world.isAreaLoaded(new StructureBoundingBox(pos.getX() - 10, pos.getZ() - 10,
+						pos.getX() + 10, pos.getZ() + 10))
+						&& world.isAirBlock(pos)) return pos;
 		}
 		return null;
 	}

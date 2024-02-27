@@ -18,7 +18,8 @@ public class MixinMerchantRecipeList extends ArrayList<MerchantRecipe> {
     
     @Redirect(method = "canRecipeBeUsed", at = @At(value = "INVOKE", target = "Lnet/minecraft/village/MerchantRecipe;getItemToBuy()Lnet/minecraft/item/ItemStack;"))
     public ItemStack canRecipeBeUsed$getItemToBuy(MerchantRecipe instance) {
-        ItemStack stack = instance.getItemToBuy();
+        if (!((ITradeDiscount)instance).hasDiscount()) return instance.getItemToBuy();
+        ItemStack stack = instance.getItemToBuy().copy();
         stack.setCount(((ITradeDiscount)instance).getDiscountedPrice());
         return stack;
     }
@@ -32,9 +33,7 @@ public class MixinMerchantRecipeList extends ArrayList<MerchantRecipe> {
             buffer.writeItemStack(merchantrecipe.getItemToSell());
             ItemStack itemstack = merchantrecipe.getSecondItemToBuy();
             buffer.writeBoolean(!itemstack.isEmpty());
-            if (!itemstack.isEmpty()) {
-                buffer.writeItemStack(itemstack);
-            }
+            if (!itemstack.isEmpty()) buffer.writeItemStack(itemstack);
             buffer.writeBoolean(merchantrecipe.isRecipeDisabled());
             buffer.writeInt(merchantrecipe.getToolUses());
             buffer.writeInt(merchantrecipe.getMaxTradeUses());

@@ -124,8 +124,7 @@ public class RaidsEventHandler {
 			ITradeDiscount trade = (ITradeDiscount) newRecipe;
 			double d0 = 0.3D + 0.0625D * (double)amplifier;
 			int j = (int)Math.floor(d0 * (double)newRecipe.getItemToBuy().getCount());
-			trade.setDiscountedPrice(-Math.max(j, 1));
-			RaidsLogger.logInfo(trade.getDiscountedPrice());
+			trade.setDiscountedPrice(Math.max(j, 1));
 			newList.add(newRecipe);
 		}
 		event.setList(newList);

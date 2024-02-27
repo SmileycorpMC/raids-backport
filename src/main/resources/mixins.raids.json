@@ -4,13 +4,19 @@
   "refmap": "mixins.raids.refmap.json",
   "mixins": [
     "MixinEntityAIMoveIndoors",
+    "MixinEntityVillager",
     "MixinItemBanner",
     "MixinListEnchantedBookForEmeralds",
-    "MixinMerchantRecipe"
+    "MixinMerchantRecipe",
+    "MixinMerchantRecipeList",
+    "MixinSlotMerchantResult"
   ],
   "client": [
+    "MixinGuiMerchant",
+    "MixinMerchantRecipeListClient",
     "MixinRenderEvoker",
     "MixinRenderIllusionIllager",
+    "MixinRenderItem",
     "MixinRenderVindicator"
   ],
   "server": []
