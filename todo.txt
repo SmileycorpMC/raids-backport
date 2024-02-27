@@ -7,7 +7,7 @@ Add Patrols ✓
 Add Advancements ✓
 Fix Raid Save Data Not Saving properly ✓
 Fix Raid AI for Vindicators, Evokers and Witches
-Add Hero of the Village Effect
+Add Hero of the Village Effect ✓ (Mostly)
 Add Watchtowers
 ### First Release
 Add Bell / FutureMC Support
