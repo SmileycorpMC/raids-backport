@@ -9,6 +9,10 @@ import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.storage.loot.LootEntryItem;
+import net.minecraft.world.storage.loot.LootPool;
+import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.smileycorp.crossbows.common.CrossbowsContent;
 import net.smileycorp.crossbows.common.ai.EntityAIAttackRangedCrossbow;
 import net.smileycorp.crossbows.common.entities.ICrossbowArrow;
@@ -49,6 +53,10 @@ public class CrossbowsIntegration {
     
     public static void setOwner(EntityFireworkRocket firework, EntityLivingBase owner) {
         ((IFireworksProjectile)firework).setOwner(owner);
+    }
+    
+    public static void addLoot(LootPool pool) {
+        pool.addEntry(new LootEntryItem(CrossbowsContent.CROSSBOW, 7, 1, new LootFunction[0], new LootCondition[0], "crossbows:crossbow"));
     }
     
 }

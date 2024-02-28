@@ -15,7 +15,12 @@ import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.loot.LootEntry;
+import net.minecraft.world.storage.loot.LootPool;
+import net.minecraft.world.storage.loot.RandomValueRange;
+import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -29,6 +34,10 @@ import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.raid.Raider;
 import net.smileycorp.raids.common.raid.WorldDataRaids;
+import net.smileycorp.raids.integration.ModIntegration;
+import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
+import net.smileycorp.raids.integration.spartanweaponry.SpartanWeaponryIntegration;
+import net.smileycorp.raids.integration.tconstruct.TinkersConstructIntegration;
 
 public class RaidsEventHandler {
 
@@ -128,6 +137,16 @@ public class RaidsEventHandler {
 			newList.add(newRecipe);
 		}
 		event.setList(newList);
+	}
+	
+	@SubscribeEvent
+	public void addLoot(LootTableLoadEvent event) {
+		if (Constants.OUTPOST_CHESTS.equals(event.getName())) {
+			LootPool pool = event.getTable().getPool("raids:outpost_crossbow");
+			if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.addLoot(pool);
+			if (ModIntegration.SPARTAN_LOADED) SpartanWeaponryIntegration.addLoot(pool);
+			if (ModIntegration.TINKERS_LOADED) TinkersConstructIntegration.addLoot(pool);
+		}
 	}
 	
 }

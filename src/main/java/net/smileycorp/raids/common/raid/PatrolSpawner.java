@@ -2,6 +2,7 @@ package net.smileycorp.raids.common.raid;
 
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.monster.EntityWitherSkeleton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
@@ -22,7 +23,7 @@ public class PatrolSpawner {
         Random rand = world.rand;
         if (nextTick-- > 0) return;
         nextTick += 12000 + rand.nextInt(1200);
-        long i = world.getWorldTime() / 24000L;
+        long i = world.getWorldTime() / 24000;
         if ((i < 5 &! world.isDaytime()) || rand.nextInt(5) != 0 || world.playerEntities.isEmpty()) return;
         EntityPlayer player = world.playerEntities.get(rand.nextInt(world.playerEntities.size()));
         if (player.func_175149_v() || Raid.isVillage(world, player.getPosition())) return;

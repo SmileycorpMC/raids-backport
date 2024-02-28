@@ -6,14 +6,9 @@
                 "min": 0,
                 "max": 1
             },
-            "entries": [
-                {
-                    "type": "item",
-                    "name": "crossbows:crossbow"
-                }
-            ]
+            "entries": []
         },
-        {
+		{
             "name": "raids:outpost1",
             "rolls": {
                 "min": 2,
@@ -80,9 +75,13 @@
                                 "min": 2,
                                 "max": 3
                             }
-                        }
+                        },
+						{
+							"function": "minecraft:set_data",
+							"data": 1
+						}
                     ],
-                    "name": "minecraft:dark_oak_log"
+                    "name": "minecraft:log2"
                 }
             ]
         },

@@ -296,9 +296,13 @@ public class Raid {
 	}
 	
 	public static boolean isVillage(World world, BlockPos center) {
+		return isVillage(world, center, 16);
+	}
+	
+	public static boolean isVillage(World world, BlockPos center, double distance) {
 		for (Village village : world.getVillageCollection().getVillageList()){
 			BlockPos vilCenter = village.getCenter();
-			if (vilCenter.getDistance(center.getX(), center.getY(), center.getZ()) < village.getVillageRadius()) return true;
+			if (vilCenter.getDistance(center.getX(), center.getY(), center.getZ()) < (village.getVillageRadius() + distance * distance)) return true;
 		}
 		return false;
 	}
