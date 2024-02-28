@@ -12,11 +12,11 @@ Pillager Patrols
 
 Advancements
 
+Hero of the Village Effects (Discounts only for the moment)
+
 ### Future Plans
 
 Watchtowers
-
-Hero of the Village Effects
 
 Bells
 
