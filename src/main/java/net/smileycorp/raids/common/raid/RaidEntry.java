@@ -13,17 +13,23 @@ import java.util.Random;
 
 public class RaidEntry {
     
-    private Class<? extends EntityLiving> entity;
-    private int[] count;
-    private Rider rider;
-    private BonusSpawns bonusSpawns;
+    private final Class<? extends EntityLiving> entity;
+    private final int[] count;
+    private final float captainChance;
+    private final Rider rider;
+    private final BonusSpawns bonusSpawns;
     private Map<Class<? extends EntityLiving>, Integer> numSpawned = Maps.newHashMap();
     
-    public RaidEntry(Class<? extends EntityLiving> entity, int[] count, @Nullable Rider rider, @Nullable BonusSpawns bonusSpawns) {
+    public RaidEntry(Class<? extends EntityLiving> entity, int[] count, float captainChance, @Nullable Rider rider, @Nullable BonusSpawns bonusSpawns) {
         this.entity = entity;
         this.count = count;
+        this.captainChance = captainChance;
         this.rider = rider;
         this.bonusSpawns = bonusSpawns;
+    }
+    
+    public float getCaptainChance() {
+        return captainChance;
     }
     
     public int getCount(Raid raid, Random rand, int wave, boolean shouldSpawnBonus) {

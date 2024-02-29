@@ -21,9 +21,12 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
@@ -55,6 +58,11 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
         targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
         targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityVillager.class, true));
         targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityIronGolem.class, true));
+    }
+    
+    @Override
+    protected boolean isValidLightLevel() {
+        return world.getLightFor(EnumSkyBlock.BLOCK, new BlockPos(posX, getEntityBoundingBox().minY, posZ)) <= 8;
     }
     
     @Override

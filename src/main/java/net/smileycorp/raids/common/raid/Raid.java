@@ -296,7 +296,7 @@ public class Raid {
 	}
 	
 	public static boolean isVillage(World world, BlockPos center) {
-		return isVillage(world, center, 16);
+		return isVillage(world, center, 0);
 	}
 	
 	public static boolean isVillage(World world, BlockPos center, double distance) {

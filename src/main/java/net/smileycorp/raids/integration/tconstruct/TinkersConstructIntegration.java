@@ -2,10 +2,6 @@ package net.smileycorp.raids.integration.tconstruct;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.oblivioussp.spartanweaponry.init.ItemRegistrySW;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -15,25 +11,17 @@ import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootPool;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
-import net.smileycorp.crossbows.common.CrossbowsContent;
-import net.smileycorp.raids.common.RaidsLogger;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.raid.Raid;
-import net.smileycorp.raids.integration.spartanweaponry.LootFunctionSWCrossbow;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.library.materials.Material;
-import slimeknights.tconstruct.library.tinkering.TinkersItem;
 import slimeknights.tconstruct.library.tools.ToolPart;
 import slimeknights.tconstruct.library.utils.ToolBuilder;
 import slimeknights.tconstruct.tools.TinkerMaterials;
-import slimeknights.tconstruct.tools.TinkerModifiers;
 import slimeknights.tconstruct.tools.TinkerTools;
 import slimeknights.tconstruct.tools.ranged.TinkerRangedWeapons;
-import slimeknights.tconstruct.tools.ranged.item.CrossBow;
-import thedarkcolour.futuremc.item.CrossbowItem;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class TinkersConstructIntegration {

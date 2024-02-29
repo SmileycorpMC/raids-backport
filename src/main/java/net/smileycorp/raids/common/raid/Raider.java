@@ -53,6 +53,9 @@ public interface Raider {
 	
 	boolean isPatrolling();
 	
+	boolean canBeCaptain();
+	
+	float getCaptainChance();
 	
 	class Impl implements Raider {
 
@@ -181,6 +184,16 @@ public interface Raider {
 		@Override
 		public boolean isPatrolling() {
 			return patrolTarget != null && !hasActiveRaid();
+		}
+		
+		@Override
+		public boolean canBeCaptain() {
+			return RaidHandler.canBeCaptain(entity);
+		}
+		
+		@Override
+		public float getCaptainChance() {
+			return RaidHandler.getCaptainChance(entity);
 		}
 		
 	}

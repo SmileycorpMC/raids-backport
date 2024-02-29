@@ -17,12 +17,12 @@ public class RaidHandler {
 
 	public static final NonNullList<Class<? extends EntityLiving>> RAIDERS = NonNullList.create();
 
-	private static final List<RaidEntry> ENTRIES = new ArrayList();
+	private static final Map<Class<? extends EntityLiving>, RaidEntry> ENTRIES = Maps.newHashMap();
 	
 	public static final Map<Class<? extends EntityLiving>, RaidBuffs> RAID_BUFFS = Maps.newHashMap();
 
-	public static void registerEntry(Class<? extends EntityLiving> entity, int[] count, @Nullable RaidEntry.Rider rider, @Nullable RaidEntry.BonusSpawns bonusSpawns) {
-		ENTRIES.add(new RaidEntry(entity, count, rider, bonusSpawns));
+	public static void registerEntry(Class<? extends EntityLiving> entity, int[] count, float captainChance, @Nullable RaidEntry.Rider rider, @Nullable RaidEntry.BonusSpawns bonusSpawns) {
+		ENTRIES.put(entity, new RaidEntry(entity, count, captainChance, rider, bonusSpawns));
 		if (!RAIDERS.contains(entity) && entity != null) RAIDERS.add(entity);
 	}
 	
@@ -34,11 +34,22 @@ public class RaidHandler {
 	public static boolean isRaider(Entity entity) {
 		return entity == null ? false : RAIDERS.contains(entity.getClass());
 	}
+	
+	public static boolean canBeCaptain(EntityLiving entity) {
+		return getCaptainChance(entity) > 0;
+	}
+	
+	public static float getCaptainChance(EntityLiving entity) {
+		if (!isRaider(entity)) return 0;
+		RaidEntry entry = ENTRIES.get(entity.getClass());
+		if (entry == null) return 0;
+		return entry.getCaptainChance();
+	}
 
 	public static void spawnNewWave(Raid raid, BlockPos pos, int wave, boolean isBonusWave) {
 		List<EntityLiving> entities = new ArrayList<EntityLiving>();
 		Random rand = raid.getWorld().rand;
-		for (RaidEntry entry : ENTRIES) {
+		for (RaidEntry entry : ENTRIES.values()) {
 			for (int i = 0; i < entry.getCount(raid, rand, wave, isBonusWave); i++) {
 				try {
 					entry.spawnEntity(raid, wave, raid.getWorld().getHeight(pos.north(rand.nextInt(6)-3).east(rand.nextInt(6)-3)), entities);
@@ -59,13 +70,7 @@ public class RaidHandler {
 			}
 		}
 		for (EntityLiving entity : entities) {
-			if (entity instanceof AbstractIllager) {
-				raid.setLeader(wave, entity);
-				return;
-			}
-		}
-		for (EntityLiving entity : entities) {
-		if (entity.hasCapability(RaidsContent.RAIDER, null)) {
+			if (canBeCaptain(entity)) {
 				raid.setLeader(wave, entity);
 				return;
 			}

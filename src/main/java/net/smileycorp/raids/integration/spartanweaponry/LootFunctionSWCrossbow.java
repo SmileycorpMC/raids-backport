@@ -1,7 +1,5 @@
 package net.smileycorp.raids.integration.spartanweaponry;
 
-import com.oblivioussp.spartanweaponry.api.ToolMaterialEx;
-import com.oblivioussp.spartanweaponry.init.ItemRegistrySW;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.conditions.LootCondition;

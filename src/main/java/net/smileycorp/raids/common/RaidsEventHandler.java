@@ -15,10 +15,7 @@ import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootPool;
-import net.minecraft.world.storage.loot.RandomValueRange;
-import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -109,6 +106,17 @@ public class RaidsEventHandler {
 					if (player instanceof EntityPlayerMP) RaidsContent.VOLUNTARY_EXILE.trigger((EntityPlayerMP) player);
 				}
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void spawn(LivingSpawnEvent.SpecialSpawn event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (event.getSpawner() == null && entity.hasCapability(RaidsContent.RAIDER, null)) {
+			Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
+			if (raider.hasActiveRaid() || raider.isPatrolling()) return;
+			float chance = raider.getCaptainChance();
+			if (chance > 0) if (entity.getRNG().nextFloat() < chance) raider.setPatrolLeader(true);
 		}
 	}
 
