@@ -23,3 +23,5 @@ Bells
 Allays
 
 Mod support and more config customisability
+
+Ominous Bottles
