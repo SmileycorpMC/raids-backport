@@ -14,3 +14,4 @@ Add Bell / FutureMC Support
 Add Allays
 Raid and Patrol Customizability
 Mod Support (Tinkers Construct, Spartan Weapons, Crossbow?)
+Ominous Bottles
