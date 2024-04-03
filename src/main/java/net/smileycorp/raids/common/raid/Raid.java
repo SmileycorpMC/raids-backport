@@ -30,6 +30,7 @@ import net.smileycorp.raids.common.RaidsLogger;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.network.RaidSoundMessage;
+import net.smileycorp.raids.config.RaidConfig;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -166,7 +167,7 @@ public class Raid {
 	
 	public void absorbBadOmen(EntityPlayerMP player) {
 		if (player.isPotionActive(RaidsContent.BAD_OMEN)) {
-			badOmenLevel += player.getActivePotionEffect(RaidsContent.BAD_OMEN).getAmplifier() + 1;
+			badOmenLevel += player.getActivePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN).getAmplifier() + 1;
 			badOmenLevel = MathUtils.clamp(badOmenLevel, 0, getMaxBadOmenLevel());
 		}
 		player.removePotionEffect(RaidsContent.BAD_OMEN);

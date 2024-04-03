@@ -1,10 +1,7 @@
 package net.smileycorp.raids.common;
 
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemBanner;
-import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
@@ -23,9 +20,11 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
+import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.potion.BadOmenPotion;
 import net.smileycorp.raids.common.potion.RaidsPotion;
 import net.smileycorp.raids.common.raid.Raider;
+import net.smileycorp.raids.config.RaidConfig;
 
 import java.util.Random;
 
@@ -35,11 +34,13 @@ public class RaidsContent {
 	public static final RaidsCriterionTrigger WHOS_THE_PILLAGER = new RaidsCriterionTrigger("whos_the_pillager");
 	public static final RaidsCriterionTrigger VOLUNTARY_EXILE = new RaidsCriterionTrigger("voluntary_exile");
 	public static final RaidsCriterionTrigger RAID_VICTORY = new RaidsCriterionTrigger("raid_victory");
-	
-	@CapabilityInject(Raider.class)
+    
+    @CapabilityInject(Raider.class)
 	public static Capability<Raider> RAIDER = null;
 	
 	public static final ItemStack OMINOUS_BANNER = createOminousBanner();
+	
+	public static final Item OMINOUS_BOTTLE = new ItemOminousBottle();
 	
 	private static int ID = 154;
 	public static final EntityEntry PILLAGER = EntityEntryBuilder.create().entity(EntityPillager.class).id(Constants.loc("pillager"), ID++).name(Constants.name("Pillager")).egg(5451574, 9804699)
@@ -49,6 +50,7 @@ public class RaidsContent {
 	
 	public static final Potion BAD_OMEN = new BadOmenPotion();
 	public static final Potion HERO_OF_THE_VILLAGE = new RaidsPotion(false, 0x44FF44, "hero_of_the_village");
+	public static final Potion RAID_OMEN = new RaidsPotion(true, 0xDE4058, "raid_omen");
 	
 	public static ItemStack createOminousBanner() {
 		NBTTagList patterns = new NBTTagList();
@@ -83,6 +85,12 @@ public class RaidsContent {
 		nbt.setTag("Fireworks", fireworks);
 		firework.setTagCompound(nbt);
 		return firework;
+	}
+	
+	@SubscribeEvent
+	public static void registerItems(RegistryEvent.Register<Item> event) {
+		IForgeRegistry<Item> registry = event.getRegistry();
+		if (RaidConfig.ominousBottles) registry.register(OMINOUS_BOTTLE);
 	}
 
 	@SubscribeEvent

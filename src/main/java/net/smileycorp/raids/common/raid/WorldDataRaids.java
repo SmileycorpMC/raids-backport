@@ -13,6 +13,7 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsLogger;
+import net.smileycorp.raids.config.RaidConfig;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;
@@ -78,11 +79,12 @@ public class WorldDataRaids extends WorldSavedData {
         }
     }
     
-    @Nullable
+    
     public Raid createOrExtendRaid(EntityPlayerMP player) {
         if (player.isSpectator()) return null;
         else {
-            Raid raid = getOrCreateRaid(world, world.getVillageCollection().getNearestVillage(player.getPosition(), 64).getCenter());
+            Raid raid = getOrCreateRaid(world, RaidConfig.raidCenteredOnPlayer ? player.getPosition() :
+                    world.getVillageCollection().getNearestVillage(player.getPosition(), 64).getCenter());
             boolean flag = false;
             if (!raid.isStarted()) {
                 if (!raidMap.containsKey(raid.getId())) raidMap.put(raid.getId(), raid);

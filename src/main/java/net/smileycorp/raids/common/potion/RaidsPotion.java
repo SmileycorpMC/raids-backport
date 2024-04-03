@@ -37,9 +37,13 @@ public class RaidsPotion extends Potion {
     private void renderEffect(int x, int y, float alpha) {
         GlStateManager.pushMatrix();
         GlStateManager.color(1, 1, 1, alpha);
-        Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+        Minecraft.getMinecraft().renderEngine.bindTexture(getTexture());
         Gui.drawScaledCustomSizeModalRect(x, y, 0, 0 , 18, 18, 18, 18, 18, 18);
         GlStateManager.popMatrix();
+    }
+    
+    protected ResourceLocation getTexture() {
+        return texture;
     }
     
 }

@@ -10,9 +10,9 @@ import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.WorldDataRaids;
 import net.smileycorp.raids.config.RaidConfig;
 
-public class BadOmenPotion extends RaidsPotion {
+public class VillageOmenPotion extends RaidsPotion {
     
-    public BadOmenPotion() {
+    public VillageOmenPotion() {
         super(true, 0x0b6138, "bad_omen");
     }
     
@@ -27,17 +27,8 @@ public class BadOmenPotion extends RaidsPotion {
             EntityPlayerMP player = (EntityPlayerMP)entity;
             World world = player.world;
             if (world.getDifficulty() == EnumDifficulty.PEACEFUL) return;
-            if (Raid.isVillage(world, player.getPosition())) {
-                if (RaidConfig.ominousBottles) {
-                
-                }
-                WorldDataRaids.getData((WorldServer) world).createOrExtendRaid(player);
-            }
+            if (Raid.isVillage(world, player.getPosition())) WorldDataRaids.getData((WorldServer) world).createOrExtendRaid(player);
         }
-    }
-    
-    protected ResourceLocation getTexture() {
-        return super.getTexture();
     }
     
 }

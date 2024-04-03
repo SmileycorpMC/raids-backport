@@ -10,6 +10,7 @@
     "MixinListEnchantedBookForEmeralds",
     "MixinMerchantRecipe",
     "MixinMerchantRecipeList",
+    "MixinPotionEffect",
     "MixinSlotMerchantResult"
   ],
   "client": [
