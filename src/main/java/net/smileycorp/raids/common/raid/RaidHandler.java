@@ -3,11 +3,9 @@ package net.smileycorp.raids.common.raid;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.AbstractIllager;
 import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsLogger;
 
 import javax.annotation.Nullable;

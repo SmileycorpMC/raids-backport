@@ -26,6 +26,7 @@ import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.raid.RaidHandler;
+import net.smileycorp.raids.common.raid.RaidOmenTracker;
 import net.smileycorp.raids.common.raid.Raider;
 import net.smileycorp.raids.common.world.MapGenOutpost;
 import net.smileycorp.raids.common.world.RaidsWorldGenerator;
@@ -50,6 +51,7 @@ public class CommonProxy {
 		MapGenStructureIO.registerStructure(MapGenOutpost.OutpostStart.class, "Pillager_Outpost");
 		StructureOutpostPieces.registerStructurePieces();
 		CapabilityManager.INSTANCE.register(Raider.class, new Raider.Storage(), Raider.Impl::new);
+		if (RaidConfig.raidCenteredOnPlayer) CapabilityManager.INSTANCE.register(RaidOmenTracker.class, new RaidOmenTracker.Storage(), RaidOmenTracker.Impl::new);
 		registerSpawns();
 	}
 

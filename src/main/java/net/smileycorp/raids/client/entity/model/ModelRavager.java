@@ -98,7 +98,7 @@ public class ModelRavager extends ModelBase {
         int j = ravager.getRoarTick();
         int l = ravager.getAttackTick();
         if (l > 0) {
-            float f = MathUtils.triangleWave((float) l - partialTicks, 10.0F);
+            float f = MathUtils.wrap((float) l - partialTicks, 10.0F);
             float f1 = (1.0F + f) * 0.5F;
             float f2 = f1 * f1 * f1 * 12.0F;
             float f3 = f2 * MathHelper.sin(neck.rotateAngleX);

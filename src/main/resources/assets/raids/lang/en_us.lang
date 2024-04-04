@@ -1,6 +1,5 @@
-item.raids.Crossbow.name=Crossbow
-item.raids.crossbow.projectile=Projectile:
 item.raids.OminousBanner.name=Ominous Banner
+item.raids.OminousBottle.name=Ominous Bottle
 
 entity.raids.Pillager.name=Pillager
 entity.raids.Ravager.name=Ravager
@@ -17,19 +16,14 @@ subtitles.raids.entity.ravager.hurt=Ravager hurts
 subtitles.raids.entity.ravager.roar=Ravager roars
 subtitles.raids.entity.ravager.step=Ravager steps
 subtitles.raids.entity.ravager.stunned=Ravager stunned
-subtitles.raids.item.crossbow.charge=Crossbow charges up
-subtitles.raids.item.crossbow.load=Crossbow loads
-subtitles.raids.item.crossbow.shoot=Crossbow fires
+subtitles.raids.item.ominous_bottle.dispose=Bottle breaks
 subtitles.raids.event.raid.horn=Ominous horn blares
+subtitles.raids.event.mob_effect.bad_omen=Omen takes hold
+subtitles.raids.event.mob_effect.raid_omen=Raid looms nearby
 
 effect.raids.bad_omen=Bad Omen
 effect.raids.hero_of_the_village=Hero of the Village
-
-enchantment.raids.multishot=Multishot
-enchantment.raids.quickcharge=Quick Charge
-enchantment.raids.piercing=Piercing
-
-death.attack.raids.fireworks.player=%1$s went off with a bang whilst fighting %2$s
+effect.raids.raid_omen=Raid Omen
 
 event.raids.raid=Raid
 event.raids.raid.raiders_remaining=Raiders remaining: %s
@@ -42,12 +36,8 @@ potion.potency.5=VI
 potion.potency.6=VII
 potion.potency.7=VIII
 
-advancements.adventure.arbalistic.title=Arbalistic
-advancements.adventure.arbalistic.description=Kill five unique mobs with one crossbow shot 
 advancements.adventure.hero_of_the_village.title=Hero of the Village
 advancements.adventure.hero_of_the_village.description=Successfully defend a village from a raid
-advancements.adventure.ol_betsy.title=Ol' Betsy
-advancements.adventure.ol_betsy.description=Shoot a crossbow
 advancements.adventure.voluntary_exile.title=Voluntary Exile
 advancements.adventure.voluntary_exile.description=Kill a raid captain. Maybe consider staying away from villages for the time being... 
 advancements.adventure.whos_the_pillager_now.title=Who's the Pillager Now?

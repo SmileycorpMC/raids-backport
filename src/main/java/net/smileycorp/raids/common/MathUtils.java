@@ -2,12 +2,12 @@ package net.smileycorp.raids.common;
 
 public class MathUtils {
     
-    public static double lerp(double p_14180_, double p_14181_, double p_14182_) {
-        return p_14181_ + p_14180_ * (p_14182_ - p_14181_);
+    public static double lerp(double delta, double start, double end) {
+        return start + delta * (end - start);
     }
     
-    public static float triangleWave(float p_217167_1_, float p_217167_2_) {
-        return (Math.abs(p_217167_1_ % p_217167_2_ - p_217167_2_ * 0.5F) - p_217167_2_ * 0.25F) / (p_217167_2_ * 0.25F);
+    public static float wrap(float val, float deviation) {
+        return (Math.abs(val % deviation - deviation * 0.5F) - deviation * 0.25F) / (deviation * 0.25F);
     }
     
     public static int clamp(int val, int min, int max) {

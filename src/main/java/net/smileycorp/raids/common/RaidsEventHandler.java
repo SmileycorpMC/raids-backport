@@ -10,9 +10,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.loot.LootPool;
@@ -22,15 +25,15 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.village.MerchantTradeOffersEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
-import net.smileycorp.raids.common.raid.Raid;
-import net.smileycorp.raids.common.raid.RaidHandler;
-import net.smileycorp.raids.common.raid.Raider;
-import net.smileycorp.raids.common.raid.WorldDataRaids;
+import net.smileycorp.raids.common.items.ItemOminousBottle;
+import net.smileycorp.raids.common.raid.*;
+import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
 import net.smileycorp.raids.integration.spartanweaponry.SpartanWeaponryIntegration;
@@ -44,6 +47,7 @@ public class RaidsEventHandler {
 		if (!(entity instanceof EntityLiving) || entity == null) return;
 		if (entity.world.isRemote) return;
 		if (RaidHandler.isRaider(entity)) event.addCapability(Constants.loc("Raider"), new Raider.Provider((EntityLiving) entity));
+		if (entity instanceof EntityPlayer && RaidConfig.raidCenteredOnPlayer) event.addCapability(Constants.loc("RaidOmen"), new RaidOmenTracker.Provider());
 	}
 	
 	@SubscribeEvent
@@ -97,17 +101,46 @@ public class RaidsEventHandler {
 					if (owner instanceof EntityPlayer) player = (EntityPlayer) owner;
 				}
 				if (!itemstack.isEmpty() && ItemStack.areItemStacksEqual(itemstack, RaidsContent.createOminousBanner()) && player != null) {
-					PotionEffect effect = player.getActivePotionEffect(RaidsContent.BAD_OMEN);
-					int i = 1;
-					if (effect != null) i += effect.getAmplifier();
-					else i--;
-					i = MathUtils.clamp(i, 0, 4);
-					player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000, i, false, true));
+					if (RaidConfig.ominousBottles) entity.entityDropItem(ItemOminousBottle.createStack(entity.getRNG().nextInt(5)),0);
+					else {
+						PotionEffect effect = player.getActivePotionEffect(RaidsContent.BAD_OMEN);
+						int i = 1;
+						if (effect != null) i += effect.getAmplifier();
+						else i--;
+						i = MathUtils.clamp(i, 0, 4);
+						player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000, i, false, true));
+					}
 					if (player instanceof EntityPlayerMP) RaidsContent.VOLUNTARY_EXILE.trigger((EntityPlayerMP) player);
 				}
 			}
 		}
 	}
+	
+	@SubscribeEvent
+	public void potionAdded(PotionEvent.PotionAddedEvent event) {
+		if (!RaidConfig.ominousBottles) return;
+		EntityLivingBase entity = event.getEntityLiving();
+		if (entity.world.isRemote) return;
+		if (event.getOldPotionEffect() != null) return;
+		Potion effect = event.getPotionEffect().getPotion();
+		SoundEvent sound = effect == RaidsContent.BAD_OMEN ? RaidsSoundEvents.BAD_OMEN : effect == RaidsContent.RAID_OMEN ? RaidsSoundEvents.RAID_OMEN : null;
+		if (sound != null) entity.world.playSound(null, entity.posX, entity.posY, entity.posZ, sound, entity.getSoundCategory(), 1.0F, 1.0F);
+	}
+	
+	@SubscribeEvent
+	public void potionExpired(PotionEvent.PotionExpiryEvent event) {
+		if (!RaidConfig.ominousBottles) return;
+		if (event.getPotionEffect().getPotion() != RaidsContent.RAID_OMEN) return;
+		EntityLivingBase entity = event.getEntityLiving();
+		if (entity instanceof EntityPlayerMP && !((EntityPlayerMP)entity).isSpectator()) {
+			EntityPlayerMP player = (EntityPlayerMP)entity;
+			World world = player.world;
+			if (world.getDifficulty() == EnumDifficulty.PEACEFUL) return;
+			if (Raid.isVillage(world, RaidConfig.raidCenteredOnPlayer ? RaidOmenTracker.getRaidStart(player) : player.getPosition()))
+				WorldDataRaids.getData((WorldServer) world).createOrExtendRaid(player);
+		}
+	}
+	
 	
 	@SubscribeEvent
 	public void spawn(LivingSpawnEvent.SpecialSpawn event) {

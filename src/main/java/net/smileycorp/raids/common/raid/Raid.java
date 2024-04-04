@@ -166,11 +166,11 @@ public class Raid {
 	}
 	
 	public void absorbBadOmen(EntityPlayerMP player) {
-		if (player.isPotionActive(RaidsContent.BAD_OMEN)) {
+		if ((player.isPotionActive(RaidsContent.BAD_OMEN) &! RaidConfig.ominousBottles) || (player.isPotionActive(RaidsContent.RAID_OMEN) && RaidConfig.ominousBottles)) {
 			badOmenLevel += player.getActivePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN).getAmplifier() + 1;
 			badOmenLevel = MathUtils.clamp(badOmenLevel, 0, getMaxBadOmenLevel());
 		}
-		player.removePotionEffect(RaidsContent.BAD_OMEN);
+		player.removePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN);
 	}
 	
 	public void stop() {
@@ -240,9 +240,9 @@ public class Raid {
 					} else raidEvent.setName(RAID_NAME_COMPONENT);
 				}
 				boolean flag3 = false;
-				int k = 0;
+				int attempt = 0;
 				while(shouldSpawnGroup()) {
-					BlockPos blockpos = waveSpawnPos.isPresent() ? waveSpawnPos.get() : findRandomSpawnPos(k, 20);
+					BlockPos blockpos = waveSpawnPos.isPresent() ? waveSpawnPos.get() : findRandomSpawnPos(attempt, 20);
 					if (blockpos != null) {
 						started = true;
 						totalHealth = 0;
@@ -255,8 +255,8 @@ public class Raid {
 							playSound(blockpos);
 							flag3 = true;
 						}
-					} else k++;
-					if (k > 3) {
+					} else attempt++;
+					if (attempt > 3) {
 						stop();
 						break;
 					}
@@ -447,16 +447,16 @@ public class Raid {
 	}
 	
 	@Nullable
-	private BlockPos findRandomSpawnPos(int p_37708_, int p_37709_) {
-		int i = p_37708_ == 0 ? 2 : 2 - p_37708_;
+	private BlockPos findRandomSpawnPos(int attempt, int tries) {
+		int i = attempt == 0 ? 2 : 2 - attempt;
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-		for(int i1 = 0; i1 < p_37709_; ++i1) {
+		for(int i1 = 0; i1 < tries; ++i1) {
 			float f = random.nextFloat() * ((float)Math.PI * 2);
 			int x = center.getX() + (int)Math.floor(Math.cos(f) * 32 * (float)i) + random.nextInt(5);
 			int z = center.getZ() + (int)Math.floor(Math.sin(f) * 32 * (float)i) + random.nextInt(5);
 			int y = world.getHeight(x, z);
 			pos.setPos(x, y, z);
-			if ((isVillage(world, pos) || p_37708_ >= 2) && world.isAreaLoaded(new StructureBoundingBox(pos.getX() - 10, pos.getZ() - 10,
+			if ((isVillage(world, pos) || attempt >= 2) && world.isAreaLoaded(new StructureBoundingBox(pos.getX() - 10, pos.getZ() - 10,
 						pos.getX() + 10, pos.getZ() + 10))
 						&& world.isAirBlock(pos)) return pos;
 		}
@@ -473,11 +473,9 @@ public class Raid {
 		groupEntityLivingMap.computeIfAbsent(index, v -> Sets.newHashSet());
 		Set<EntityLiving> set = groupEntityLivingMap.get(index);
 		EntityLiving entity0 = null;
-		for(EntityLiving entity1 : set) {
-			if (entity1.getUniqueID().equals(entity.getUniqueID())) {
-				entity0 = entity1;
-				break;
-			}
+		for(EntityLiving entity1 : set) if (entity1.getUniqueID().equals(entity.getUniqueID())) {
+			entity0 = entity1;
+			break;
 		}
 		if (entity0 != null) {
 			set.remove(entity0);
@@ -504,8 +502,8 @@ public class Raid {
 		return center;
 	}
 	
-	private void setCenter(BlockPos p_37761_) {
-		center = p_37761_;
+	public void setCenter(BlockPos center) {
+		this.center = center;
 	}
 	
 	public int getId() {
@@ -592,8 +590,8 @@ public class Raid {
 	public void setWorld(WorldServer world) {
 		this.world = world;
 	}
-	
-	enum Status {
+    
+    enum Status {
 		ONGOING,
 		VICTORY,
 		LOSS,

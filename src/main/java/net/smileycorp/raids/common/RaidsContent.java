@@ -23,6 +23,7 @@ import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.potion.BadOmenPotion;
 import net.smileycorp.raids.common.potion.RaidsPotion;
+import net.smileycorp.raids.common.raid.RaidOmenTracker;
 import net.smileycorp.raids.common.raid.Raider;
 import net.smileycorp.raids.config.RaidConfig;
 
@@ -37,6 +38,9 @@ public class RaidsContent {
     
     @CapabilityInject(Raider.class)
 	public static Capability<Raider> RAIDER = null;
+	
+	@CapabilityInject(RaidOmenTracker.class)
+	public static Capability<RaidOmenTracker> RAID_OMEN_TRACKER = null;
 	
 	public static final ItemStack OMINOUS_BANNER = createOminousBanner();
 	
@@ -98,6 +102,7 @@ public class RaidsContent {
 		IForgeRegistry<Potion> registry = event.getRegistry();
 		registry.register(HERO_OF_THE_VILLAGE);
 		registry.register(BAD_OMEN);
+		if (RaidConfig.ominousBottles) registry.register(RAID_OMEN);
     }
 	
 	@SubscribeEvent
