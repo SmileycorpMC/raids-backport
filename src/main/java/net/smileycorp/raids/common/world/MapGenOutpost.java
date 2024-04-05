@@ -1,49 +1,28 @@
 package net.smileycorp.raids.common.world;
 
-import com.google.common.collect.Lists;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Biomes;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.ChunkGeneratorFlat;
 import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.MapGenStructure;
-import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraft.world.gen.structure.StructureStart;
 import net.smileycorp.raids.common.RaidsLogger;
-import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.config.OutpostConfig;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Random;
 
 public class MapGenOutpost extends MapGenStructure {
     
-    private static final List<Biome.SpawnListEntry> spawnlist = Lists.newArrayList(new Biome.SpawnListEntry(EntityPillager.class, 1, 1, 1));
-    
     private static MapGenOutpost INSTANCE;
     private final IChunkGenerator generator;
     
-    private final List<Biome> spawnbiomes = Lists.newArrayList();
-    
     public MapGenOutpost(IChunkGenerator generator) {
         this.generator = generator;
-        spawnbiomes.addAll(MapGenVillage.VILLAGE_SPAWN_BIOMES);
-        spawnbiomes.add(Biomes.TAIGA_HILLS);
-        spawnbiomes.add(Biomes.REDWOOD_TAIGA);
-        spawnbiomes.add(Biomes.REDWOOD_TAIGA_HILLS);
-        spawnbiomes.add(Biomes.DESERT_HILLS);
-        spawnbiomes.add(Biomes.ICE_PLAINS);
-        spawnbiomes.add(Biomes.MUTATED_PLAINS);
-        spawnbiomes.add(Biomes.EXTREME_HILLS_EDGE);
     }
     
     @Override
@@ -55,10 +34,6 @@ public class MapGenOutpost extends MapGenStructure {
     @Override
     public BlockPos getNearestStructurePos(World worldIn, BlockPos pos, boolean findUnexplored) {
         return null;
-    }
-    
-    public List<Biome.SpawnListEntry> getSpawnList() {
-        return spawnlist;
     }
     
     @Override
@@ -74,22 +49,14 @@ public class MapGenOutpost extends MapGenStructure {
         dz = dz * OutpostConfig.maxDistance + random.nextInt(OutpostConfig.maxDistance - OutpostConfig.maxDistance/4);
         if (chunkX != dx || chunkZ != dz) return false;
         BlockPos pos = new BlockPos((chunkX << 4) + 8, 0, (chunkZ << 4) + 8);
-        if (!world.getBiomeProvider().areBiomesViable(pos.getX(), pos.getZ(), 0, spawnbiomes)) return false;
-        return world.findNearestStructure("Village", pos, true).distanceSq(pos) >= (OutpostConfig.distanceFromVillage * OutpostConfig.distanceFromVillage);
-    }
-    
-    public boolean canSpawn(World world, BlockPos pos) {
-        OutpostStart structure = getStructureAt(pos);
-        if (structure == null) return true;
-        List<Entity> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, structure.getSpawnBox(), e -> {
-            for (Biome.SpawnListEntry entry : spawnlist) if (entry.entityClass == e.getClass()) return true;
-            return false;
-        });
-        return entities.size() < 8;
+        if (!world.getBiomeProvider().areBiomesViable(pos.getX(), pos.getZ(), 0, OutpostConfig.getSpawnBiomes())) return false;
+        BlockPos village = world.findNearestStructure("Village", pos, true);
+        if (village == null) return true;
+        return village.distanceSq(pos) >= (OutpostConfig.distanceFromVillage * OutpostConfig.distanceFromVillage);
     }
     
     @Override
-    protected OutpostStart getStructureAt(BlockPos pos) {
+    public OutpostStart getStructureAt(BlockPos pos) {
         for (StructureStart structure : structureMap.values()) if (((OutpostStart)structure).isInStructure(pos)) return (OutpostStart) structure;
         return null;
     }
@@ -107,7 +74,7 @@ public class MapGenOutpost extends MapGenStructure {
     
     public static class OutpostStart extends StructureStart {
     
-        private final AxisAlignedBB boundingBox;
+        private final BlockPos center;
         
         public OutpostStart(World world, Random rand, int chunkX, int chunkZ, IChunkGenerator generator) {
             int x = chunkX << 4;
@@ -115,17 +82,18 @@ public class MapGenOutpost extends MapGenStructure {
             ChunkPrimer chunkprimer = new ChunkPrimer();
             if (generator instanceof ChunkGeneratorOverworld) ((ChunkGeneratorOverworld)generator).setBlocksInChunk(chunkX, chunkZ, chunkprimer);
             int y = generator instanceof ChunkGeneratorFlat ? ((ChunkGeneratorFlat)generator).flatWorldGenInfo.getFlatLayers().size() : getY(1, 1, 13, 13, chunkprimer);
-            BlockPos center = new BlockPos(x + 8, y + 16, z + 8);
+            center = new BlockPos(x + 8, y + 16, z + 8);
             BlockPos pos = new BlockPos(x, y, z);
             RaidsLogger.logInfo("Generated outpost at " + pos);
             components.addAll(StructureOutpostPieces.watchtower(world.getSaveHandler().getStructureTemplateManager(), pos,
                     Rotation.values()[rand.nextInt(Rotation.values().length)]));
-            boundingBox = new AxisAlignedBB(center.add(-36, -26, -36), center.add(36, 26, 36));
             updateBoundingBox();
         }
         
         private boolean isInStructure(BlockPos pos) {
-            return boundingBox.contains(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+            boolean b = Math.abs(pos.getX() - center.getX()) < 36 && Math.abs(pos.getY() - center.getY()) < 26 && Math.abs(pos.getZ() - center.getZ()) < 36;
+            if (b) RaidsLogger.logInfo(pos + " is in structure at " + center);
+            return b;
         }
     
         public int getY(int x, int z, int i, int k, ChunkPrimer primer) {
@@ -137,7 +105,7 @@ public class MapGenOutpost extends MapGenStructure {
         }
     
         public AxisAlignedBB getSpawnBox() {
-            return boundingBox;
+            return new AxisAlignedBB(center).grow(36, 26, 36);
         }
         
     }

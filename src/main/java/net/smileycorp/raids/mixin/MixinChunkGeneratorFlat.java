@@ -7,7 +7,9 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkGeneratorFlat;
 import net.minecraft.world.gen.IChunkGenerator;
+import net.smileycorp.raids.common.RaidsLogger;
 import net.smileycorp.raids.common.world.MapGenOutpost;
+import net.smileycorp.raids.config.OutpostConfig;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,7 +30,10 @@ public abstract class MixinChunkGeneratorFlat implements IChunkGenerator {
     @Inject(method = "getPossibleCreatures", at = @At("HEAD"), cancellable = true)
     public void getPossibleCreatures(EnumCreatureType type, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnListEntry>> callback) {
         MapGenOutpost outposts = MapGenOutpost.getInstance(this);
-        if (hasDecoration && type == EnumCreatureType.MONSTER && outposts.isInsideStructure(pos)) callback.setReturnValue(outposts.getSpawnList());
+        if (hasDecoration && type == EnumCreatureType.MONSTER && outposts.isInsideStructure(pos)) {
+            RaidsLogger.logInfo("spawn at" + pos);
+            callback.setReturnValue(OutpostConfig.getSpawnEntities());
+        }
     }
     
     @Inject(method = "recreateStructures", at = @At(value = "TAIL"))

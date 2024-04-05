@@ -19,6 +19,7 @@ import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.storage.loot.LootEntryItem;
@@ -42,11 +43,14 @@ import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.raid.*;
 import net.smileycorp.raids.common.world.MapGenOutpost;
+import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
 import net.smileycorp.raids.integration.spartanweaponry.SpartanWeaponryIntegration;
 import net.smileycorp.raids.integration.tconstruct.TinkersConstructIntegration;
+
+import java.util.List;
 
 public class RaidsEventHandler {
 
@@ -157,8 +161,13 @@ public class RaidsEventHandler {
 			World world = event.getWorld();
 			IChunkProvider provider = world.getChunkProvider();
 			if (provider instanceof ChunkProviderServer) {
-				MapGenOutpost outposts = MapGenOutpost.getInstance(((ChunkProviderServer) provider).chunkGenerator);
-				if (!outposts.canSpawn(world, entity.getPosition())) event.setResult(Result.DENY);
+				MapGenOutpost.OutpostStart structure = MapGenOutpost.getInstance(((ChunkProviderServer) provider).chunkGenerator).getStructureAt(entity.getPosition());
+				if (structure == null) return;
+				List<Entity> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, structure.getSpawnBox(), e -> {
+					for (Biome.SpawnListEntry entry : OutpostConfig.getSpawnEntities()) if (entry.entityClass == e.getClass()) return true;
+					return false;
+				});
+				if (entities.size() < OutpostConfig.maxEntities) event.setResult(Result.DENY);
 			}
 		}
 	}
