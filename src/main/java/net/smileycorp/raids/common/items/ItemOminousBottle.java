@@ -86,16 +86,12 @@ public class ItemOminousBottle extends Item {
     }
     
     public static ItemStack createStack(int amplifier) {
-        ItemStack stack = new ItemStack(RaidsContent.OMINOUS_BOTTLE);
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("ominous_bottle_amplifier", amplifier);
-        stack.setTagCompound(nbt);
+        ItemStack stack = new ItemStack(RaidsContent.OMINOUS_BOTTLE, 1, amplifier);
         return stack;
     }
     
     public static int getAmplifier(ItemStack stack) {
-        NBTTagCompound nbt = stack.getTagCompound();
-        return nbt != null && nbt.hasKey("ominous_bottle_amplifier") ? nbt.getInteger("ominous_bottle_amplifier") : 0;
+        return stack.getMetadata();
     }
     
 }

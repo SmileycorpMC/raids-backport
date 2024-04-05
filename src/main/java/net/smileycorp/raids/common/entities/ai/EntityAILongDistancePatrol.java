@@ -38,20 +38,15 @@ public class EntityAILongDistancePatrol extends EntityAIBase {
         boolean leader = raider.isPatrolLeader();
         PathNavigate navigation = mob.getNavigator();
         if (navigation.noPath()) {
-            RaidsLogger.logInfo("b");
             List<Entity> list = findPatrolCompanions();
-            RaidsLogger.logInfo(list);
             if (raider.isPatrolling() && list.isEmpty()) return;
-            RaidsLogger.logInfo("c");
             if (leader && raider.getPatrolTarget().distanceSq(mob.getPosition()) < 100) raider.findPatrolTarget();
             Vec3d vec3 = new Vec3d(raider.getPatrolTarget().getX() + 0.5, raider.getPatrolTarget().getY(), raider.getPatrolTarget().getZ() + 0.5);
             Vec3d vec31 = new Vec3d(mob.posX, mob.posY, mob.posZ);
             vec3 = vec31.subtract(vec3).rotateYaw(90).scale(0.4).add(vec3);
             BlockPos blockpos = mob.world.getHeight(new BlockPos(vec3.subtract(vec31).normalize().scale(10).add(vec31)));
-            RaidsLogger.logInfo(blockpos);
             if (!navigation.tryMoveToXYZ(blockpos.getX(), blockpos.getY(),blockpos.getZ(), leader ? leaderSpeedModifier : speedModifier)) {
                 moveRandomly();
-                RaidsLogger.logInfo("e");
                 cooldownUntil = mob.world.getWorldTime() + 200;
             } else if (leader) for(Entity patroller : list) if (patroller.hasCapability(RaidsContent.RAIDER, null))
                         patroller.getCapability(RaidsContent.RAIDER, null).setPatrolTarget(blockpos);
