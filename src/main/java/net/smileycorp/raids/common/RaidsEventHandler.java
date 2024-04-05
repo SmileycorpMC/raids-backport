@@ -14,9 +14,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
@@ -156,18 +158,18 @@ public class RaidsEventHandler {
 	
 	@SubscribeEvent
 	public void checkSpawn(LivingSpawnEvent.CheckSpawn event) {
-		Entity entity = event.getEntity();
-		if (entity.isCreatureType(EnumCreatureType.MONSTER, true) &! event.isSpawner()) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (entity.isCreatureType(EnumCreatureType.MONSTER, true) &! event.isSpawner() && OutpostConfig.isSpawnEntity(entity)) {
 			World world = event.getWorld();
 			IChunkProvider provider = world.getChunkProvider();
 			if (provider instanceof ChunkProviderServer) {
-				MapGenOutpost.OutpostStart structure = MapGenOutpost.getInstance(((ChunkProviderServer) provider).chunkGenerator).getStructureAt(entity.getPosition());
+				BlockPos pos = entity.getPosition();
+				MapGenOutpost.OutpostStart structure = MapGenOutpost.getInstance(((ChunkProviderServer) provider).chunkGenerator).getStructureAt(pos);
 				if (structure == null) return;
-				List<Entity> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, structure.getSpawnBox(), e -> {
-					for (Biome.SpawnListEntry entry : OutpostConfig.getSpawnEntities()) if (entry.entityClass == e.getClass()) return true;
-					return false;
-				});
-				if (entities.size() < OutpostConfig.maxEntities) event.setResult(Result.DENY);
+				List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, structure.getSpawnBox(), OutpostConfig::isSpawnEntity);
+				if (entities.size() < OutpostConfig.maxEntities && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 8
+						&& world.getBlockState(pos.down()).isOpaqueCube()) event.setResult(Result.ALLOW);
+				else event.setResult(Result.DENY);
 			}
 		}
 	}

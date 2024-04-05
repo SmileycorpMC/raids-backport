@@ -1,7 +1,9 @@
 package net.smileycorp.raids.config;
 
 import com.google.common.collect.Lists;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.config.Configuration;
@@ -94,6 +96,11 @@ public class OutpostConfig {
             }
         }
         return spawnEntities;
+    }
+    
+    public static boolean isSpawnEntity(EntityLivingBase entity) {
+        for (Biome.SpawnListEntry entry : OutpostConfig.getSpawnEntities()) if (entry.entityClass == entity.getClass()) return true;
+        return false;
     }
     
 }
