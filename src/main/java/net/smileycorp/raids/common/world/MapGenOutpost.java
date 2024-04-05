@@ -11,6 +11,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.gen.ChunkGeneratorFlat;
 import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.MapGenStructure;
@@ -29,11 +30,11 @@ public class MapGenOutpost extends MapGenStructure {
     private static final List<Biome.SpawnListEntry> spawnlist = Lists.newArrayList(new Biome.SpawnListEntry(EntityPillager.class, 1, 1, 1));
     
     private static MapGenOutpost INSTANCE;
-    private final ChunkGeneratorOverworld generator;
+    private final IChunkGenerator generator;
     
     private final List<Biome> spawnbiomes = Lists.newArrayList();
     
-    public MapGenOutpost(ChunkGeneratorOverworld generator) {
+    public MapGenOutpost(IChunkGenerator generator) {
         this.generator = generator;
         spawnbiomes.addAll(MapGenVillage.VILLAGE_SPAWN_BIOMES);
         spawnbiomes.add(Biomes.TAIGA_HILLS);
@@ -99,8 +100,8 @@ public class MapGenOutpost extends MapGenStructure {
     }
     
     public static MapGenOutpost getInstance(IChunkGenerator generator) {
-        if (INSTANCE == null) INSTANCE = new MapGenOutpost((ChunkGeneratorOverworld) generator);
-        if (INSTANCE.generator != generator) INSTANCE = new MapGenOutpost((ChunkGeneratorOverworld) generator);
+        if (INSTANCE == null) INSTANCE = new MapGenOutpost(generator);
+        if (INSTANCE.generator != generator) INSTANCE = new MapGenOutpost(generator);
         return INSTANCE;
     }
     
@@ -108,12 +109,12 @@ public class MapGenOutpost extends MapGenStructure {
     
         private final AxisAlignedBB boundingBox;
         
-        public OutpostStart(World world, Random rand, int chunkX, int chunkZ, ChunkGeneratorOverworld generator) {
+        public OutpostStart(World world, Random rand, int chunkX, int chunkZ, IChunkGenerator generator) {
             int x = chunkX << 4;
             int z = chunkZ << 4;
             ChunkPrimer chunkprimer = new ChunkPrimer();
-            generator.setBlocksInChunk(chunkX, chunkZ, chunkprimer);
-            int y = getY(1, 1, 13, 13, chunkprimer);
+            if (generator instanceof ChunkGeneratorOverworld) ((ChunkGeneratorOverworld)generator).setBlocksInChunk(chunkX, chunkZ, chunkprimer);
+            int y = generator instanceof ChunkGeneratorFlat ? ((ChunkGeneratorFlat)generator).flatWorldGenInfo.getFlatLayers().size() : getY(1, 1, 13, 13, chunkprimer);
             BlockPos center = new BlockPos(x + 8, y + 16, z + 8);
             BlockPos pos = new BlockPos(x, y, z);
             RaidsLogger.logInfo("Generated outpost at " + pos);
