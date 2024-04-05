@@ -9,6 +9,14 @@
             "entries": []
         },
 		{
+            "name": "raids:ominous_bottle",
+            "rolls": {
+                "min": 0,
+                "max": 1
+            },
+            "entries": []
+        },
+		{
             "name": "raids:outpost1",
             "rolls": {
                 "min": 2,

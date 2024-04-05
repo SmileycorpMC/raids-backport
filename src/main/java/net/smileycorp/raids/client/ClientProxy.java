@@ -40,7 +40,7 @@ public class ClientProxy extends CommonProxy {
 	public static void registerModels(ModelRegistryEvent event) {
 		RenderingRegistry.registerEntityRenderingHandler(EntityPillager.class, RenderPillager::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityRavager.class, RenderRavager::new);
-		ModelLoader.setCustomModelResourceLocation(RaidsContent.OMINOUS_BOTTLE, 0, new ModelResourceLocation(Constants.loc("ominous_bottle"), "normal"));
+		for (int i = 0; i < 255; i++) ModelLoader.setCustomModelResourceLocation(RaidsContent.OMINOUS_BOTTLE, i, new ModelResourceLocation(Constants.loc("ominous_bottle"), "normal"));
 	}
 	
 }

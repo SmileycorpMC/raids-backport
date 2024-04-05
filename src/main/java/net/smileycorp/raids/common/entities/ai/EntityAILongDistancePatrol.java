@@ -7,7 +7,6 @@ import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.RaidsLogger;
 import net.smileycorp.raids.common.raid.Raider;
 
 import java.util.List;

@@ -3,6 +3,7 @@ package net.smileycorp.raids.common;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityVillager;
@@ -18,7 +19,14 @@ import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.ChunkProviderServer;
+import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootPool;
+import net.minecraft.world.storage.loot.RandomValueRange;
+import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraft.world.storage.loot.functions.LootFunction;
+import net.minecraft.world.storage.loot.functions.SetMetadata;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -33,6 +41,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.raid.*;
+import net.smileycorp.raids.common.world.MapGenOutpost;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
@@ -141,15 +150,32 @@ public class RaidsEventHandler {
 		}
 	}
 	
+	@SubscribeEvent
+	public void checkSpawn(LivingSpawnEvent.CheckSpawn event) {
+		Entity entity = event.getEntity();
+		if (entity.isCreatureType(EnumCreatureType.MONSTER, true) &! event.isSpawner()) {
+			World world = event.getWorld();
+			IChunkProvider provider = world.getChunkProvider();
+			if (provider instanceof ChunkProviderServer) {
+				MapGenOutpost outposts = MapGenOutpost.getInstance(((ChunkProviderServer) provider).chunkGenerator);
+				if (!outposts.canSpawn(world, entity.getPosition())) event.setResult(Result.DENY);
+			}
+		}
+	}
 	
 	@SubscribeEvent
 	public void spawn(LivingSpawnEvent.SpecialSpawn event) {
 		EntityLivingBase entity = event.getEntityLiving();
-		if (event.getSpawner() == null && entity.hasCapability(RaidsContent.RAIDER, null)) {
+		if (entity.hasCapability(RaidsContent.RAIDER, null) && RaidHandler.isRaider(entity)) {
 			Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
 			if (raider.hasActiveRaid() || raider.isPatrolling()) return;
 			float chance = raider.getCaptainChance();
-			if (chance > 0) if (entity.getRNG().nextFloat() < chance) raider.setPatrolLeader(true);
+			if (chance > 0) {
+				if (entity.getRNG().nextFloat() <= chance) {
+					raider.setPatrolLeader(true);
+					entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, RaidsContent.createOminousBanner());
+				}
+			}
 		}
 	}
 
@@ -183,10 +209,14 @@ public class RaidsEventHandler {
 	@SubscribeEvent
 	public void addLoot(LootTableLoadEvent event) {
 		if (Constants.OUTPOST_CHESTS.equals(event.getName())) {
-			LootPool pool = event.getTable().getPool("raids:outpost_crossbow");
-			if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.addLoot(pool);
-			if (ModIntegration.SPARTAN_LOADED) SpartanWeaponryIntegration.addLoot(pool);
-			if (ModIntegration.TINKERS_LOADED) TinkersConstructIntegration.addLoot(pool);
+			if (RaidConfig.ominousBottles) {
+				LootPool bottlePool = event.getTable().getPool("raids:ominous_bottle");
+				bottlePool.addEntry(new LootEntryItem(RaidsContent.OMINOUS_BOTTLE, 1, 1, new LootFunction[] {new SetMetadata(new LootCondition[0], new RandomValueRange(0, 4))}, new LootCondition[0], "raids:ominous_bottle"));
+			}
+			LootPool crossbowPool = event.getTable().getPool("raids:outpost_crossbow");
+			if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.addLoot(crossbowPool);
+			if (ModIntegration.SPARTAN_LOADED) SpartanWeaponryIntegration.addLoot(crossbowPool);
+			if (ModIntegration.TINKERS_LOADED) TinkersConstructIntegration.addLoot(crossbowPool);
 		}
 	}
 	

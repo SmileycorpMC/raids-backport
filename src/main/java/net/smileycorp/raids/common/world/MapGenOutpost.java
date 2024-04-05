@@ -1,9 +1,13 @@
 package net.smileycorp.raids.common.world;
 
 import com.google.common.collect.Lists;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Biomes;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
@@ -11,7 +15,6 @@ import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.MapGenStructure;
 import net.minecraft.world.gen.structure.MapGenVillage;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureStart;
 import net.smileycorp.raids.common.RaidsLogger;
 import net.smileycorp.raids.common.entities.EntityPillager;
@@ -74,15 +77,24 @@ public class MapGenOutpost extends MapGenStructure {
         return world.findNearestStructure("Village", pos, true).distanceSq(pos) >= (OutpostConfig.distanceFromVillage * OutpostConfig.distanceFromVillage);
     }
     
+    public boolean canSpawn(World world, BlockPos pos) {
+        OutpostStart structure = getStructureAt(pos);
+        if (structure == null) return true;
+        List<Entity> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, structure.getSpawnBox(), e -> {
+            for (Biome.SpawnListEntry entry : spawnlist) if (entry.entityClass == e.getClass()) return true;
+            return false;
+        });
+        return entities.size() < 8;
+    }
+    
     @Override
-    protected StructureStart getStructureAt(BlockPos pos) {
-        for (StructureStart structure : structureMap.values()) if (((OutpostStart)structure).isInStructure(pos)) return structure;
+    protected OutpostStart getStructureAt(BlockPos pos) {
+        for (StructureStart structure : structureMap.values()) if (((OutpostStart)structure).isInStructure(pos)) return (OutpostStart) structure;
         return null;
     }
     
     @Override
     protected StructureStart getStructureStart(int chunkX, int chunkZ) {
-        RaidsLogger.logInfo("start " + chunkX + "," + chunkZ);
         return new OutpostStart(world, rand, chunkX, chunkZ, generator);
     }
     
@@ -94,7 +106,7 @@ public class MapGenOutpost extends MapGenStructure {
     
     public static class OutpostStart extends StructureStart {
     
-        private final StructureBoundingBox boundingBox;
+        private final AxisAlignedBB boundingBox;
         
         public OutpostStart(World world, Random rand, int chunkX, int chunkZ, ChunkGeneratorOverworld generator) {
             int x = chunkX << 4;
@@ -102,17 +114,17 @@ public class MapGenOutpost extends MapGenStructure {
             ChunkPrimer chunkprimer = new ChunkPrimer();
             generator.setBlocksInChunk(chunkX, chunkZ, chunkprimer);
             int y = getY(1, 1, 13, 13, chunkprimer);
-            BlockPos center = new BlockPos(x + 8, y + 16, x + 8);
+            BlockPos center = new BlockPos(x + 8, y + 16, z + 8);
             BlockPos pos = new BlockPos(x, y, z);
             RaidsLogger.logInfo("Generated outpost at " + pos);
             components.addAll(StructureOutpostPieces.watchtower(world.getSaveHandler().getStructureTemplateManager(), pos,
                     Rotation.values()[rand.nextInt(Rotation.values().length)]));
-            boundingBox = new StructureBoundingBox(center.add(-36, -26, -36), center.add(36, 26, 36));
+            boundingBox = new AxisAlignedBB(center.add(-36, -26, -36), center.add(36, 26, 36));
             updateBoundingBox();
         }
         
         private boolean isInStructure(BlockPos pos) {
-            return boundingBox.isVecInside(pos);
+            return boundingBox.contains(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
         }
     
         public int getY(int x, int z, int i, int k, ChunkPrimer primer) {
@@ -121,6 +133,10 @@ public class MapGenOutpost extends MapGenStructure {
             int jy = primer.findGroundBlockIdx(x + i, z);
             int j = primer.findGroundBlockIdx(x + i, z + k);
             return Math.min(Math.min(y0, yj), Math.min(jy, j));
+        }
+    
+        public AxisAlignedBB getSpawnBox() {
+            return boundingBox;
         }
         
     }

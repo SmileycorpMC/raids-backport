@@ -34,12 +34,12 @@ public abstract class MixinChunkGeneratorOverworld implements IChunkGenerator {
     
     @Inject(method = "getPossibleCreatures", at = @At("HEAD"), cancellable = true)
     public void getPossibleCreatures(EnumCreatureType type, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnListEntry>> callback) {
-        if (mapFeaturesEnabled && type == EnumCreatureType.MONSTER && MapGenOutpost.getInstance(this).isInsideStructure(pos))
-            callback.setReturnValue(MapGenOutpost.getInstance(this).getSpawnList());
+        MapGenOutpost outposts = MapGenOutpost.getInstance(this);
+        if (mapFeaturesEnabled && type == EnumCreatureType.MONSTER && outposts.isInsideStructure(pos)) callback.setReturnValue(outposts.getSpawnList());
     }
     
     @Inject(method = "recreateStructures", at = @At(value = "TAIL"))
-    public void generateChunk(Chunk chunkIn, int x, int z, CallbackInfo callback) {
+    public void recreateStructures(Chunk chunkIn, int x, int z, CallbackInfo callback) {
         if (mapFeaturesEnabled) MapGenOutpost.getInstance(this).generate(world, x, z, null);
     }
 
