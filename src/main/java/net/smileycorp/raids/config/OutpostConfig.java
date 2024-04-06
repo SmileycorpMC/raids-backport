@@ -1,7 +1,6 @@
 package net.smileycorp.raids.config;
 
 import com.google.common.collect.Lists;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;

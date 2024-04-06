@@ -192,10 +192,7 @@ public class Raid {
 				}
 				if (flag != active) raidEvent.setVisible(active);
 				if (!active) return;
-				if (!isVillage(world, center)) {
-					moveRaidCenterToNearbyVillageSection();
-				}
-				
+				if (!isVillage(world, center) &! RaidConfig.raidCenteredOnPlayer) moveRaidCenterToNearbyVillageSection();
 				if (!isVillage(world, center)) {
 					if (groupsSpawned > 0) {
 						status = Status.LOSS;
@@ -219,11 +216,8 @@ public class Raid {
 						if (flag1 && !world.isBlockLoaded(waveSpawnPos.get())) flag2 = true;
 						if (flag2) {
 							int j = 0;
-							if (raidCooldownTicks < 100) {
-								j = 1;
-							} else if (raidCooldownTicks < 40) {
-								j = 2;
-							}
+							if (raidCooldownTicks < 100) j = 1;
+							else if (raidCooldownTicks < 40) j = 2;
 							waveSpawnPos = getValidSpawnPos(j);
 						}
 						if (raidCooldownTicks == 300 || raidCooldownTicks % 20 == 0) updatePlayers();
@@ -366,8 +360,6 @@ public class Raid {
 	}
 	
 	private void playSound(BlockPos pos) {
-		float f = 13.0F;
-		int i = 64;
 		Collection<EntityPlayerMP> collection = raidEvent.getPlayers();
 		for(EntityPlayer player : world.playerEntities) {
 			Vec3d vec3 = player.getPositionVector();
@@ -402,11 +394,9 @@ public class Raid {
 		}
 		Set toRemove = Sets.newHashSet();
 		for (Set<EntityLiving> set : groupEntityLivingMap.values()) {
-			for (EntityLiving entity : set) {
-				if (!entity.isEntityAlive()) {
-					toRemove.add(entity);
-					totalHealth -= entity.getHealth();
-				}
+			for (EntityLiving entity : set) if (!entity.isEntityAlive()) {
+				toRemove.add(entity);
+				totalHealth -= entity.getHealth();
 			}
 			set.removeAll(toRemove);
 		}
@@ -538,11 +528,11 @@ public class Raid {
 	public int getNumGroups(EnumDifficulty difficulty) {
 		switch(difficulty) {
 			case EASY:
-				return 3;
+				return RaidConfig.easyWaves;
 			case NORMAL:
-				return 5;
+				return RaidConfig.normalWaves;
 			case HARD:
-				return 7;
+				return RaidConfig.hardWaves;
 			default:
 				return 0;
 		}
