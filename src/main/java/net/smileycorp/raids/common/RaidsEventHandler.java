@@ -21,7 +21,6 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.storage.loot.LootEntryItem;
@@ -181,11 +180,9 @@ public class RaidsEventHandler {
 			Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
 			if (raider.hasActiveRaid() || raider.isPatrolling()) return;
 			float chance = raider.getCaptainChance();
-			if (chance > 0) {
-				if (entity.getRNG().nextFloat() <= chance) {
-					raider.setPatrolLeader(true);
-					entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, RaidsContent.createOminousBanner());
-				}
+			if (chance > 0 && entity.getRNG().nextFloat() <= chance) {
+				raider.setPatrolLeader(true);
+				entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, RaidsContent.createOminousBanner());
 			}
 		}
 	}
