@@ -14,14 +14,14 @@ Advancements
 
 Hero of the Village Effects (Discounts only for the moment)
 
-### Future Plans
+Pillager Outposts (Watchtowers Only)
 
-Watchtowers
+Ominous Bottles
+
+### Future Plans
 
 Bells
 
 Allays
 
 Mod support and more config customisability
-
-Ominous Bottles
