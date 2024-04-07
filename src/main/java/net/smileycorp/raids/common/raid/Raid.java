@@ -362,13 +362,13 @@ public class Raid {
 	private void playSound(BlockPos pos) {
 		Collection<EntityPlayerMP> collection = raidEvent.getPlayers();
 		for(EntityPlayer player : world.playerEntities) {
-			Vec3d vec3 = player.getPositionVector();
-			Vec3d vec31 = new Vec3d(pos);
-			double d0 = Math.sqrt((vec31.x - vec3.x) * (vec31.x - vec3.x) + (vec31.z - vec3.z) * (vec31.z - vec3.z));
-			double d1 = vec3.x + 13 / d0 * (vec31.x - vec3.x);
-			double d2 = vec3.z + 13 / d0 * (vec31.z - vec3.z);
-			if ((d0 <= 64 || collection.contains(player)) && player instanceof EntityPlayerMP)
-				PacketHandler.NETWORK_INSTANCE.sendTo(new RaidSoundMessage(new BlockPos(d0, d1, d2)), (EntityPlayerMP)player);
+			Vec3d playerpos = player.getPositionVector();
+			Vec3d center = new Vec3d(pos);
+			double delta = Math.sqrt((center.x - playerpos.x) * (center.x - playerpos.x) + (center.z - playerpos.z) * (center.z - playerpos.z));
+			double x = playerpos.x + 13 / delta * (center.x - playerpos.x);
+			double z = playerpos.z + 13 / delta * (center.z - playerpos.z);
+			if ((delta <= 64 || collection.contains(player)) && player instanceof EntityPlayerMP)
+				PacketHandler.NETWORK_INSTANCE.sendTo(new RaidSoundMessage(new BlockPos(x, playerpos.y, z)), (EntityPlayerMP)player);
 		}
 	}
 	
