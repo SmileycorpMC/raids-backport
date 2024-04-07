@@ -48,7 +48,7 @@ public class EntityAIPathfindToRaid extends EntityAIBase {
         if (!mob.hasPath()) {
             BlockPos center = raid.getCenter();
             Vec3d vec3 = RandomPositionGenerator.findRandomTargetBlockTowards(mob, 15, 4, new Vec3d(center.getX() + 0.5, center.getY(), center.getZ() + 0.5));
-            if (vec3 != null) mob.getNavigator().tryMoveToXYZ(vec3.x, vec3.y, vec3.z, 1.0D);
+            if (vec3 != null) mob.getNavigator().tryMoveToXYZ(vec3.x, vec3.y, vec3.z, 1);
         }
         
     }
@@ -56,7 +56,7 @@ public class EntityAIPathfindToRaid extends EntityAIBase {
     private void recruitNearby(Raid raid) {
         if (raid.isActive()) {
             Set<Entity> set = Sets.newHashSet();
-            set.addAll(mob.world.getEntitiesInAABBexcluding(mob, mob.getEntityBoundingBox().grow(16.0D), entity -> {
+            set.addAll(mob.world.getEntitiesInAABBexcluding(mob, mob.getEntityBoundingBox().grow(16), entity -> {
                 if (!(entity instanceof EntityLiving && entity.hasCapability(RaidsContent.RAIDER, null))) return false;
                 return !entity.getCapability(RaidsContent.RAIDER, null).hasActiveRaid() && WorldDataRaids.canJoinRaid((EntityLiving) entity, raid);
             }));

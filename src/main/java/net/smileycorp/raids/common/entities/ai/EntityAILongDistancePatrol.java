@@ -53,7 +53,7 @@ public class EntityAILongDistancePatrol extends EntityAIBase {
     }
     
     private List<Entity> findPatrolCompanions() {
-        return mob.world.getEntitiesInAABBexcluding(mob, mob.getEntityBoundingBox().grow(16.0D), entity -> {
+        return mob.world.getEntitiesInAABBexcluding(mob, mob.getEntityBoundingBox().grow(16), entity -> {
             if (!entity.hasCapability(RaidsContent.RAIDER, null)) return false;
             return !entity.getCapability(RaidsContent.RAIDER, null).hasActiveRaid();
         });
@@ -61,7 +61,7 @@ public class EntityAILongDistancePatrol extends EntityAIBase {
     
     private boolean moveRandomly() {
         Random rand = mob.getRNG();
-        BlockPos blockpos = mob.world.getHeight(mob.getPosition().add(-8 + rand.nextInt(16), 0, -8 + rand.nextInt(16)));
+        BlockPos blockpos = mob.world.getHeight(mob.getPosition().add(rand.nextInt(16) - 8, 0, rand.nextInt(16) - 8));
         return this.mob.getNavigator().tryMoveToXYZ(blockpos.getX(), blockpos.getY(), blockpos.getZ(), speedModifier);
     }
     

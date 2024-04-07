@@ -389,7 +389,7 @@ public class Raid {
 	
 	public void updateBossbar() {
 		if (getTotalEntityLivingsAlive() <= 0 && hasMoreWaves() && raidCooldownTicks > 0) {
-			raidEvent.setPercent(MathUtils.clamp((float)(300 - raidCooldownTicks) / 300, 0, 1));
+			raidEvent.setPercent(MathUtils.clamp((float)(300 - raidCooldownTicks) / 300f, 0, 1));
 			return;
 		}
 		Set toRemove = Sets.newHashSet();

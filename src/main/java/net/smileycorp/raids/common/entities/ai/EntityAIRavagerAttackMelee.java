@@ -12,8 +12,8 @@ public class EntityAIRavagerAttackMelee extends EntityAIAttackMelee {
     
     @Override
     protected double getAttackReachSqr(EntityLivingBase target) {
-        float f = attacker.width - 0.1F;
-        return f * 2.0F * f * 2.0F + target.width;
+        float distance = attacker.width - 0.1F;
+        return distance * 2.0F * distance * 2.0F + target.width;
     }
     
 }

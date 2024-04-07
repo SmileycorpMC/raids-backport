@@ -20,7 +20,7 @@ public abstract class MixinRenderVindicator extends RenderLiving<EntityMob> {
     }
     
     @Inject(at =@At("TAIL"), method = "<init>")
-    public void init(RenderManager renderManager, CallbackInfo callbackInfo)  {
+    public void init(RenderManager renderManager, CallbackInfo callback)  {
         addLayer(new LayerCustomHead(((ModelIllager)getMainModel()).head));
     }
     

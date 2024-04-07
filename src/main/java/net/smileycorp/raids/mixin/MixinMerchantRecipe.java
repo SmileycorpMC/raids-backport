@@ -46,7 +46,7 @@ public class MixinMerchantRecipe implements ITradeDiscount {
     }
     
     @Inject(at = @At("TAIL"), method = "readFromTags")
-    public void readFromTags(NBTTagCompound nbt, CallbackInfo ci) {
+    public void readFromTags(NBTTagCompound nbt, CallbackInfo callback) {
         if (nbt.hasKey("discountedPrice")) discountedPrice = nbt.getInteger("discountedPrice");
         if (itemToBuy != null && itemToBuy.getItem() == Items.BOOK && secondItemToBuy != null && secondItemToBuy.getItem() == Items.EMERALD) {
             ItemStack stack = itemToBuy;

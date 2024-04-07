@@ -19,7 +19,7 @@ public class BadOmenPotion extends RaidsPotion {
     private static final ResourceLocation OMINOUS_TEXTURE = Constants.loc("textures/mob_effect/bad_omen_121.png");
     
     public BadOmenPotion() {
-        super(true, 0x0b6138, "bad_omen");
+        super(true, 0x0B6138, "bad_omen");
     }
     
     @Override

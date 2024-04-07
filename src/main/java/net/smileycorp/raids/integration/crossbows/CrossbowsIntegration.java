@@ -25,7 +25,7 @@ import java.util.Map;
 public class CrossbowsIntegration {
     
     public static void addTask(EntityPillager entity) {
-        entity.tasks.addTask(3, new EntityAIAttackRangedCrossbow<EntityPillager>(entity, 1.0D, 20,
+        entity.tasks.addTask(3, new EntityAIAttackRangedCrossbow<>(entity, 1, 20,
                 entity::setChargingCrossbow, entity::onCrossbowAttackPerformed));
     }
     

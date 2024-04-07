@@ -24,7 +24,7 @@ public class MixinRenderItem {
     
     //this sucks but is's probably the best way to add support to futuremc's villager gui
     @Inject(at = @At("TAIL"), method = "renderItemOverlays")
-    public void renderItemOverlays(FontRenderer fr, ItemStack stack, int x, int y, CallbackInfo ci) {
+    public void renderItemOverlays(FontRenderer fr, ItemStack stack, int x, int y, CallbackInfo callback) {
         if (ModIntegration.FUTUREMC_LOADED && FutureMCClientIntegration.shouldRenderDiscounts(stack)) {
             Minecraft mc = Minecraft.getMinecraft();
             GlStateManager.pushMatrix();

@@ -34,8 +34,6 @@ import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
 
-import javax.annotation.Nullable;
-
 public class EntityPillager extends AbstractIllager implements IRangedAttackMob {
 
     private static final DataParameter<Boolean> IS_CHARGING_CROSSBOW = EntityDataManager.createKey(EntityPillager.class, DataSerializers.BOOLEAN);
@@ -49,10 +47,10 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
 		super.initEntityAI();
 		tasks.addTask(0, new EntityAISwimming(this));
         if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.addTask(this);
-        else tasks.addTask(4, new EntityAIAttackRangedBow(this, 1.0D, 20, 15.0F));
-        tasks.addTask(8, new EntityAIWanderAvoidWater(this, 1.0D));
-        tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 15F, 1F));
-        tasks.addTask(10, new EntityAIWatchClosest(this, EntityLivingBase.class, 15F));
+        else tasks.addTask(4, new EntityAIAttackRangedBow(this, 1, 20, 15));
+        tasks.addTask(8, new EntityAIWanderAvoidWater(this, 1));
+        tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 15, 1));
+        tasks.addTask(10, new EntityAIWatchClosest(this, EntityLivingBase.class, 15));
         targetTasks.addTask(1, new EntityAIHurtByTarget(this, false, AbstractIllager.class));
         targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
         targetTasks.addTask(3, new EntityAINearestAttackableTarget(this, EntityVillager.class, true));
@@ -65,7 +63,7 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
     }
     
     @Override
-    public void setAttackTarget(@Nullable EntityLivingBase target) {
+    public void setAttackTarget(EntityLivingBase target) {
         if (RaidHandler.isRaider(target)) return;
         super.setAttackTarget(target);
     }
@@ -132,11 +130,11 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
         if (getHeldItemMainhand().getItem() instanceof net.minecraft.item.ItemBow)
             entityarrow = ((net.minecraft.item.ItemBow) this.getHeldItemMainhand().getItem()).customizeArrow(entityarrow);
         double d0 = target.posX - posX;
-        double d1 = target.getEntityBoundingBox().minY + (double)(target.height / 3.0F) - entityarrow.posY;
+        double d1 = target.getEntityBoundingBox().minY + (double)(target.height / 3f) - entityarrow.posY;
         double d2 = target.posZ - posZ;
         double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
-        entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float)(14 - world.getDifficulty().getDifficultyId() * 4));
-        playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRNG().nextFloat() * 0.4F + 0.8F));
+        entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224, d2, 1.6f, (float)(14 - world.getDifficulty().getDifficultyId() * 4));
+        playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1, 1f / (this.getRNG().nextFloat() * 0.4f + 0.8f));
         world.spawnEntity(entityarrow);
     }
     

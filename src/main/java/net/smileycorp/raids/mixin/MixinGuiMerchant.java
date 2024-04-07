@@ -27,12 +27,12 @@ public abstract class MixinGuiMerchant extends GuiContainer {
     }
     
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderItem;renderItemAndEffectIntoGUI(Lnet/minecraft/item/ItemStack;II)V"), method = "drawScreen")
-    public void drawScreen$renderItemAndEffectIntoGUI(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+    public void drawScreen$renderItemAndEffectIntoGUI(int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         itemRender.zLevel = 0;
     }
     
     @Inject(at = @At("TAIL"), method = "drawScreen")
-    public void drawScreen$TAIL(int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+    public void drawScreen$TAIL(int mouseX, int mouseY, float partialTicks, CallbackInfo callback) {
         MerchantRecipeList recipes = merchant.getRecipes(mc.player);
         if (recipes == null) return;
         if (recipes.isEmpty()) return;

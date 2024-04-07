@@ -85,14 +85,14 @@ public class WorldDataRaids extends WorldSavedData {
         else {
             Raid raid = getOrCreateRaid(world, RaidConfig.raidCenteredOnPlayer ? RaidOmenTracker.getRaidStart(player) :
                     world.getVillageCollection().getNearestVillage(player.getPosition(), 64).getCenter());
-            boolean flag = false;
+            boolean canAbsorb = false;
             if (!raid.isStarted()) {
                 if (!raidMap.containsKey(raid.getId())) raidMap.put(raid.getId(), raid);
-                flag = true;
+                canAbsorb = true;
             } else if (raid.getBadOmenLevel() < raid.getMaxBadOmenLevel()) {
-                flag = true;
+                canAbsorb = true;
             } else player.removePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN);
-            if (flag) raid.absorbBadOmen(player);
+            if (canAbsorb) raid.absorbBadOmen(player);
             setDirty(true);
             return raid;
         }

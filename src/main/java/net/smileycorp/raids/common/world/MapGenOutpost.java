@@ -45,8 +45,8 @@ public class MapGenOutpost extends MapGenStructure {
         int dx = (x / OutpostConfig.maxDistance);
         int dz = (z / OutpostConfig.maxDistance);
         Random random = world.setRandomSeed(dx, dz, 165745296);
-        dx = dx * OutpostConfig.maxDistance + random.nextInt(OutpostConfig.maxDistance - OutpostConfig.maxDistance/4);
-        dz = dz * OutpostConfig.maxDistance + random.nextInt(OutpostConfig.maxDistance - OutpostConfig.maxDistance/4);
+        dx = dx * OutpostConfig.maxDistance + random.nextInt(OutpostConfig.maxDistance - OutpostConfig.maxDistance / 4);
+        dz = dz * OutpostConfig.maxDistance + random.nextInt(OutpostConfig.maxDistance - OutpostConfig.maxDistance / 4);
         if (chunkX != dx || chunkZ != dz) return false;
         BlockPos pos = new BlockPos((chunkX << 4) + 8, 0, (chunkZ << 4) + 8);
         if (!world.getBiomeProvider().areBiomesViable(pos.getX(), pos.getZ(), 0, OutpostConfig.getSpawnBiomes())) return false;

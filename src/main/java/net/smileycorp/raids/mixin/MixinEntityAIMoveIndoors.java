@@ -33,7 +33,7 @@ public class MixinEntityAIMoveIndoors {
             callback.setReturnValue(false);
             return;
         }
-        else if (insidePosX != -1 && this.entity.getDistanceSq(insidePosX, this.entity.posY, insidePosZ) < 4.0D) {
+        else if (insidePosX != -1 && this.entity.getDistanceSq(insidePosX, this.entity.posY, insidePosZ) < 4) {
             callback.setReturnValue(false);
             return;
         }

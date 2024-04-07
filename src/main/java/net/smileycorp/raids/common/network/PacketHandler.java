@@ -24,12 +24,9 @@ public class PacketHandler {
 
 		@Override
 		public IMessage onMessage(RaidSoundMessage message, MessageContext ctx) {
-
 			if (ctx.side == Side.CLIENT) {
 				Minecraft mc = Minecraft.getMinecraft();
-				mc.addScheduledTask(() -> {
-					ClientHandler.playRaidSound(message.getPos());
-				});
+				mc.addScheduledTask(() -> ClientHandler.playRaidSound(message.getPos()));
 			}
 			return null;
 		}
