@@ -257,17 +257,7 @@ public class Raid {
 				}
 				if (isStarted() && !hasMoreWaves() && i == 0) {
 					if (postRaidTicks < 40) postRaidTicks++;
-					else {
-						status = Status.VICTORY;
-						for(UUID uuid : heroesOfTheVillage) {
-							Entity entity = world.getEntityFromUuid(uuid);
-							if (entity instanceof EntityLivingBase) {
-								EntityLivingBase living = (EntityLivingBase)entity;
-								living.addPotionEffect(new PotionEffect(RaidsContent.HERO_OF_THE_VILLAGE, 48000, badOmenLevel - 1, false, true));
-							}
-							if (entity instanceof EntityPlayerMP) RaidsContent.RAID_VICTORY.trigger((EntityPlayerMP) entity);
-						}
-					}
+					else raidVictory();
 				}
 				updateBossbar();
 				setDirty();
@@ -282,11 +272,21 @@ public class Raid {
 					if (isVictory()) {
 						raidEvent.setPercent(0);
 						raidEvent.setName(RAID_BAR_VICTORY_COMPONENT);
-					} else {
-						raidEvent.setName(RAID_BAR_DEFEAT_COMPONENT);
-					}
+					} else raidEvent.setName(RAID_BAR_DEFEAT_COMPONENT);
 				}
 			}
+		}
+	}
+	
+	public void raidVictory() {
+		status = Status.VICTORY;
+		for(UUID uuid : heroesOfTheVillage) {
+			Entity entity = world.getEntityFromUuid(uuid);
+			if (entity instanceof EntityLivingBase) {
+				EntityLivingBase living = (EntityLivingBase)entity;
+				living.addPotionEffect(new PotionEffect(RaidsContent.HERO_OF_THE_VILLAGE, 48000, badOmenLevel - 1, false, true));
+			}
+			if (entity instanceof EntityPlayerMP) RaidsContent.RAID_VICTORY.trigger((EntityPlayerMP) entity);
 		}
 	}
 	
@@ -539,15 +539,17 @@ public class Raid {
 	}
 	
 	public float getEnchantOdds() {
-		int i = getBadOmenLevel();
-		if (i == 2) {
-			return 0.1F;
-		} else if (i == 3) {
-			return 0.25F;
-		} else if (i == 4) {
-			return 0.5F;
-		} else {
-			return i == 5 ? 0.75F : 0.0F;
+		switch (getBadOmenLevel()) {
+			case 2:
+				return  0.1f;
+			case 3:
+				return 0.25F;
+			case 4:
+				return 0.5F;
+			case 5:
+				return 0.75F;
+			default:
+				return 0;
 		}
 	}
 	
@@ -589,13 +591,8 @@ public class Raid {
 		
 		private static final Status[] VALUES = values();
 		
-		static Status getByName(String p_37804_) {
-			for(Status raid$raidstatus : VALUES) {
-				if (p_37804_.equalsIgnoreCase(raid$raidstatus.name())) {
-					return raid$raidstatus;
-				}
-			}
-			
+		static Status getByName(String name) {
+			for(Status status : VALUES) if (name.equalsIgnoreCase(status.name())) return status;
 			return ONGOING;
 		}
 		
