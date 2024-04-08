@@ -33,6 +33,7 @@ import net.smileycorp.raids.common.world.RaidsWorldGenerator;
 import net.smileycorp.raids.common.world.StructureOutpostPieces;
 import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.config.OutpostConfig;
+import net.smileycorp.raids.config.PatrolConfig;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
@@ -44,6 +45,7 @@ public class CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		EntityConfig.syncConfig(event);
 		OutpostConfig.syncConfig(event);
+		PatrolConfig.syncConfig(event);
 		RaidConfig.syncConfig(event);
 		PacketHandler.initPackets();
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());

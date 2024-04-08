@@ -29,6 +29,10 @@ public class RaidHandler {
 		if (!RAIDERS.contains(entity) && entity != null) RAIDERS.add(entity);
 	}
 	
+	public static void addRaider(Class<? extends EntityLiving> entity) {
+		if (!RAIDERS.contains(entity) && entity != null) RAIDERS.add(entity);
+	}
+	
 	public static boolean isRaider(Entity entity) {
 		return entity == null ? false : RAIDERS.contains(entity.getClass());
 	}

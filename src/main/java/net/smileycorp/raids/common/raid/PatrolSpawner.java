@@ -1,16 +1,21 @@
 package net.smileycorp.raids.common.raid;
 
+import com.google.common.collect.Lists;
+import javafx.util.Pair;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.BiomeDictionary;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsLogger;
-import net.smileycorp.raids.common.entities.EntityPillager;
+import net.smileycorp.raids.config.PatrolConfig;
 
+import java.util.List;
 import java.util.Random;
 
 public class PatrolSpawner {
@@ -35,29 +40,48 @@ public class PatrolSpawner {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(source.add(k, 0, l));
         if (!world.isAreaLoaded(pos.add(-10, 0, -10), pos.add(10, 0, 10))
                 || BiomeDictionary.hasType(world.getBiome(pos), BiomeDictionary.Type.MUSHROOM)) return;
-        int k1 = (int) Math.ceil(world.getDifficultyForLocation(pos).getAdditionalDifficulty()) + 1;
-        RaidsLogger.logInfo("Spawning patrol with " + (k1 - 1) + " members at " + pos);
-        for (int l1 = 0; l1 < k1; l1++) {
+        int numSpawns = (int) Math.ceil(world.getDifficultyForLocation(pos).getAdditionalDifficulty()) + 1;
+        RaidsLogger.logInfo("Spawning patrol with " + (numSpawns - 1) + " members at " + pos);
+        List<Class<? extends EntityLiving>> spawns = Lists.newArrayList();
+        Pair<Integer, List<Pair<Class<? extends EntityLiving>, Integer>>> entries = PatrolConfig.getSpawnEntities();
+        for (int i = 0; i < numSpawns; i++) {
+            int c = rand.nextInt(entries.getKey());
+            for (Pair<Class<? extends EntityLiving>, Integer> entry : entries.getValue()) {
+                if (c < entry.getValue()) spawns.add(entry.getKey());
+                break;
+            }
+        }
+        boolean hasLeader = false;
+        for (Class<? extends EntityLiving> clazz : spawns) {
             pos.setY(world.getHeight(pos.getX(), pos.getZ()));
-            if (l1 == 0) if (!spawnPatrolMember(world, pos, true)) break;
-            else spawnPatrolMember(world, pos, false);
+            EntityLiving entity = spawnPatrolMember(world, pos, clazz);
+            if (!hasLeader && entity != null && entity.hasCapability(RaidsContent.RAIDER, null)) {
+                Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
+                raider.setLeader();
+                hasLeader = true;
+            }
             pos = pos.setPos(pos.getX() + rand.nextInt(5) - rand.nextInt(5), pos.getY(), pos.getZ() + rand.nextInt(5) - rand.nextInt(5));
         }
     }
     
-    private boolean spawnPatrolMember(WorldServer world, BlockPos pos, boolean leader) {
+    private EntityLiving spawnPatrolMember(WorldServer world, BlockPos pos, Class<? extends EntityLiving> clazz) {
         IBlockState state = world.getBlockState(pos);
         if (state.isFullBlock() || state.getBlock() instanceof BlockLiquid || world.getLightBrightness(pos) > 8)
-            return false;
-        EntityPillager pillager = new EntityPillager(world);
-        pillager.setPosition(pos.getX(), pos.getY(), pos.getZ());
-        pillager.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-        if (pillager.hasCapability(RaidsContent.RAIDER, null)) {
-            Raider raider = pillager.getCapability(RaidsContent.RAIDER, null);
-            raider.findPatrolTarget();
-            if (leader) raider.setLeader();
+            return null;
+        try {
+            EntityLiving entity = clazz.getConstructor(World.class).newInstance(world);
+            entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
+            entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+            if (entity.hasCapability(RaidsContent.RAIDER, null)) {
+                Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
+                raider.findPatrolTarget();
+            }
+            RaidsLogger.logInfo("Spawning patrol member " + entity + " at " + pos);
+            return world.spawnEntity(entity) ? entity : null;
+        } catch (Exception e) {
+            RaidsLogger.logError("Failed spawning entity from class " + clazz, e);
+            return null;
         }
-        RaidsLogger.logInfo("Spawning patrol member " + pillager + " at " + pos);
-        return world.spawnEntity(pillager);
     }
+    
 }
