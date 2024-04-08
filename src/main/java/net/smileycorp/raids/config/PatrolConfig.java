@@ -1,11 +1,8 @@
 package net.smileycorp.raids.config;
 
 import com.google.common.collect.Lists;
-import javafx.util.Pair;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.registries.GameData;
@@ -13,13 +10,15 @@ import net.smileycorp.raids.common.RaidsLogger;
 import net.smileycorp.raids.common.raid.RaidHandler;
 
 import java.io.File;
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
 
 public class PatrolConfig {
     
     private static Configuration config;
 
-    private static Pair<Integer, List<Pair<Class<? extends EntityLiving>, Integer>>> spawnEntities;
+    private static Map.Entry<Integer, List<Map.Entry<Class<? extends EntityLiving>, Integer>>> spawnEntities;
     private static String[] spawnEntitiesStr;
     
     public static void syncConfig(FMLPreInitializationEvent event) {
@@ -33,9 +32,9 @@ public class PatrolConfig {
         }
     }
     
-    public static Pair<Integer, List<Pair<Class<? extends EntityLiving>, Integer>>> getSpawnEntities() {
+    public static Map.Entry<Integer, List<Map.Entry<Class<? extends EntityLiving>, Integer>>> getSpawnEntities() {
         if (spawnEntities == null) {
-            List<Pair<Class<? extends EntityLiving>, Integer>> list = Lists.newArrayList();
+            List<Map.Entry<Class<? extends EntityLiving>, Integer>> list = Lists.newArrayList();
             int total = 0;
             for (String str : spawnEntitiesStr) {
                 try {
@@ -59,7 +58,7 @@ public class PatrolConfig {
                     if (clazz == null) throw new Exception("Entry " + str + " is not in the correct format");
                     if (EntityLiving.class.isAssignableFrom(clazz) && weight > 0) {
                         total += weight;
-                        Pair<Class<? extends EntityLiving>, Integer> entry = new Pair(clazz, total);
+                        Map.Entry<Class<? extends EntityLiving>, Integer> entry = new AbstractMap.SimpleEntry(clazz, total);
                         list.add(entry);
                         RaidHandler.addRaider((Class<? extends EntityLiving>) clazz);
                         RaidsLogger.logInfo("Loaded patrol spawn entity " + entry + " as " + clazz.getName() + " with weight " + weight);
@@ -70,14 +69,9 @@ public class PatrolConfig {
                     RaidsLogger.logError("Error adding patrol entry " + str, e);
                 }
             }
-            spawnEntities = new Pair(total, list);
+            spawnEntities = new AbstractMap.SimpleEntry(total, list);
         }
         return spawnEntities;
-    }
-    
-    public static boolean isSpawnEntity(EntityLivingBase entity) {
-        for (Biome.SpawnListEntry entry : OutpostConfig.getSpawnEntities()) if (entry.entityClass == entity.getClass()) return true;
-        return false;
     }
     
 }
