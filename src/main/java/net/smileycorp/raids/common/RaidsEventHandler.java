@@ -9,6 +9,7 @@ import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -26,6 +27,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootPool;
+import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.RandomValueRange;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
@@ -220,14 +222,16 @@ public class RaidsEventHandler {
 	@SubscribeEvent
 	public void addLoot(LootTableLoadEvent event) {
 		if (Constants.OUTPOST_CHESTS.equals(event.getName())) {
+			LootTable table = event.getTable();
 			if (RaidConfig.ominousBottles) {
-				LootPool bottlePool = event.getTable().getPool("raids:ominous_bottle");
+				LootPool bottlePool = table.getPool("raids:ominous_bottle");
 				bottlePool.addEntry(new LootEntryItem(RaidsContent.OMINOUS_BOTTLE, 1, 1, new LootFunction[] {new SetMetadata(new LootCondition[0], new RandomValueRange(0, 4))}, new LootCondition[0], "raids:ominous_bottle"));
 			}
-			LootPool crossbowPool = event.getTable().getPool("raids:outpost_crossbow");
-			if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.addLoot(crossbowPool);
-			if (ModIntegration.SPARTAN_LOADED) SpartanWeaponryIntegration.addLoot(crossbowPool);
-			if (ModIntegration.TINKERS_LOADED) TinkersConstructIntegration.addLoot(crossbowPool);
+			if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.addLoot(table);
+			if (ModIntegration.SPARTAN_LOADED) SpartanWeaponryIntegration.addLoot(table);
+			if (ModIntegration.TINKERS_LOADED) TinkersConstructIntegration.addLoot(table);
+			LootPool crossbowPool = table.getPool("raids:outpost_crossbow");
+			if (crossbowPool.lootEntries.isEmpty()) crossbowPool.addEntry(new LootEntryItem(Items.BOW, 1, 1, new LootFunction[0], new LootCondition[0], "raids:bow"));
 		}
 	}
 	

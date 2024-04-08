@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.storage.loot.LootEntryItem;
-import net.minecraft.world.storage.loot.LootPool;
+import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.smileycorp.raids.common.entities.EntityPillager;
@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Random;
 
 public class TinkersConstructIntegration {
-    public static void addLoot(LootPool pool) {
-        pool.addEntry(new LootEntryItem(TinkerRangedWeapons.crossBow, 3, 1, new LootFunction[]{new LootFunctionTConCrossbow()}, new LootCondition[0], "tconstruct:crossbow"));
+    public static void addLoot(LootTable table) {
+        table.getPool("raids:outpost_crossbow").addEntry(new LootEntryItem(TinkerRangedWeapons.crossBow, 3, 1, new LootFunction[]{new LootFunctionTConCrossbow()}, new LootCondition[0], "tconstruct:crossbow"));
     }
     
     public static void applyRaidBuffs(EntityPillager entity, Raid raid, int wave) {
@@ -56,8 +56,8 @@ public class TinkersConstructIntegration {
     }
     
     public static ItemStack getIronCrossbow(Random rand) {
-        List<Material> parts = Lists.newArrayList(TinkerMaterials.wood, rand.nextInt(0) == 0 ? TinkerMaterials.iron : TinkerMaterials.wood,
-                rand.nextInt(0) == 0 ? TinkerMaterials.iron : TinkerMaterials.wood, TinkerMaterials.string);
+        List<Material> parts = Lists.newArrayList(TinkerMaterials.wood, rand.nextInt(2) == 0 ? TinkerMaterials.iron : TinkerMaterials.wood,
+                rand.nextInt(2) == 0 ? TinkerMaterials.iron : TinkerMaterials.wood, TinkerMaterials.string);
         return TinkerRangedWeapons.crossBow.buildItem(parts);
     }
     
