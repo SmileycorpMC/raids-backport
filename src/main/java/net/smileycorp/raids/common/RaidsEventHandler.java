@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
@@ -165,7 +166,9 @@ public class RaidsEventHandler {
 				BlockPos pos = entity.getPosition();
 				MapGenOutpost.OutpostStart structure = MapGenOutpost.getInstance(((ChunkProviderServer) provider).chunkGenerator).getStructureAt(pos);
 				if (structure == null) return;
-				List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, structure.getSpawnBox(), OutpostConfig::isSpawnEntity);
+				AxisAlignedBB aabb = structure.getSpawnBox();
+				if (aabb == null) return;
+				List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, aabb, OutpostConfig::isSpawnEntity);
 				if (entities.size() < OutpostConfig.maxEntities && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 8
 						&& world.getBlockState(pos.down()).isOpaqueCube()) event.setResult(Result.ALLOW);
 				else event.setResult(Result.DENY);

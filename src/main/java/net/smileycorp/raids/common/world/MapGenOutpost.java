@@ -1,5 +1,7 @@
 package net.smileycorp.raids.common.world;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -74,7 +76,9 @@ public class MapGenOutpost extends MapGenStructure {
     
     public static class OutpostStart extends StructureStart {
     
-        private final BlockPos center;
+        private BlockPos center;
+        
+        public OutpostStart() {};
         
         public OutpostStart(World world, Random rand, int chunkX, int chunkZ, IChunkGenerator generator) {
             int x = chunkX << 4;
@@ -91,6 +95,7 @@ public class MapGenOutpost extends MapGenStructure {
         }
         
         private boolean isInStructure(BlockPos pos) {
+            if (center == null) return false;
             boolean b = Math.abs(pos.getX() - center.getX()) < 36 && Math.abs(pos.getY() - center.getY()) < 26 && Math.abs(pos.getZ() - center.getZ()) < 36;
             if (b) RaidsLogger.logInfo(pos + " is in structure at " + center);
             return b;
@@ -105,7 +110,18 @@ public class MapGenOutpost extends MapGenStructure {
         }
     
         public AxisAlignedBB getSpawnBox() {
+            if (center == null) return null;
             return new AxisAlignedBB(center).grow(36, 26, 36);
+        }
+    
+        @Override
+        public void writeToNBT(NBTTagCompound nbt) {
+            if (center != null) nbt.setTag("center", NBTUtil.createPosTag(center));
+        }
+    
+        @Override
+        public void readFromNBT(NBTTagCompound nbt) {
+            if (nbt.hasKey("center")) center = NBTUtil.getPosFromTag(nbt.getCompoundTag("center"));
         }
         
     }
