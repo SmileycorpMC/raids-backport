@@ -44,7 +44,8 @@ public class RaidEntry {
     }
     
     private int getCountWithoutBonus(Raid raid, int wave, boolean shouldSpawnBonus) {
-        return shouldSpawnBonus ? count[raid.getNumGroups()] : count[wave];
+        if (shouldSpawnBonus) wave = raid.getNumGroups();
+        return wave >= count.length ? count[count.length - 1] : count[wave];
     }
     
     public void spawnEntity(Raid raid, int wave, BlockPos pos, List<EntityLiving> entities) throws Exception {
