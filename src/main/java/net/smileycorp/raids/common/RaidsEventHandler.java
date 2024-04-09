@@ -50,7 +50,8 @@ import net.smileycorp.raids.common.world.MapGenOutpost;
 import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.integration.ModIntegration;
-import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
+import net.smileycorp.raids.integration.crossbow.CrossbowIntegration;
+import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
 import net.smileycorp.raids.integration.spartanweaponry.SpartanWeaponryIntegration;
 import net.smileycorp.raids.integration.tconstruct.TinkersConstructIntegration;
 
@@ -227,7 +228,8 @@ public class RaidsEventHandler {
 				LootPool bottlePool = table.getPool("raids:ominous_bottle");
 				bottlePool.addEntry(new LootEntryItem(RaidsContent.OMINOUS_BOTTLE, 1, 1, new LootFunction[] {new SetMetadata(new LootCondition[0], new RandomValueRange(0, 4))}, new LootCondition[0], "raids:ominous_bottle"));
 			}
-			if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.addLoot(table);
+			if (ModIntegration.CROSSBOWS_BACKPORT_LOADED) CrossbowsBackportIntegration.addLoot(table);
+			if (ModIntegration.CROSSBOW_LOADED) CrossbowIntegration.addLoot(table);
 			if (ModIntegration.SPARTAN_LOADED) SpartanWeaponryIntegration.addLoot(table);
 			if (ModIntegration.TINKERS_LOADED) TinkersConstructIntegration.addLoot(table);
 			LootPool crossbowPool = table.getPool("raids:outpost_crossbow");

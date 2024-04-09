@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityVindicator;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.smileycorp.raids.common.RaidsLogger;
@@ -17,16 +19,15 @@ public class RaidHandler {
 
 	private static final Map<Class<? extends EntityLiving>, RaidEntry> ENTRIES = Maps.newHashMap();
 	
-	public static final Map<Class<? extends EntityLiving>, RaidBuffs> RAID_BUFFS = Maps.newHashMap();
+	public static final Map<Class, RaidBuffs> RAID_BUFFS = Maps.newHashMap();
 
 	public static void registerEntry(Class<? extends EntityLiving> entity, int[] count, float captainChance, @Nullable RaidEntry.Rider rider, @Nullable RaidEntry.BonusSpawns bonusSpawns) {
 		ENTRIES.put(entity, new RaidEntry(entity, count, captainChance, rider, bonusSpawns));
 		if (!RAIDERS.contains(entity) && entity != null) RAIDERS.add(entity);
 	}
 	
-	public static <T extends EntityLiving> void registerRaidBuffs(Class<T> entity, RaidBuffs<T> buffs) {
-		RAID_BUFFS.put(entity, buffs);
-		if (!RAIDERS.contains(entity) && entity != null) RAIDERS.add(entity);
+	public static void registerRaidBuffs(Class item, RaidBuffs buffs) {
+		RAID_BUFFS.put(item, buffs);
 	}
 	
 	public static void addRaider(Class<? extends EntityLiving> entity) {
@@ -80,13 +81,21 @@ public class RaidHandler {
 	}
 	
 	public static void applyRaidBuffs(EntityLiving entity, Raid raid, int wave, Random rand) {
-		RaidBuffs buffs = RAID_BUFFS.get(entity.getClass());
-		if (buffs != null) buffs.apply(entity, raid, wave, rand);
+		for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
+			ItemStack stack = entity.getItemStackFromSlot(slot);
+			if (stack == null) continue;
+			if (stack.isEmpty()) continue;
+			for (Map.Entry<Class, RaidBuffs> buffs : RAID_BUFFS.entrySet()) {
+				if (buffs.getKey().isAssignableFrom(stack.getItem().getClass()))
+					stack = buffs.getValue().apply(stack, entity, raid, wave, rand);
+			}
+			entity.setItemStackToSlot(slot, stack);
+		}
 	}
 	
-	public interface RaidBuffs<T extends EntityLiving> {
+	public interface RaidBuffs {
 		
-		void apply(T entity, Raid raid, int wave, Random rand);
+		ItemStack apply(ItemStack stack, EntityLiving entity, Raid raid, int wave, Random rand);
 	
 	}
 	

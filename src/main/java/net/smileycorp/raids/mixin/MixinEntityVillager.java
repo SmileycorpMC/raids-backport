@@ -13,7 +13,7 @@ import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.WorldDataRaids;
 import net.smileycorp.raids.integration.ModIntegration;
-import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
+import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -42,7 +42,7 @@ public abstract class MixinEntityVillager extends EntityAgeable {
             if (world.getHeight((int) posX, (int) posZ) > posY) return;
             ItemStack stack = RaidsContent.getVillagerFirework(rand);
             EntityFireworkRocket firework = new EntityFireworkRocket(world, posX, posY + getEyeHeight(), posZ, stack );
-            if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.setOwner(firework, this);
+            if (ModIntegration.CROSSBOWS_BACKPORT_LOADED) CrossbowsBackportIntegration.setOwner(firework, this);
             world.spawnEntity(firework);
             firework.motionY = 0.01;
         }

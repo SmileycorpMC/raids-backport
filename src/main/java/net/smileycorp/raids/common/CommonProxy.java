@@ -4,13 +4,15 @@ import com.google.common.collect.Maps;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityEvoker;
 import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraft.world.storage.loot.LootTableList;
@@ -25,6 +27,7 @@ import net.smileycorp.raids.common.command.CommandSpawnPatrol;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.network.PacketHandler;
+import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.raid.RaidOmenTracker;
 import net.smileycorp.raids.common.raid.Raider;
@@ -36,9 +39,9 @@ import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.PatrolConfig;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.integration.ModIntegration;
-import net.smileycorp.raids.integration.crossbows.CrossbowsIntegration;
 
 import java.util.Map;
+import java.util.Random;
 
 public class CommonProxy {
 	
@@ -54,7 +57,6 @@ public class CommonProxy {
 		StructureOutpostPieces.registerStructurePieces();
 		CapabilityManager.INSTANCE.register(Raider.class, new Raider.Storage(), Raider.Impl::new);
 		if (RaidConfig.raidCenteredOnPlayer) CapabilityManager.INSTANCE.register(RaidOmenTracker.class, new RaidOmenTracker.Storage(), RaidOmenTracker.Impl::new);
-		registerSpawns();
 	}
 
 	public void init(FMLInitializationEvent event) {
@@ -64,6 +66,15 @@ public class CommonProxy {
 		CriteriaTriggers.register(RaidsContent.WHOS_THE_PILLAGER);
 		CriteriaTriggers.register(RaidsContent.VOLUNTARY_EXILE);
 		CriteriaTriggers.register(RaidsContent.RAID_VICTORY);
+		registerSpawns();
+		registerRaidBuffs();
+		ModIntegration.init();
+	}
+	
+	private void registerRaidBuffs() {
+		RaidHandler.registerRaidBuffs(ItemBow.class, CommonProxy::applyBowBuffs);
+		RaidHandler.registerRaidBuffs(ItemSword.class, CommonProxy::applyMeleeBuffs);
+		RaidHandler.registerRaidBuffs(ItemTool.class, CommonProxy::applyMeleeBuffs);
 	}
 	
 	public void postInit(FMLPostInitializationEvent event) {
@@ -88,20 +99,27 @@ public class CommonProxy {
 		RaidHandler.registerEntry(EntityWitch.class, new int[]{0, 0, 0, 0, 3, 0, 0, 1}, 0, null, (difficulty, rand, raid, wave, isBonusWave)  ->
 			(difficulty == EnumDifficulty.EASY || wave <= 2 || wave == 4) ? 0 : 1);
 		RaidHandler.registerEntry(EntityEvoker.class, new int[]{0, 0, 0, 1, 0, 1, 0, 2}, 0.06f, null, null);
-		RaidHandler.registerRaidBuffs(EntityPillager.class, (entity, raid, wave, rand) -> {
-			if (rand.nextFloat() <= raid.getEnchantOdds()) {
-				if (ModIntegration.CROSSBOWS_LOADED) CrossbowsIntegration.applyRaidBuffs(entity, raid, wave);
-			}
-		});
-		RaidHandler.registerRaidBuffs(EntityVindicator.class, (entity, raid, wave, rand) -> {
-			ItemStack itemstack = new ItemStack(Items.IRON_AXE);
-			if (rand.nextFloat() <= raid.getEnchantOdds()) {
-				Map<Enchantment, Integer> map = Maps.newHashMap();
-				map.put(Enchantments.SHARPNESS, wave > raid.getNumGroups(EnumDifficulty.NORMAL) ? 2 : 1);
-				EnchantmentHelper.setEnchantments(map, itemstack);
-			}
-			entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemstack);
-		});
+	}
+	
+	public static ItemStack applyMeleeBuffs(ItemStack stack, EntityLiving entity, Raid raid, int wave, Random rand) {
+		if (rand.nextFloat() > raid.getEnchantOdds()) return stack;
+		Map<Enchantment, Integer> map = Maps.newHashMap();
+		map.put(Enchantments.SHARPNESS, wave > raid.getNumGroups(EnumDifficulty.NORMAL) ? 2 : 1);
+		EnchantmentHelper.setEnchantments(map, stack);
+		return stack;
+	}
+	
+	public static ItemStack applyBowBuffs(ItemStack stack, EntityLiving entity, Raid raid, int wave, Random rand) {
+		if (rand.nextFloat() > raid.getEnchantOdds()) return stack;
+		Map<Enchantment, Integer> map = Maps.newHashMap();
+		if (wave > raid.getNumGroups(EnumDifficulty.NORMAL)) {
+			map.put(Enchantments.POWER, 2);
+			if (rand.nextInt(3) == 0) map.put(Enchantments.FLAME, 1);
+		}
+		else if (wave > raid.getNumGroups(EnumDifficulty.EASY)) map.put(Enchantments.POWER, 1);
+		map.put(Enchantments.PUNCH, 1);
+		EnchantmentHelper.setEnchantments(map, stack);
+		return stack;
 	}
 	
 }
