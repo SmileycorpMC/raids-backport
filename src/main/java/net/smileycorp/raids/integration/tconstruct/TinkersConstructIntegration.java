@@ -3,6 +3,7 @@ package net.smileycorp.raids.integration.tconstruct;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -45,6 +46,7 @@ public class TinkersConstructIntegration {
     }
     
     public static ItemStack getCrossbow(Random rand, boolean loot) {
+        if (rand.nextInt(100) == 0) return TinkersConstructIntegration.generateRandomCrossbow(rand);
         int i = rand.nextInt(10);
         return (i == 9 && loot) ? TinkersConstructIntegration.generateRandomCrossbow(rand) :
                 i < 3 ? TinkersConstructIntegration.getIronCrossbow(rand) : TinkersConstructIntegration.getWoodCrossbow();
@@ -59,13 +61,21 @@ public class TinkersConstructIntegration {
         float power = ItemBow.getArrowVelocity(20) * 7;
         power *= ProjectileLauncherNBT.from(stack).range;
         EntityArrow projectile = ((ItemArrow)Items.ARROW).createArrow(world, new ItemStack(Items.ARROW), entity);
-        projectile.shoot(entity, entity.rotationPitch, entity.rotationYaw, 0.0F, power, 0);
+        EntityLivingBase target = entity.getAttackTarget();
+        double d0 = target.posX - entity.posX;
+        double d1 = target.getEntityBoundingBox().minY + (target.height * 0.4f) - projectile.posY;
+        double d2 = target.posZ - entity.posZ;
+        projectile.shoot(d0, d1, d2, power, 0);
         projectile.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
         if(projectile != null && ProjectileEvent.OnLaunch.fireEvent(projectile, stack, entity)) {
             ToolHelper.damageTool(stack, 1, entity);
             world.spawnEntity(projectile);
         }
         world.playSound(null, entity.posX, entity.posY, entity.posZ, SoundEvents.ENTITY_ARROW_SHOOT, entity.getSoundCategory(), 1.0F, 1.0F / (entity.getRNG().nextFloat() * 0.4F + 1.2F) + power * 0.5F);
+    }
+    
+    public static boolean isCharged(ItemStack stack, EntityPillager entity) {
+        return ((CrossBow) stack.getItem()).getDrawbackProgress(stack, entity) >= 1;
     }
     
     public static void addLoot(LootTable table) {

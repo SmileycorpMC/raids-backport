@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common;
+package net.smileycorp.raids.common.util;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -10,6 +10,7 @@ import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.critereon.AbstractCriterionInstance;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
+import net.smileycorp.raids.common.Constants;
 
 import java.util.Map;
 import java.util.Set;

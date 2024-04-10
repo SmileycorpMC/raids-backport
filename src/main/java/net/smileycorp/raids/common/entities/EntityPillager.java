@@ -40,7 +40,6 @@ import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
 
-import javax.annotation.Nonnull;
 import javax.vecmath.Vector3f;
 
 @Optional.Interface(iface = "git.jbredwards.crossbow.api.ICrossbowUser", modid = "crossbow")
@@ -102,9 +101,8 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob,
     public IllagerArmPose getArmPose() {
         if (!ModIntegration.HAS_CROSSBOW_MOD) return getHeldItemMainhand().isEmpty() && getHeldItemOffhand().isEmpty()
                 ? IllagerArmPose.ATTACKING : IllagerArmPose.BOW_AND_ARROW;
-        if (ModIntegration.isCrossbow(getHeldItemMainhand())) return null;
+        if (ModIntegration.isCrossbow(getHeldItemMainhand()) || ModIntegration.isCrossbow(getHeldItemOffhand())) return null;
         if (!getHeldItemMainhand().isEmpty()) return IllagerArmPose.BOW_AND_ARROW;
-        if (ModIntegration.isCrossbow(getHeldItemOffhand())) return null;
         return getHeldItemOffhand().isEmpty() ? IllagerArmPose.ATTACKING : IllagerArmPose.BOW_AND_ARROW;
     }
 	
@@ -196,7 +194,7 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob,
         double d2 = Math.sqrt(d0 * d0 + d1 * d1);
         double d3 = target.posY - posY + d2 * (double)0.2F;
         Vec3d vec3 = new Vec3d(d0, d3, d1).normalize();
-        Vec3d vec31 = vec3.crossProduct(new Vec3d(0.0D, 1.0D, 0.0D));
+        Vec3d vec31 = vec3.crossProduct(new Vec3d(0.0D, 1, 0.0D));
         Vector3f angle = new Vector3f((float) vec31.x, (float) vec31.y, (float) vec31.z);
         Vector3f vector3f = new Vector3f((float) vec3.x, (float) vec3.y, (float) vec3.z);
         vector3f.angle(angle);

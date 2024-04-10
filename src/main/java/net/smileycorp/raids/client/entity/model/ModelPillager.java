@@ -8,8 +8,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
 import net.smileycorp.crossbows.common.item.ItemCrossbow;
-import net.smileycorp.raids.common.MathUtils;
 import net.smileycorp.raids.common.entities.EntityPillager;
+import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
 
@@ -36,6 +36,12 @@ public class ModelPillager extends ModelIllager {
     }
     
     public static void animateCharge(EntityLivingBase entity, ModelRenderer rightArm, ModelRenderer leftArm) {
+        rightArm.rotateAngleX = 0;
+        rightArm.rotateAngleY = 0;
+        rightArm.rotateAngleZ = 0;
+        leftArm.rotateAngleX = 0;
+        leftArm.rotateAngleY = 0;
+        leftArm.rotateAngleZ = 0;
         boolean isRight = entity.getActiveHand() == EnumHand.MAIN_HAND ^ entity.getPrimaryHand() == EnumHandSide.LEFT;
         ModelRenderer hand = isRight ? rightArm : leftArm;
         ModelRenderer hand1 = isRight ? leftArm : rightArm;
@@ -50,6 +56,12 @@ public class ModelPillager extends ModelIllager {
     }
     
     public static void animateCrossbowHold(ModelRenderer rightArm, ModelRenderer leftArm, ModelRenderer head, boolean isRight) {
+        rightArm.rotateAngleX = 0;
+        rightArm.rotateAngleY = 0;
+        rightArm.rotateAngleZ = 0;
+        leftArm.rotateAngleX = 0;
+        leftArm.rotateAngleY = 0;
+        leftArm.rotateAngleZ = 0;
         ModelRenderer hand1 = isRight ? rightArm : leftArm;
         ModelRenderer hand2 = isRight ? leftArm : rightArm;
         hand1.rotateAngleY = (isRight ? -0.3F : 0.3F) + head.rotateAngleY;

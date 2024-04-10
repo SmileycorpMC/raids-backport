@@ -25,6 +25,7 @@ import net.smileycorp.raids.common.potion.BadOmenPotion;
 import net.smileycorp.raids.common.potion.RaidsPotion;
 import net.smileycorp.raids.common.raid.RaidOmenTracker;
 import net.smileycorp.raids.common.raid.Raider;
+import net.smileycorp.raids.common.util.RaidsCriterionTrigger;
 import net.smileycorp.raids.config.RaidConfig;
 
 import java.util.Random;

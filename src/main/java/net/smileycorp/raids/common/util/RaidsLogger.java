@@ -1,6 +1,7 @@
-package net.smileycorp.raids.common;
+package net.smileycorp.raids.common.util;
 
 import com.google.common.collect.Lists;
+import net.smileycorp.raids.common.Constants;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

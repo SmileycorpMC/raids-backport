@@ -8,7 +8,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.registries.GameData;
-import net.smileycorp.raids.common.RaidsLogger;
+import net.smileycorp.raids.common.util.RaidsLogger;
 
 import java.io.File;
 import java.util.List;
@@ -28,6 +28,13 @@ public class OutpostConfig {
     private static List<Biome.SpawnListEntry> spawnEntities;
     private static String[] spawnEntitiesStr;
     
+    //chest loot
+    public static boolean ominousBottles;
+    public static boolean crossbowsBackportCrossbows;
+    public static boolean crossbowCrossbows;
+    public static boolean spartansWeaponryCrossbows;
+    public static boolean tinkersConstructCrossbows;
+    
     public static void syncConfig(FMLPreInitializationEvent event) {
         config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/outposts.cfg"));
         try{
@@ -37,6 +44,11 @@ public class OutpostConfig {
             spawnBiomesStr = config.get("generation", "spawnBiomes", new String[] {"minecraft:plains", "minecraft:desert", "minecraft:savanna", "minecraft:taiga", "minecraft:ice_flats", "minecraft:taiga_cold"}, "Which biomes can outposts spawn in?").getStringList();
             maxEntities = config.get("spawns", "maxEntities", 8, "How many entities can be spawned at an outpost at once?").getInt();
             spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-1"}, "Which entities should spawn in outposts? (format is registry name-spawn weight)").getStringList();
+            ominousBottles = config.get("chest loot", "ominousBottles", true, "Can ominous bottles generate in outpost chests? (Requires Ominous Bottles to be enabled in the raids config)").getBoolean();
+            crossbowsBackportCrossbows = config.get("chest loot", "crossbowsBackportCrossbows", true, "Can crossbows backport crossbows generate in outpost chests? (Requires Crossbows Backport to be installed)").getBoolean();
+            crossbowCrossbows = config.get("chest loot", "crossbowCrossbows", true, "Can crossbow crossbows generate in outpost chests? (Requires Crossbow to be installed)").getBoolean();
+            spartansWeaponryCrossbows = config.get("chest loot", "spartansWeaponryCrossbows", true, "Can spartans weaponry crossbows and bolts generate in outpost chests? (Requires Spartan's Weaponry to be installed)").getBoolean();
+            tinkersConstructCrossbows = config.get("chest loot", "tinkersConstructCrossbows", true, "Can tinkers construct crossbows generate in outpost chests? (Requires Tinker's Construct to be installed)").getBoolean();
         } catch(Exception e) {
         } finally {
             if (config.hasChanged()) config.save();

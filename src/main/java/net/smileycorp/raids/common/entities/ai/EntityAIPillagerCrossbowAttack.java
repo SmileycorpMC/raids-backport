@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.integration.ModIntegration;
+import net.smileycorp.raids.integration.spartanweaponry.SpartanWeaponryIntegration;
 
 public class EntityAIPillagerCrossbowAttack extends EntityAIBase {
     
@@ -68,10 +69,25 @@ public class EntityAIPillagerCrossbowAttack extends EntityAIBase {
                     entity.setChargingCrossbow(true);
                 }
             } else if (state == State.CHARGING) {
-                if (!entity.isHandActive()) state = State.UNCHARGED;
-                int i = entity.getItemInUseCount();
+                if (!entity.isHandActive()) {
+                    if (ModIntegration.SPARTAN_LOADED) {
+                        for (EnumHand hand : EnumHand.values()) {
+                            ItemStack stack = entity.getHeldItem(hand);
+                            if (!SpartanWeaponryIntegration.isCrossbow(stack)) continue;
+                            entity.resetActiveHand();
+                            state = State.CHARGED;
+                            stack.onPlayerStoppedUsing(entity.world, entity, 0);
+                            attackDelay = 35 + entity.getRNG().nextInt(20);
+                            entity.setChargingCrossbow(false);
+                            ModIntegration.setCharged(stack, true);
+                            return;
+                        }
+                    }
+                    state = State.UNCHARGED;
+                }
                 ItemStack stack = entity.getActiveItemStack();
-                if (ModIntegration.isCrossbow(stack) && i < -stack.getMaxItemUseDuration()) {
+                if (ModIntegration.isCrossbow(stack) && ModIntegration.isCharged(stack, entity)) {
+                    ModIntegration.setCharged(stack, true);
                     entity.resetActiveHand();
                     state = State.CHARGED;
                     stack.onPlayerStoppedUsing(entity.world, entity, 0);

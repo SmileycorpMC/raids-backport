@@ -55,14 +55,22 @@ public class ModIntegration {
     
     public static void setCharged(ItemStack stack, boolean charged) {
         if (CROSSBOWS_BACKPORT_LOADED && CrossbowsBackportIntegration.isCrossbow(stack)) CrossbowsBackportIntegration.setCharged(stack, charged);
+        if (SPARTAN_LOADED && SpartanWeaponryIntegration.isCrossbow(stack)) SpartanWeaponryIntegration.setCharged(stack, charged);
         if (TINKERS_LOADED && TinkersConstructIntegration.isCrossbow(stack)) TinkersConstructIntegration.setCharged(stack, charged);
     }
     
     public static void performShooting(EntityPillager entity, ItemStack stack, float velocity) {
         if (CROSSBOWS_BACKPORT_LOADED && CrossbowsBackportIntegration.isCrossbow(stack)) CrossbowsBackportIntegration.shoot(entity, stack, velocity);
         if (CROSSBOW_LOADED && CrossbowIntegration.isCrossbow(stack)) CrossbowIntegration.shoot(entity, stack, velocity);
-        if (SPARTAN_LOADED && SpartanWeaponryIntegration.isCrossbow(stack)) SpartanWeaponryIntegration.shoot(entity, stack, velocity);
+        if (SPARTAN_LOADED && SpartanWeaponryIntegration.isCrossbow(stack)) SpartanWeaponryIntegration.shoot(entity, stack);
         if (TINKERS_LOADED && TinkersConstructIntegration.isCrossbow(stack)) TinkersConstructIntegration.shoot(entity, stack);
     }
     
+    public static boolean isCharged(ItemStack stack, EntityPillager entity) {
+        if (CROSSBOWS_BACKPORT_LOADED && CrossbowsBackportIntegration.isCrossbow(stack)) return entity.getItemInUseCount() < -stack.getMaxItemUseDuration();
+        if (CROSSBOW_LOADED && CrossbowIntegration.isCrossbow(stack)) return entity.getItemInUseCount() < -stack.getMaxItemUseDuration();
+        if (SPARTAN_LOADED && SpartanWeaponryIntegration.isCrossbow(stack)) return entity.getItemInUseCount() < -stack.getMaxItemUseDuration();
+        if (TINKERS_LOADED && TinkersConstructIntegration.isCrossbow(stack)) return TinkersConstructIntegration.isCharged(stack, entity);
+        return false;
+    }
 }

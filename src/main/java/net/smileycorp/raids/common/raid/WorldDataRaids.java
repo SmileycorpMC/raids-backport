@@ -12,7 +12,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.WorldSavedData;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.RaidsLogger;
+import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.RaidConfig;
 
 import javax.annotation.Nullable;

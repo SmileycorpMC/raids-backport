@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.BiomeDictionary;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.RaidsLogger;
+import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.PatrolConfig;
 
 import java.util.List;

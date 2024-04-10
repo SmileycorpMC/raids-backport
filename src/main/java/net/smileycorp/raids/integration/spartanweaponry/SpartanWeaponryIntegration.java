@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.oblivioussp.spartanweaponry.entity.projectile.EntityBolt;
 import com.oblivioussp.spartanweaponry.init.EnchantmentRegistrySW;
 import com.oblivioussp.spartanweaponry.init.ItemRegistrySW;
+import com.oblivioussp.spartanweaponry.init.SoundRegistry;
 import com.oblivioussp.spartanweaponry.item.ItemCrossbow;
 import com.oblivioussp.spartanweaponry.util.NBTHelper;
 import com.oblivioussp.spartanweaponry.util.Quaternion;
@@ -49,8 +50,13 @@ public class SpartanWeaponryIntegration {
         return loot ? new ItemStack(ItemRegistrySW.crossbowDiamond) : new ItemStack(ItemRegistrySW.crossbowWood);
     }
     
-    public static void shoot(EntityPillager entity, ItemStack stack, float velocity) {
+    public static void setCharged(ItemStack stack, boolean charged) {
+        NBTHelper.setBoolean(stack, ItemCrossbow.NBT_IS_LOADED, charged);
+    }
+    
+    public static void shoot(EntityPillager entity, ItemStack stack) {
         ItemCrossbow crossbow = (ItemCrossbow) stack.getItem();
+        float velocity = crossbow.getBoltSpeed() * 3;
         int aimTicks = crossbow.getAimTicks(stack);
         int inaccuracy = aimTicks - crossbow.getMaxItemUseDuration(stack);
         float inaccuracyModifier = 0.0f;
@@ -65,6 +71,7 @@ public class SpartanWeaponryIntegration {
         stack.damageItem(spreadshot ? 3 : 1, entity);
         NBTHelper.setBoolean(stack, ItemCrossbow.NBT_IS_LOADED, false);
         NBTHelper.setTagCompound(stack, ItemCrossbow.nbtAmmoStack, new NBTTagCompound());
+        entity.playSound(SoundRegistry.CROSSBOW_FIRE, 1, 1 / (entity.getRNG().nextFloat() * 0.4F + 1.2F) + velocity * 0.5F);
     }
     
     private static void spawnProjectile(ItemStack stack, World world, EntityLiving entity, float inaccuracy, float angle, float velocity) {

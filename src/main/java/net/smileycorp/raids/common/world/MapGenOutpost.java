@@ -12,7 +12,7 @@ import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.MapGenStructure;
 import net.minecraft.world.gen.structure.StructureStart;
-import net.smileycorp.raids.common.RaidsLogger;
+import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.OutpostConfig;
 
 import javax.annotation.Nullable;
@@ -96,9 +96,7 @@ public class MapGenOutpost extends MapGenStructure {
         
         private boolean isInStructure(BlockPos pos) {
             if (center == null) return false;
-            boolean b = Math.abs(pos.getX() - center.getX()) < 36 && Math.abs(pos.getY() - center.getY()) < 26 && Math.abs(pos.getZ() - center.getZ()) < 36;
-            if (b) RaidsLogger.logInfo(pos + " is in structure at " + center);
-            return b;
+            return Math.abs(pos.getX() - center.getX()) < 36 && Math.abs(pos.getY() - center.getY()) < 26 && Math.abs(pos.getZ() - center.getZ()) < 36;
         }
     
         public int getY(int x, int z, int i, int k, ChunkPrimer primer) {

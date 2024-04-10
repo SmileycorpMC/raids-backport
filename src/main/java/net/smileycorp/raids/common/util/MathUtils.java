@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common;
+package net.smileycorp.raids.common.util;
 
 public class MathUtils {
     

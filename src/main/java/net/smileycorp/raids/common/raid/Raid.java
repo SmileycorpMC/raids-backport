@@ -24,12 +24,12 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.Village;
 import net.minecraft.world.*;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.smileycorp.raids.common.MathUtils;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.RaidsLogger;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.network.RaidSoundMessage;
+import net.smileycorp.raids.common.util.MathUtils;
+import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.RaidConfig;
 
 import javax.annotation.Nullable;

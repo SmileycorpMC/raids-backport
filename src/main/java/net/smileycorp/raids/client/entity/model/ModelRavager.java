@@ -5,8 +5,8 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.MathHelper;
-import net.smileycorp.raids.common.MathUtils;
 import net.smileycorp.raids.common.entities.EntityRavager;
+import net.smileycorp.raids.common.util.MathUtils;
 
 public class ModelRavager extends ModelBase {
     

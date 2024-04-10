@@ -46,6 +46,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.raid.*;
+import net.smileycorp.raids.common.util.ILootPool;
+import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.common.world.MapGenOutpost;
 import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.RaidConfig;
@@ -224,16 +226,16 @@ public class RaidsEventHandler {
 	public void addLoot(LootTableLoadEvent event) {
 		if (Constants.OUTPOST_CHESTS.equals(event.getName())) {
 			LootTable table = event.getTable();
-			if (RaidConfig.ominousBottles) {
+			if (RaidConfig.ominousBottles && OutpostConfig.ominousBottles) {
 				LootPool bottlePool = table.getPool("raids:ominous_bottle");
 				bottlePool.addEntry(new LootEntryItem(RaidsContent.OMINOUS_BOTTLE, 1, 1, new LootFunction[] {new SetMetadata(new LootCondition[0], new RandomValueRange(0, 4))}, new LootCondition[0], "raids:ominous_bottle"));
 			}
-			if (ModIntegration.CROSSBOWS_BACKPORT_LOADED) CrossbowsBackportIntegration.addLoot(table);
-			if (ModIntegration.CROSSBOW_LOADED) CrossbowIntegration.addLoot(table);
-			if (ModIntegration.SPARTAN_LOADED) SpartanWeaponryIntegration.addLoot(table);
-			if (ModIntegration.TINKERS_LOADED) TinkersConstructIntegration.addLoot(table);
+			if (ModIntegration.CROSSBOWS_BACKPORT_LOADED && OutpostConfig.crossbowsBackportCrossbows) CrossbowsBackportIntegration.addLoot(table);
+			if (ModIntegration.CROSSBOW_LOADED && OutpostConfig.crossbowCrossbows) CrossbowIntegration.addLoot(table);
+			if (ModIntegration.SPARTAN_LOADED && OutpostConfig.spartansWeaponryCrossbows) SpartanWeaponryIntegration.addLoot(table);
+			if (ModIntegration.TINKERS_LOADED && OutpostConfig.tinkersConstructCrossbows) TinkersConstructIntegration.addLoot(table);
 			LootPool crossbowPool = table.getPool("raids:outpost_crossbow");
-			if (crossbowPool.lootEntries.isEmpty()) crossbowPool.addEntry(new LootEntryItem(Items.BOW, 1, 1, new LootFunction[0], new LootCondition[0], "raids:bow"));
+			if (((ILootPool)crossbowPool).isEmpty()) crossbowPool.addEntry(new LootEntryItem(Items.BOW, 1, 1, new LootFunction[0], new LootCondition[0], "raids:bow"));
 		}
 	}
 	

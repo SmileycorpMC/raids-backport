@@ -9,6 +9,7 @@
     "MixinEntityVillager",
     "MixinItemBanner",
     "MixinListEnchantedBookForEmeralds",
+    "MixinLootPool",
     "MixinMerchantRecipe",
     "MixinMerchantRecipeList",
     "MixinSlotMerchantResult"

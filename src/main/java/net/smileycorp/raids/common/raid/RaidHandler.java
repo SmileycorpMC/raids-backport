@@ -8,7 +8,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.smileycorp.raids.common.RaidsLogger;
+import net.smileycorp.raids.common.util.RaidsLogger;
 
 import javax.annotation.Nullable;
 import java.util.*;
