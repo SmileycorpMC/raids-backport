@@ -2,8 +2,10 @@ package net.smileycorp.raids.integration.crossbow;
 
 import com.google.common.collect.Maps;
 import git.jbredwards.crossbow.api.ICrossbow;
+import git.jbredwards.crossbow.mod.common.capability.ICrossbowProjectiles;
 import git.jbredwards.crossbow.mod.common.init.CrossbowEnchantments;
 import git.jbredwards.crossbow.mod.common.init.CrossbowItems;
+import git.jbredwards.crossbow.mod.common.item.ItemCrossbow;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
@@ -13,6 +15,7 @@ import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
+import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.RaidHandler;
 
@@ -21,8 +24,20 @@ import java.util.Random;
 
 public class CrossbowIntegration {
     
+    public static void init() {
+        RaidHandler.registerRaidBuffs(ICrossbow.class, CrossbowIntegration::applyCrossbowBuffs);
+    }
+    
     public static boolean isCrossbow(ItemStack stack) {
         return stack.getItem() instanceof ICrossbow;
+    }
+    
+    public static ItemStack getCrossbow() {
+        return new ItemStack(CrossbowItems.CROSSBOW);
+    }
+    
+    public static void shoot(EntityPillager entity, ItemStack stack, float velocity) {
+        ItemCrossbow.shootAll(entity.world, entity, stack, ICrossbowProjectiles.get(stack), velocity, 14 - entity.getEntityWorld().getDifficulty().getDifficultyId() * 4);
     }
     
     public static void addLoot(LootTable table) {
@@ -37,10 +52,6 @@ public class CrossbowIntegration {
         map.put(CrossbowEnchantments.MULTISHOT, 1);
         EnchantmentHelper.setEnchantments(map, stack);
         return stack;
-    }
-    
-    public static void init() {
-        RaidHandler.registerRaidBuffs(ICrossbow.class, CrossbowIntegration::applyCrossbowBuffs);
     }
     
 }

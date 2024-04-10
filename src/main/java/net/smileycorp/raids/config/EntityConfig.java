@@ -10,6 +10,10 @@ public class EntityConfig {
     private static Configuration config;
     
     public static EntityAttributesEntry pillager;
+    public static boolean crossbowsBackportCrossbows;
+    public static boolean crossbowCrossbows;
+    public static boolean spartansWeaponryCrossbows;
+    public static boolean tinkersConstructCrossbows;
     public static EntityAttributesEntry ravager;
     public static EntityAttributesEntry allay;
     
@@ -18,6 +22,10 @@ public class EntityConfig {
         try{
             config.load();
             pillager = new EntityAttributesEntry(config, "pillager", 0.35, 32, 5, 24, 0, 0, 0, 0);
+            crossbowsBackportCrossbows = config.get("pillager", "crossbowsBackportCrossbows", true, "Can pillagers spawn with crossbows backport crossbows? (Requires Crossbows Backport to be installed)").getBoolean();
+            crossbowCrossbows = config.get("pillager", "crossbowCrossbows", true, "Can pillagers spawn with crossbow crossbows? (Requires Crossbow to be installed)").getBoolean();
+            spartansWeaponryCrossbows = config.get("pillager", "spartansWeaponryCrossbows", true, "Can pillagers spawn with spartans weaponry crossbows? (Requires Spartan's Weaponry to be installed)").getBoolean();
+            tinkersConstructCrossbows = config.get("pillager", "tinkersConstructCrossbows", true, "Can pillagers spawn with tinkers construct crossbows? (Requires Tinker's Construct to be installed)").getBoolean();
             ravager = new EntityAttributesEntry(config, "ravager", 0.3, 32, 12, 100, 0, 0, 0.75, 0);
             //allay = new EntityAttributesEntry(config, "allay", 0.1, 48, 2, 20, 0, 0, 0, 0.1);
         } catch(Exception e) {

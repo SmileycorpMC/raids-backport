@@ -15,9 +15,7 @@ public class LootFunctionTConCrossbow extends LootFunction {
     
     @Override
     public ItemStack apply(ItemStack stack, Random rand, LootContext context) {
-        int i = rand.nextInt(10);
-        return i == 0 ? TinkersConstructIntegration.generateRandomCrossbow(rand) :
-                i < 4 ? TinkersConstructIntegration.getIronCrossbow(rand) : TinkersConstructIntegration.getWoodCrossbow();
+        return TinkersConstructIntegration.getCrossbow(rand, true);
     }
     
 }

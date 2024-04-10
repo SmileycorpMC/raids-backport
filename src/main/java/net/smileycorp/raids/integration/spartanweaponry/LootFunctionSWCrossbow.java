@@ -15,7 +15,7 @@ public class LootFunctionSWCrossbow extends LootFunction {
     
     @Override
     public ItemStack apply(ItemStack stack, Random rand, LootContext context) {
-        return SpartanWeaponryIntegration.getRandomCrossbow(rand);
+        return SpartanWeaponryIntegration.getCrossbow(rand, true);
     }
     
 }
