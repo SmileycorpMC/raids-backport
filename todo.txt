@@ -6,7 +6,7 @@ Add Ravagers ✓
 Add Patrols ✓
 Add Advancements ✓
 Fix Raid Save Data Not Saving properly ✓
-Fix Raid AI for Vindicators, Evokers and Witches
+Fix Raid AI for Vindicators, Evokers and Witches ✓
 Add Hero of the Village Effect ✓ (Mostly)
 Add Watchtowers ✓
 Patrol Customizability ✓
