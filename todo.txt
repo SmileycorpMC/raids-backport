@@ -8,10 +8,16 @@ Add Advancements ✓
 Fix Raid Save Data Not Saving properly ✓
 Fix Raid AI for Vindicators, Evokers and Witches
 Add Hero of the Village Effect ✓ (Mostly)
-Add Watchtowers
-### First Release
+Add Watchtowers ✓
+Patrol Customizability ✓
+Ominous Bottles ✓
+### First Release ✓
+Mod Support (Tinkers Construct, Spartan Weapons, Crossbow) ✓
+### Second Release ✓
+More Config Options
+Raid Customizability
+### Third Release
+Tektopia Support?
 Add Bell / FutureMC Support
 Add Allays
-Raid and Patrol Customizability
-Mod Support (Tinkers Construct, Spartan Weapons, Crossbow?)
-Ominous Bottles
+Other Outpost Structures
