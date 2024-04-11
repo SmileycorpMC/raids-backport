@@ -18,10 +18,14 @@ Pillager Outposts (Watchtowers Only)
 
 Ominous Bottles
 
+Mod support with Crossbow, Spartan's Weaponry and Tinker's Constructs crossbows
+
 ### Future Plans
 
-Bells
+Bells (and/or FutureMC bell support)
 
 Allays
 
-Mod support and more config customisability
+Fully customisable raids, with muliple raid types based on various conditions like gamstages or advancements.
+
+Tektopia support?
