@@ -28,7 +28,7 @@ import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.raid.Raid;
-import net.smileycorp.raids.common.raid.RaidHandler;
+import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.common.raid.RaidOmenTracker;
 import net.smileycorp.raids.common.raid.Raider;
 import net.smileycorp.raids.common.world.MapGenOutpost;

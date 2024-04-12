@@ -1,10 +1,11 @@
-package net.smileycorp.raids.common.raid;
+package net.smileycorp.raids.common.raid.data;
 
 import com.google.common.collect.Maps;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.smileycorp.raids.common.raid.Raid;
 
 import javax.annotation.Nullable;
 import java.util.List;

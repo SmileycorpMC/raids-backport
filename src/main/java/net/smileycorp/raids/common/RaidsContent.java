@@ -43,8 +43,6 @@ public class RaidsContent {
 	@CapabilityInject(RaidOmenTracker.class)
 	public static Capability<RaidOmenTracker> RAID_OMEN_TRACKER = null;
 	
-	public static final ItemStack OMINOUS_BANNER = createOminousBanner();
-	
 	public static final Item OMINOUS_BOTTLE = new ItemOminousBottle();
 	
 	private static int ID = 154;

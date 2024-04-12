@@ -35,7 +35,7 @@ import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.EntityAIPillagerCrossbowAttack;
-import net.smileycorp.raids.common.raid.RaidHandler;
+import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;

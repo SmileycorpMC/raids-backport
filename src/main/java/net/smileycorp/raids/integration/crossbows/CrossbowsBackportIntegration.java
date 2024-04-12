@@ -19,7 +19,7 @@ import net.smileycorp.crossbows.common.entities.IFireworksProjectile;
 import net.smileycorp.crossbows.common.item.ItemCrossbow;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.raid.Raid;
-import net.smileycorp.raids.common.raid.RaidHandler;
+import net.smileycorp.raids.common.raid.data.RaidHandler;
 
 import java.util.Map;
 import java.util.Random;

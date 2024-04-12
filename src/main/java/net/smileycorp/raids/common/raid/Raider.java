@@ -16,6 +16,8 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.ai.EntityAILongDistancePatrol;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
+import net.smileycorp.raids.common.raid.data.RaidHandler;
+import net.smileycorp.raids.config.EntityConfig;
 
 public interface Raider {
 	
@@ -125,6 +127,7 @@ public interface Raider {
 			if (entity != null) {
 				if (entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
 					entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, RaidsContent.createOminousBanner());
+					entity.setDropChance(EntityEquipmentSlot.HEAD, 2.0F);
 				}
 			}
 			patrolLeader = true;
@@ -193,7 +196,7 @@ public interface Raider {
 		
 		@Override
 		public float getCaptainChance() {
-			return RaidHandler.getCaptainChance(entity);
+			return EntityConfig.getCaptainChance(entity);
 		}
 		
 	}

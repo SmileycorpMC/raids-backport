@@ -46,6 +46,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.raid.*;
+import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.common.util.ILootPool;
 import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.common.world.MapGenOutpost;

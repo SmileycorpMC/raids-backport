@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common.raid;
+package net.smileycorp.raids.common.raid.data;
 
 import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
@@ -8,7 +8,9 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.util.RaidsLogger;
+import net.smileycorp.raids.config.EntityConfig;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -39,16 +41,9 @@ public class RaidHandler {
 	}
 	
 	public static boolean canBeCaptain(EntityLiving entity) {
-		return getCaptainChance(entity) > 0;
+		return EntityConfig.getCaptainChance(entity) > 0;
 	}
 	
-	public static float getCaptainChance(EntityLiving entity) {
-		if (!isRaider(entity)) return 0;
-		RaidEntry entry = ENTRIES.get(entity.getClass());
-		if (entry == null) return 0;
-		return entry.getCaptainChance();
-	}
-
 	public static void spawnNewWave(Raid raid, BlockPos pos, int wave, boolean isBonusWave) {
 		List<EntityLiving> entities = new ArrayList<EntityLiving>();
 		Random rand = raid.getWorld().rand;

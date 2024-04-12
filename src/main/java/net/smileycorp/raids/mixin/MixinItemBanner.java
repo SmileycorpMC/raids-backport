@@ -21,7 +21,7 @@ public class MixinItemBanner extends ItemBlock {
 
     @Inject(method = "getSubItems", at = @At("TAIL"))
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items, CallbackInfo callback) {
-        if (isInCreativeTab(tab)) items.add(RaidsContent.OMINOUS_BANNER);
+        if (isInCreativeTab(tab)) items.add(RaidsContent.createOminousBanner());
     }
 
 }

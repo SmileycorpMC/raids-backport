@@ -43,7 +43,7 @@ public class OutpostConfig {
             distanceFromVillage = config.get("generation", "distanceFromVillage", 160, "How close can outposts be to villages.").getInt();
             spawnBiomesStr = config.get("generation", "spawnBiomes", new String[] {"minecraft:plains", "minecraft:desert", "minecraft:savanna", "minecraft:taiga", "minecraft:ice_flats", "minecraft:taiga_cold"}, "Which biomes can outposts spawn in?").getStringList();
             maxEntities = config.get("spawns", "maxEntities", 8, "How many entities can be spawned at an outpost at once?").getInt();
-            spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-1"}, "Which entities should spawn in outposts? (format is registry name-spawn weight)").getStringList();
+            spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-1"}, "Which entities should spawn in outposts? (format is registry name-spawn weight, weight is any positive integer)").getStringList();
             ominousBottles = config.get("chest loot", "ominousBottles", true, "Can ominous bottles generate in outpost chests? (Requires Ominous Bottles to be enabled in the raids config)").getBoolean();
             crossbowsBackportCrossbows = config.get("chest loot", "crossbowsBackportCrossbows", true, "Can crossbows backport crossbows generate in outpost chests? (Requires Crossbows Backport to be installed)").getBoolean();
             crossbowCrossbows = config.get("chest loot", "crossbowCrossbows", true, "Can crossbow crossbows generate in outpost chests? (Requires Crossbow to be installed)").getBoolean();
