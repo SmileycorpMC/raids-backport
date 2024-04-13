@@ -54,7 +54,7 @@ public class MapGenOutpost extends MapGenStructure {
         if (!world.getBiomeProvider().areBiomesViable(pos.getX(), pos.getZ(), 0, OutpostConfig.getSpawnBiomes())) return false;
         BlockPos village = world.findNearestStructure("Village", pos, true);
         if (village == null) return true;
-        return village.distanceSq(pos) >= (OutpostConfig.distanceFromVillage * OutpostConfig.distanceFromVillage);
+        return village.distanceSq(pos) > (OutpostConfig.distanceFromVillage * OutpostConfig.distanceFromVillage);
     }
     
     @Override

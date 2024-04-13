@@ -86,6 +86,7 @@ dependencies {
 	implementation "curse.maven:tconstruct-74072:2902483"
 	implementation "curse.maven:mantle-74924:2713386"
 	implementation "curse.maven:spartan-weaponry-278141:4467344"
+    implementation "curse.maven:tektopia-333029:2763046"
     implementation "maven.modrinth:crossbow:1.1.0"
 }
 

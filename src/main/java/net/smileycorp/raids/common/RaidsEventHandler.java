@@ -45,7 +45,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
-import net.smileycorp.raids.common.raid.*;
+import net.smileycorp.raids.common.raid.Raid;
+import net.smileycorp.raids.common.raid.RaidOmenTracker;
+import net.smileycorp.raids.common.raid.Raider;
+import net.smileycorp.raids.common.raid.WorldDataRaids;
 import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.common.util.ILootPool;
 import net.smileycorp.raids.common.util.MathUtils;
@@ -170,6 +173,7 @@ public class RaidsEventHandler {
 			IChunkProvider provider = world.getChunkProvider();
 			if (provider instanceof ChunkProviderServer) {
 				BlockPos pos = entity.getPosition();
+				if (Raid.isVillage(world, pos)) return;
 				MapGenOutpost.OutpostStart structure = MapGenOutpost.getInstance(((ChunkProviderServer) provider).chunkGenerator).getStructureAt(pos);
 				if (structure == null) return;
 				AxisAlignedBB aabb = structure.getSpawnBox();

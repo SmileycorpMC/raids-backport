@@ -2,13 +2,9 @@ package net.smileycorp.raids.config;
 
 import com.google.common.collect.Lists;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.EntityVindicator;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.common.util.RaidsLogger;
@@ -29,8 +25,7 @@ public class PatrolConfig {
         config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/patrols.cfg"));
         try{
             config.load();
-            spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-0.06f",
-                    "vindication_illager-0.06f", "evocation_illager-0.06f", "illusion_illager-0.06f"}, "Which entities should spawn in patrols? (format is registry name-spawn weight, weight is a positive integer)").getStringList();
+            spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-1"}, "Which entities should spawn in patrols? (format is registry name-spawn weight, weight is a positive integer)").getStringList();
         } catch(Exception e) {
         } finally {
             if (config.hasChanged()) config.save();

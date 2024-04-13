@@ -3,6 +3,9 @@ package net.smileycorp.raids.common.raid;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +21,8 @@ import net.smileycorp.raids.common.entities.ai.EntityAILongDistancePatrol;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
 import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.config.EntityConfig;
+import net.smileycorp.raids.integration.ModIntegration;
+import net.smileycorp.raids.integration.tektopia.TektopiaIntegration;
 
 public interface Raider {
 	
@@ -111,7 +116,10 @@ public interface Raider {
 				raid.addWaveMob(wave, entity, false);
 				if (entity instanceof EntityCreature) {
 					entity.tasks.addTask(3, new EntityAIPathfindToRaid(this, (EntityCreature) entity));
-					entity.tasks.addTask(4, new EntityAIMoveThroughVillage((EntityCreature) entity, 1, false));
+					entity.tasks.addTask(4, new EntityAIMoveThroughVillage((EntityCreature) entity, 1, true));
+					entity.targetTasks.addTask(3, new EntityAINearestAttackableTarget((EntityCreature) entity, EntityVillager.class, true));
+					entity.targetTasks.addTask(3, new EntityAINearestAttackableTarget((EntityCreature) entity, EntityIronGolem.class, true));
+					if (ModIntegration.TEKTOPIA_LOADED) TektopiaIntegration.addTargetTask((EntityCreature) entity);
 				}
 			}
 			if (nbt.hasKey("PatrolTarget")) setPatrolTarget(NBTUtil.getPosFromTag(nbt.getCompoundTag("PatrolTarget")));

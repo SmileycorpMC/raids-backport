@@ -21,6 +21,7 @@ public class ModIntegration {
     public static boolean SPARTAN_LOADED = Loader.isModLoaded("spartanweaponry");
     public static boolean TINKERS_LOADED = Loader.isModLoaded("tconstruct");
     public static boolean FUTUREMC_LOADED = Loader.isModLoaded("futuremc");
+    public static boolean TEKTOPIA_LOADED = Loader.isModLoaded("tektopia");
     
     public static boolean HAS_CROSSBOW_MOD = CROSSBOWS_BACKPORT_LOADED || CROSSBOW_LOADED || SPARTAN_LOADED || TINKERS_LOADED;
     

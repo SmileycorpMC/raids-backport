@@ -1,6 +1,5 @@
 package net.smileycorp.raids.config;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -8,13 +7,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.registries.GameData;
-import net.smileycorp.raids.common.raid.data.RaidEntry;
-import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.common.util.RaidsLogger;
 
 import java.io.File;
-import java.util.AbstractMap;
-import java.util.List;
 import java.util.Map;
 
 public class EntityConfig {
@@ -44,7 +39,8 @@ public class EntityConfig {
             tinkersConstructCrossbows = config.get("pillager", "tinkersConstructCrossbows", true, "Can pillagers spawn with tinkers construct crossbows? (Requires Tinker's Construct to be installed)").getBoolean();
             ravager = new EntityAttributesEntry(config, "ravager", 0.3, 32, 12, 100, 0, 0, 0.75, 0);
             //allay = new EntityAttributesEntry(config, "allay", 0.1, 48, 2, 20, 0, 0, 0, 0.1);
-            captainChanceStr = config.get("general", "captainChance", new String[] {"raids:pillager-1"}, "What's the chance for entities to be patrol captains (also applies when spawned naturally, format is registry name-chance, chance is any number between 0 and 1)").getStringList();
+            captainChanceStr = config.get("general", "captainChance", new String[] {"raids:pillager-0.06f",
+                    "vindication_illager-0.06f", "evocation_illager-0.06f", "illusion_illager-0.06f"}, "What's the chance for entities to be patrol captains (also applies when spawned naturally, format is registry name-chance, chance is any number between 0 and 1)").getStringList();
         } catch(Exception e) {
         } finally {
             if (config.hasChanged()) config.save();

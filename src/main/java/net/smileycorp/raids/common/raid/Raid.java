@@ -8,6 +8,9 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -32,6 +35,8 @@ import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.RaidConfig;
+import net.smileycorp.raids.integration.ModIntegration;
+import net.smileycorp.raids.integration.tektopia.TektopiaIntegration;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -296,6 +301,7 @@ public class Raid {
 	}
 	
 	public static boolean isVillage(World world, BlockPos center, double distance) {
+		if (ModIntegration.TEKTOPIA_LOADED) return TektopiaIntegration.isVillage(world, center);
 		for (Village village : world.getVillageCollection().getVillageList()){
 			BlockPos vilCenter = village.getCenter();
 			if (vilCenter.getDistance(center.getX(), center.getY(), center.getZ()) < (village.getVillageRadius() + distance * distance)) return true;
@@ -304,6 +310,13 @@ public class Raid {
 	}
 	
 	private void moveRaidCenterToNearbyVillageSection() {
+		if (ModIntegration.TEKTOPIA_LOADED) {
+			BlockPos pos = TektopiaIntegration.getNewCenter(world, center);
+			if (pos != null) {
+				setCenter(center);
+				return;
+			}
+		}
 		for (Village village : world.getVillageCollection().getVillageList()) {
 			BlockPos vilCenter = village.getCenter();
 			if (vilCenter.getDistance(center.getX(), center.getY(), center.getZ()) < 72)
@@ -383,6 +396,9 @@ public class Raid {
 			if (entity instanceof EntityCreature) {
 				entity.tasks.addTask(3, new EntityAIPathfindToRaid(raider, (EntityCreature) entity));
 				entity.tasks.addTask(4, new EntityAIMoveThroughVillage((EntityCreature) entity, 1, false));
+				entity.targetTasks.addTask(3, new EntityAINearestAttackableTarget((EntityCreature) entity, EntityVillager.class, true));
+				entity.targetTasks.addTask(3, new EntityAINearestAttackableTarget((EntityCreature) entity, EntityIronGolem.class, true));
+				if (ModIntegration.TEKTOPIA_LOADED) TektopiaIntegration.addTargetTask((EntityCreature) entity);
 			}
 			if (!recruited) RaidHandler.applyRaidBuffs(entity, this, wave, random);
 		}
