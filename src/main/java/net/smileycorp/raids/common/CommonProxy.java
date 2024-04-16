@@ -87,18 +87,18 @@ public class CommonProxy {
 	}
 	
 	private void registerSpawns() {
-		RaidHandler.registerEntry(EntityPillager.class, new int[]{0, 4, 3, 3, 4, 4, 4, 2}, 0.06f, null, null);
-		RaidHandler.registerEntry(EntityVindicator.class, new int[]{0, 0, 2, 0, 1, 4, 2, 5}, 0.06f, null, (difficulty, rand, raid, wave, isBonusWave) ->
+		RaidHandler.registerEntry(EntityPillager.class, new int[]{0, 4, 3, 3, 4, 4, 4, 2}, null, null);
+		RaidHandler.registerEntry(EntityVindicator.class, new int[]{0, 0, 2, 0, 1, 4, 2, 5}, null, (difficulty, rand, raid, wave, isBonusWave) ->
 				difficulty == EnumDifficulty.EASY ? rand.nextInt(2) : difficulty == EnumDifficulty.NORMAL ? 1 : 2);
-		RaidHandler.registerEntry(EntityRavager.class, new int[]{0, 0, 1, 0, 0, 0, 0}, 0, (raid, world, numSpawned) -> {
+		RaidHandler.registerEntry(EntityRavager.class, new int[]{0, 0, 1, 0, 0, 0, 0}, (raid, world, numSpawned) -> {
 			int i = raid.getGroupsSpawned() + 1;
 			if (i == raid.getNumGroups(EnumDifficulty.NORMAL)) return new EntityPillager(world);
 			if (i >= raid.getNumGroups(EnumDifficulty.HARD)) return numSpawned.containsKey(EntityEvoker.class) ? new EntityVindicator(world) : new EntityEvoker(world);
 			return null;
 		}, (difficulty, rand, raid, wave, isBonusWave) -> difficulty != EnumDifficulty.EASY && isBonusWave ? 1 : 0);
-		RaidHandler.registerEntry(EntityWitch.class, new int[]{0, 0, 0, 0, 3, 0, 0, 1}, 0, null, (difficulty, rand, raid, wave, isBonusWave)  ->
+		RaidHandler.registerEntry(EntityWitch.class, new int[]{0, 0, 0, 0, 3, 0, 0, 1}, null, (difficulty, rand, raid, wave, isBonusWave)  ->
 			(difficulty == EnumDifficulty.EASY || wave <= 2 || wave == 4) ? 0 : 1);
-		RaidHandler.registerEntry(EntityEvoker.class, new int[]{0, 0, 0, 1, 0, 1, 0, 2}, 0.06f, null, null);
+		RaidHandler.registerEntry(EntityEvoker.class, new int[]{0, 0, 0, 1, 0, 1, 0, 2}, null, null);
 	}
 	
 	public static ItemStack applyMeleeBuffs(ItemStack stack, EntityLiving entity, Raid raid, int wave, Random rand) {

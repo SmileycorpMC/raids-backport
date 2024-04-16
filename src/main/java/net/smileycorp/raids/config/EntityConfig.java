@@ -39,8 +39,8 @@ public class EntityConfig {
             tinkersConstructCrossbows = config.get("pillager", "tinkersConstructCrossbows", true, "Can pillagers spawn with tinkers construct crossbows? (Requires Tinker's Construct to be installed)").getBoolean();
             ravager = new EntityAttributesEntry(config, "ravager", 0.3, 32, 12, 100, 0, 0, 0.75, 0);
             //allay = new EntityAttributesEntry(config, "allay", 0.1, 48, 2, 20, 0, 0, 0, 0.1);
-            captainChanceStr = config.get("general", "captainChance", new String[] {"raids:pillager-0.06f",
-                    "vindication_illager-0.06f", "evocation_illager-0.06f", "illusion_illager-0.06f"}, "What's the chance for entities to be patrol captains (also applies when spawned naturally, format is registry name-chance, chance is any number between 0 and 1)").getStringList();
+            captainChanceStr = config.get("general", "captainChance", new String[] {"raids:pillager-0.06",
+                    "minecraft:vindication_illager-0.06", "minecraft:evocation_illager-0.06", "minecraft:illusion_illager-0.06"}, "What's the chance for entities to be patrol captains (also applies when spawned naturally, format is registry name-chance, chance is any number between 0 and 1)").getStringList();
         } catch(Exception e) {
         } finally {
             if (config.hasChanged()) config.save();

@@ -23,8 +23,8 @@ public class RaidHandler {
 	
 	public static final Map<Class, RaidBuffs> RAID_BUFFS = Maps.newHashMap();
 
-	public static void registerEntry(Class<? extends EntityLiving> entity, int[] count, float captainChance, @Nullable RaidEntry.Rider rider, @Nullable RaidEntry.BonusSpawns bonusSpawns) {
-		ENTRIES.put(entity, new RaidEntry(entity, count, captainChance, rider, bonusSpawns));
+	public static void registerEntry(Class<? extends EntityLiving> entity, int[] count, @Nullable RaidEntry.Rider rider, @Nullable RaidEntry.BonusSpawns bonusSpawns) {
+		ENTRIES.put(entity, new RaidEntry(entity, count, rider, bonusSpawns));
 		if (!RAIDERS.contains(entity) && entity != null) RAIDERS.add(entity);
 	}
 	

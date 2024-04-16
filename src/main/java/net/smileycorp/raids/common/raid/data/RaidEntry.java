@@ -23,7 +23,6 @@ public class RaidEntry {
     
     private final Class<? extends EntityLiving> entity;
     private final int[] count;
-    private final float captainChance;
     private final Rider rider;
     private final BonusSpawns bonusSpawns;
     private Map<Class<? extends EntityLiving>, Integer> numSpawned = Maps.newHashMap();
