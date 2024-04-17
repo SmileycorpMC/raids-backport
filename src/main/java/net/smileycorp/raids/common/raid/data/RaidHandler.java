@@ -4,10 +4,14 @@ import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityVindicator;
+import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.EntityConfig;
@@ -42,6 +46,12 @@ public class RaidHandler {
 	
 	public static boolean canBeCaptain(EntityLiving entity) {
 		return EntityConfig.getCaptainChance(entity) > 0;
+	}
+	
+	public static void findRaiders(World world, BlockPos pos) {
+		AxisAlignedBB aabb = (new AxisAlignedBB(pos)).grow(48.0D);
+		for (EntityLiving entity : world.getEntitiesWithinAABB(EntityLiving.class, aabb, RaidHandler::isRaider))
+			entity.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 60));
 	}
 	
 	public static void spawnNewWave(Raid raid, BlockPos pos, int wave, boolean isBonusWave) {

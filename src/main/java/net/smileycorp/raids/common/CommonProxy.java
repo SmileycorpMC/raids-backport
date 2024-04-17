@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.smileycorp.raids.common.command.CommandDebugRaid;
+import net.smileycorp.raids.common.command.CommandFindRaiders;
 import net.smileycorp.raids.common.command.CommandSpawnPatrol;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
@@ -84,6 +85,7 @@ public class CommonProxy {
 	public void serverStart(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandDebugRaid());
 		event.registerServerCommand(new CommandSpawnPatrol());
+		event.registerServerCommand(new CommandFindRaiders());
 	}
 	
 	private void registerSpawns() {

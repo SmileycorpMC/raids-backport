@@ -2,9 +2,7 @@ package net.smileycorp.raids.common.raid.data;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
