@@ -7,7 +7,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
@@ -87,16 +86,18 @@ public class TinkersConstructIntegration {
     public static ItemStack applyCrossbowBuffs(ItemStack stack, EntityLiving entity, Raid raid, int wave, Random rand) {
         if (rand.nextFloat() > raid.getEnchantOdds()) return stack;
         if (wave > raid.getNumGroups(EnumDifficulty.NORMAL) || raid.getBadOmenLevel() > 2) {
-            int h = entity.getRNG().nextInt(wave * raid.getBadOmenLevel() * 3);
+            int b = (int) Math.pow(wave + raid.getBadOmenLevel(), 2);
+            int h = entity.getRNG().nextInt(b) + b;
             if (h > 150) h = 150;
-            NonNullList<ItemStack> redstone = NonNullList.create();
-            for (int i = 0; i <= h/64; i++) redstone.add(new ItemStack(Items.REDSTONE, i==0 ? h%64 : 64));
-            try {
-                stack = ToolBuilder.tryModifyTool(redstone, stack, true);
-            } catch (Exception e) {
-                RaidsLogger.logError("Failed adding modifier to stack " + stack + " for entity " + entity, e);
+            int max = h / 50;
+            for (int i = 0; i <= max; i++) {
+                try {
+                    ItemStack modified = ToolBuilder.tryModifyTool(NonNullList.from(ItemStack.EMPTY, new ItemStack(Items.REDSTONE, i == max ? h % 50 : 50)), stack, false);
+                    if (!modified.isEmpty()) stack = modified;
+                } catch (Exception e) {
+                    RaidsLogger.logError("Failed adding modifier to stack " + stack + " for entity " + entity, e);
+                }
             }
-            entity.setDropChance(EntityEquipmentSlot.MAINHAND, 1);
         }
         return stack;
     }
