@@ -1,15 +1,18 @@
-package net.smileycorp.raids.common.raid.data;
+package net.smileycorp.raids.config.raidevent;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.registries.GameData;
 import net.smileycorp.raids.common.raid.Raid;
+import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.util.RaidsLogger;
 
 import javax.annotation.Nullable;
@@ -19,13 +22,20 @@ import java.util.Random;
 
 public class RaidEntry {
     
-    private final Class<? extends EntityLiving> entity;
+    private final EntityEntry entity;
     private final int[] count;
     private final Rider rider;
     private final BonusSpawns bonusSpawns;
     private Map<Class<? extends EntityLiving>, Integer> numSpawned = Maps.newHashMap();
     
-    public RaidEntry(Class<? extends EntityLiving> entity, int[] count, @Nullable Rider rider, @Nullable BonusSpawns bonusSpawns) {
+    public RaidEntry(ResourceLocation entity, int[] count, @Nullable Rider rider, @Nullable BonusSpawns bonusSpawns) throws Exception {
+       this(GameData.getEntityRegistry().getValue(entity), count, rider, bonusSpawns);
+    }
+    
+    public RaidEntry(EntityEntry entity, int[] count, @Nullable Rider rider, @Nullable BonusSpawns bonusSpawns) throws Exception {
+        if (entity == null) {
+            throw new Exception("Entry is null ");
+        }
         this.entity = entity;
         this.count = count;
         this.rider = rider;
@@ -50,7 +60,7 @@ public class RaidEntry {
     
     public void spawnEntity(Raid raid, int wave, BlockPos pos, List<EntityLiving> entities) throws Exception {
         World world = raid.getWorld();
-        EntityLiving entity = this.entity.getConstructor(World.class).newInstance(world);
+        EntityLiving entity = (EntityLiving) this.entity.newInstance(world);
         entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
         if (world.spawnEntity(entity)) {
             entities.add(entity);
@@ -72,14 +82,32 @@ public class RaidEntry {
         }
     }
     
+    public EntityEntry getEntity() {
+        return entity;
+    }
+    
+    public JsonObject toJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("entity", GameData.getEntityRegistry().getKey(entity).toString());
+        JsonArray spawn_counts = new JsonArray();
+        for (int count : this.count) spawn_counts.add(count);
+        json.add("spawn_counts", spawn_counts);
+        JsonObject bonus_spawns = new JsonObject();
+        json.add("bonus_spawns", bonus_spawns);
+        JsonObject riders = new JsonObject();
+        json.add("riders", riders);
+        return json;
+    }
+    
     public static RaidEntry deserialize(JsonObject json) {
         try {
-            Class<? extends EntityLiving> entity = (Class<? extends EntityLiving>) GameData.getEntityRegistry().getValue(new ResourceLocation(json.get("entity").getAsString())).getEntityClass();
-            if (!EntityLiving.class.isAssignableFrom(entity)) throw new Exception(json.get("entity").getAsString() + " is not an instanceof EntityLiving");
+            EntityEntry entity = GameData.getEntityRegistry().getValue(new ResourceLocation(json.get("entity").getAsString()));
+            if (!EntityLiving.class.isAssignableFrom(entity.getEntityClass())) throw new Exception(json.get("entity").getAsString() + " is not an instanceof EntityLiving");
             List<Integer> count = Lists.newArrayList();
             json.get("spawn_counts").getAsJsonArray().forEach(e -> count.add(e.getAsInt()));
             Rider rider = null;
             BonusSpawns bonus = null;
+            RaidHandler.addRaider((Class<? extends EntityLiving>) entity.getEntityClass());
             return new RaidEntry(entity, count.stream().mapToInt(i->i).toArray(), rider, bonus);
         } catch (Exception e) {
             RaidsLogger.logError("Failed to read raid entry " + json, e);

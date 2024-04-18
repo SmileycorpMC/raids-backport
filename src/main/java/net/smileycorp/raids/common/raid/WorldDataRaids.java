@@ -14,17 +14,20 @@ import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.RaidConfig;
+import net.smileycorp.raids.config.raidevent.RaidSpawnTable;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class WorldDataRaids extends WorldSavedData {
     
     public static final String DATA = Constants.MODID;
     
     private final Map<Integer, Raid> raidMap = Maps.newHashMap();
+    private final Random rand = new Random();
     private WorldServer world;
     private int nextAvailableID;
     private int tick;
@@ -84,7 +87,8 @@ public class WorldDataRaids extends WorldSavedData {
         if (player.isSpectator()) return null;
         else {
             Raid raid = getOrCreateRaid(world, RaidConfig.raidCenteredOnPlayer ? RaidOmenTracker.getRaidStart(player) :
-                    world.getVillageCollection().getNearestVillage(player.getPosition(), 64).getCenter());
+                    world.getVillageCollection().getNearestVillage(player.getPosition(), 64).getCenter(), player);
+            if (raid == null) return null;
             boolean canAbsorb = false;
             if (!raid.isStarted()) {
                 if (!raidMap.containsKey(raid.getId())) raidMap.put(raid.getId(), raid);
@@ -98,9 +102,11 @@ public class WorldDataRaids extends WorldSavedData {
         }
     }
     
-    private Raid getOrCreateRaid(WorldServer world, BlockPos pos) {
+    private Raid getOrCreateRaid(WorldServer world, BlockPos pos, EntityPlayerMP player) {
         Raid raid = getRaidAt(pos);
-        return raid != null ? raid : new Raid(getUniqueId(), world, pos);
+        if (raid != null) return raid;
+        RaidSpawnTable table = RaidHandler.getSpawnTable(world, pos, player, rand);
+        return table == null ? null : new Raid(getUniqueId(), world, pos, table);
     }
     
     public Raid getRaidAt(BlockPos pos) {

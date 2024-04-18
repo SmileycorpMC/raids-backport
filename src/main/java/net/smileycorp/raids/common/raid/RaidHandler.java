@@ -1,9 +1,10 @@
-package net.smileycorp.raids.common.raid.data;
+package net.smileycorp.raids.common.raid;
 
 import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityVindicator;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -12,25 +13,21 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.smileycorp.raids.common.raid.Raid;
-import net.smileycorp.raids.common.util.RaidsLogger;
+import net.minecraft.world.WorldServer;
 import net.smileycorp.raids.config.EntityConfig;
+import net.smileycorp.raids.config.raidevent.RaidSpawnTable;
+import net.smileycorp.raids.config.raidevent.RaidTableLoader;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class RaidHandler {
 
 	public static final NonNullList<Class<? extends EntityLiving>> RAIDERS = NonNullList.create();
-
-	private static final Map<Class<? extends EntityLiving>, RaidEntry> ENTRIES = Maps.newHashMap();
 	
 	public static final Map<Class, RaidBuffs> RAID_BUFFS = Maps.newHashMap();
-
-	public static void registerEntry(Class<? extends EntityLiving> entity, int[] count, @Nullable RaidEntry.Rider rider, @Nullable RaidEntry.BonusSpawns bonusSpawns) {
-		ENTRIES.put(entity, new RaidEntry(entity, count, rider, bonusSpawns));
-		if (!RAIDERS.contains(entity) && entity != null) RAIDERS.add(entity);
-	}
 	
 	public static void registerRaidBuffs(Class item, RaidBuffs buffs) {
 		RAID_BUFFS.put(item, buffs);
@@ -55,17 +52,9 @@ public class RaidHandler {
 	}
 	
 	public static void spawnNewWave(Raid raid, BlockPos pos, int wave, boolean isBonusWave) {
-		List<EntityLiving> entities = new ArrayList<EntityLiving>();
-		Random rand = raid.getWorld().rand;
-		for (RaidEntry entry : ENTRIES.values()) {
-			for (int i = 0; i < entry.getCount(raid, rand, wave, isBonusWave); i++) {
-				try {
-					entry.spawnEntity(raid, wave, raid.getWorld().getHeight(pos.north(rand.nextInt(6)-3).east(rand.nextInt(6)-3)), entities);
-				} catch (Exception e) {
-					RaidsLogger.logError("Could not spawn entity for entry " + entry, e);
-				}
-			}
-		}
+		RaidSpawnTable table = raid.getTable();
+		if (table == null) return;
+		List<EntityLiving> entities = table.getWaveEntities(raid, pos, wave, isBonusWave);
 		Collections.shuffle(entities);
 		chooseRaidLeader(raid, wave, entities);
 	}
@@ -96,6 +85,16 @@ public class RaidHandler {
 			}
 			entity.setItemStackToSlot(slot, stack);
 		}
+	}
+	
+	public static RaidSpawnTable getSpawnTable(WorldServer world, BlockPos pos, EntityPlayerMP player, Random rand) {
+		return RaidTableLoader.INSTANCE.getSpawnTable(world, pos, player, rand);
+	}
+	
+	public static RaidSpawnTable getSpawnTable(String table) {
+		RaidTableLoader tables = RaidTableLoader.INSTANCE;
+		if (table == null) return tables.spawnTables().size() > 0 ? tables.spawnTables().first() : null;
+		return RaidTableLoader.INSTANCE.getSpawnTable(table);
 	}
 	
 	public interface RaidBuffs {

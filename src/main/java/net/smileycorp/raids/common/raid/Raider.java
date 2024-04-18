@@ -19,7 +19,6 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.ai.EntityAILongDistancePatrol;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
-import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.tektopia.TektopiaIntegration;

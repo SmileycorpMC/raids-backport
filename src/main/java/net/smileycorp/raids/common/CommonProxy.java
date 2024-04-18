@@ -6,6 +6,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityEvoker;
+import net.minecraft.entity.monster.EntityIllusionIllager;
 import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.init.Enchantments;
@@ -29,9 +30,9 @@ import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.raid.Raid;
+import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.raid.RaidOmenTracker;
 import net.smileycorp.raids.common.raid.Raider;
-import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.common.world.MapGenOutpost;
 import net.smileycorp.raids.common.world.RaidsWorldGenerator;
 import net.smileycorp.raids.common.world.StructureOutpostPieces;
@@ -39,6 +40,7 @@ import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.PatrolConfig;
 import net.smileycorp.raids.config.RaidConfig;
+import net.smileycorp.raids.config.raidevent.RaidTableLoader;
 import net.smileycorp.raids.integration.ModIntegration;
 
 import java.util.Map;
@@ -51,6 +53,7 @@ public class CommonProxy {
 		OutpostConfig.syncConfig(event);
 		PatrolConfig.syncConfig(event);
 		RaidConfig.syncConfig(event);
+		RaidTableLoader.init(event);
 		PacketHandler.initPackets();
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());
 		MinecraftForge.EVENT_BUS.register(new RaidsWorldGenerator());
@@ -67,7 +70,7 @@ public class CommonProxy {
 		CriteriaTriggers.register(RaidsContent.WHOS_THE_PILLAGER);
 		CriteriaTriggers.register(RaidsContent.VOLUNTARY_EXILE);
 		CriteriaTriggers.register(RaidsContent.RAID_VICTORY);
-		registerSpawns();
+		addDefaultRaiders();
 		registerRaidBuffs();
 		ModIntegration.init();
 	}
@@ -79,7 +82,7 @@ public class CommonProxy {
 	}
 	
 	public void postInit(FMLPostInitializationEvent event) {
-		
+		RaidTableLoader.INSTANCE.generateDefaultData();
 	}
 	
 	public void serverStart(FMLServerStartingEvent event) {
@@ -88,19 +91,13 @@ public class CommonProxy {
 		event.registerServerCommand(new CommandFindRaiders());
 	}
 	
-	private void registerSpawns() {
-		RaidHandler.registerEntry(EntityPillager.class, new int[]{0, 4, 3, 3, 4, 4, 4, 2}, null, null);
-		RaidHandler.registerEntry(EntityVindicator.class, new int[]{0, 0, 2, 0, 1, 4, 2, 5}, null, (difficulty, rand, raid, wave, isBonusWave) ->
-				difficulty == EnumDifficulty.EASY ? rand.nextInt(2) : difficulty == EnumDifficulty.NORMAL ? 1 : 2);
-		RaidHandler.registerEntry(EntityRavager.class, new int[]{0, 0, 1, 0, 0, 0, 0}, (raid, world, numSpawned) -> {
-			int i = raid.getGroupsSpawned() + 1;
-			if (i == raid.getNumGroups(EnumDifficulty.NORMAL)) return new EntityPillager(world);
-			if (i >= raid.getNumGroups(EnumDifficulty.HARD)) return numSpawned.containsKey(EntityEvoker.class) ? new EntityVindicator(world) : new EntityEvoker(world);
-			return null;
-		}, (difficulty, rand, raid, wave, isBonusWave) -> difficulty != EnumDifficulty.EASY && isBonusWave ? 1 : 0);
-		RaidHandler.registerEntry(EntityWitch.class, new int[]{0, 0, 0, 0, 3, 0, 0, 1}, null, (difficulty, rand, raid, wave, isBonusWave)  ->
-			(difficulty == EnumDifficulty.EASY || wave <= 2 || wave == 4) ? 0 : 1);
-		RaidHandler.registerEntry(EntityEvoker.class, new int[]{0, 0, 0, 1, 0, 1, 0, 2}, null, null);
+	private void addDefaultRaiders() {
+		RaidHandler.addRaider(EntityPillager.class);
+		RaidHandler.addRaider(EntityVindicator.class);
+		RaidHandler.addRaider(EntityEvoker.class);
+		RaidHandler.addRaider(EntityRavager.class);
+		RaidHandler.addRaider(EntityWitch.class);
+		RaidHandler.addRaider(EntityIllusionIllager.class);
 	}
 	
 	public static ItemStack applyMeleeBuffs(ItemStack stack, EntityLiving entity, Raid raid, int wave, Random rand) {

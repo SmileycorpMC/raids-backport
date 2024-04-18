@@ -5,7 +5,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.smileycorp.raids.common.Constants;
-import net.smileycorp.raids.common.raid.data.RaidHandler;
+import net.smileycorp.raids.common.raid.RaidHandler;
 
 public class CommandFindRaiders extends CommandBase {
     

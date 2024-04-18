@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.registries.GameData;
-import net.smileycorp.raids.common.raid.data.RaidHandler;
+import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.util.RaidsLogger;
 
 import java.io.File;

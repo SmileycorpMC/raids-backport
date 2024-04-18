@@ -18,7 +18,9 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
@@ -29,12 +31,10 @@ import net.minecraft.world.*;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
-import net.smileycorp.raids.common.network.PacketHandler;
-import net.smileycorp.raids.common.network.RaidSoundMessage;
-import net.smileycorp.raids.common.raid.data.RaidHandler;
 import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.RaidConfig;
+import net.smileycorp.raids.config.raidevent.RaidSpawnTable;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.tektopia.TektopiaIntegration;
 
@@ -58,6 +58,8 @@ public class Raid {
 	private WorldServer world;
 	private boolean started;
 	private final int id;
+	
+	private final RaidSpawnTable table;
 	private float totalHealth;
 	private int badOmenLevel;
 	private boolean active;
@@ -71,11 +73,12 @@ public class Raid {
 	private int celebrationTicks;
 	private Optional<BlockPos> waveSpawnPos = Optional.empty();
 	
-	public Raid(int id, WorldServer world, BlockPos center) {
+	public Raid(int id, WorldServer world, BlockPos center, RaidSpawnTable table) {
 		this.id = id;
 		this.world = world;
 		active = true;
 		this.center = center;
+		this.table = table;
 		raidCooldownTicks = 300;
 		raidEvent.setPercent(0.0F);
 		numGroups = getNumGroups(world.getDifficulty());
@@ -96,6 +99,7 @@ public class Raid {
 		center = new BlockPos(nbt.getInteger("CX"), nbt.getInteger("CY"), nbt.getInteger("CZ"));
 		numGroups = nbt.getInteger("NumGroups");
 		status = Status.getByName(nbt.getString("Status"));
+		table = RaidHandler.getSpawnTable(nbt.getString("Table"));
 		heroesOfTheVillage.clear();
 		if (nbt.hasKey("HeroesOfTheVillage", 9)) {
 			NBTTagList list = nbt.getTagList("HeroesOfTheVillage", 10);
@@ -188,6 +192,7 @@ public class Raid {
 	}
 	
 	public void tick() {
+		if (table == null) stop();
 		if (!isStopped()) {
 			if (status == Status.ONGOING) {
 				boolean flag = active;
@@ -376,13 +381,14 @@ public class Raid {
 	private void playSound(BlockPos pos) {
 		Collection<EntityPlayerMP> collection = raidEvent.getPlayers();
 		for(EntityPlayer player : world.playerEntities) {
-			Vec3d playerpos = player.getPositionVector();
-			Vec3d center = new Vec3d(pos);
-			double delta = Math.sqrt((center.x - playerpos.x) * (center.x - playerpos.x) + (center.z - playerpos.z) * (center.z - playerpos.z));
-			double x = playerpos.x + 13 / delta * (center.x - playerpos.x);
-			double z = playerpos.z + 13 / delta * (center.z - playerpos.z);
-			if ((delta <= 64 || collection.contains(player)) && player instanceof EntityPlayerMP)
-				PacketHandler.NETWORK_INSTANCE.sendTo(new RaidSoundMessage(new BlockPos(x, playerpos.y, z)), (EntityPlayerMP)player);
+			Vec3d vec3 = player.getPositionVector();
+			double dx = pos.getX() + 0.5 - vec3.x;
+			double dz = pos.getZ() + 0.5 - vec3.z;
+			double distance = Math.sqrt(dx * dx + dz * dz);
+			double x = vec3.x + 13 / distance * dx;
+			double y = vec3.z + 13/ distance * dz;
+			if (distance <= 64 || collection.contains(player))
+				((EntityPlayerMP)player).connection.sendPacket(new SPacketSoundEffect(table.getSound(), SoundCategory.NEUTRAL, x, player.posY, y, 64, 1));
 		}
 	}
 	
@@ -533,6 +539,7 @@ public class Raid {
 		nbt.setFloat("TotalHealth", totalHealth);
 		nbt.setInteger("NumGroups", numGroups);
 		nbt.setString("Status", status.getName());
+		nbt.setString("Table", table.getName());
 		nbt.setInteger("CX", center.getX());
 		nbt.setInteger("CY", center.getY());
 		nbt.setInteger("CZ", center.getZ());
@@ -599,8 +606,16 @@ public class Raid {
 	public void setWorld(WorldServer world) {
 		this.world = world;
 	}
-    
-    enum Status {
+	
+	public RaidSpawnTable getTable() {
+		return table;
+	}
+	
+	public Random getRandom() {
+		return random;
+	}
+	
+	enum Status {
 		ONGOING,
 		VICTORY,
 		LOSS,
