@@ -131,26 +131,26 @@
 							{
 								"name": "game_difficulty",
 								"value": "EASY"
+							},
+							{
+								"name": "comparison",
+								"type": "int",
+								"operation": "<=",
+								"value1": {
+									"name": "wave"
+								},
+								"value2": 2
+							},
+							{
+								"name": "comparison",
+								"type": "int",
+								"operation": "==",
+								"value1": {
+									"name": "wave"
+								},
+								"value2": 4
 							}
 						]
-					},
-					{
-						"name": "comparison",
-						"type": "int",
-						"operation": "<=",
-						"value1": {
-							"name": "wave"
-						},
-						"value2": 2
-					},
-					{
-						"name": "comparison",
-						"type": "int",
-						"operation": "==",
-						"value1": {
-							"name": "wave"
-						},
-						"value2": 4
 					}
 				]
 			},
