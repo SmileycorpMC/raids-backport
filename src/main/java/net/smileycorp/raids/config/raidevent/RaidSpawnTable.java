@@ -1,17 +1,14 @@
 package net.smileycorp.raids.config.raidevent;
 
 import com.google.common.collect.Lists;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.raid.Raid;
+import net.smileycorp.raids.common.raid.RaidContext;
 import net.smileycorp.raids.common.util.RaidsLogger;
-import net.smileycorp.raids.config.raidevent.conditions.TableCondition;
+import net.smileycorp.raids.config.raidevent.conditions.RaidCondition;
 
 import java.util.Iterator;
 import java.util.List;
@@ -21,18 +18,18 @@ public class RaidSpawnTable {
     
     private final String name;
     private final List<RaidEntry> entries = Lists.newArrayList();
-    private final List<TableCondition> conditions = Lists.newArrayList();
+    private final List<RaidCondition> conditions = Lists.newArrayList();
     private final SoundEvent sound;
     
-    RaidSpawnTable(String name, List<RaidEntry> entries, List<TableCondition> conditions, SoundEvent sound) {
+    RaidSpawnTable(String name, List<RaidEntry> entries, List<RaidCondition> conditions, SoundEvent sound) {
         this.name = name;
         this.entries.addAll(entries);
         this.conditions.addAll(conditions);
         this.sound = sound == null ? sound : RaidsSoundEvents.RAID_HORN;
     }
     
-    public boolean shouldApply(World level, BlockPos pos, EntityPlayer player, Random rand) {
-        for (TableCondition condition : conditions) if (!condition.apply(level, pos, player, rand)) return false;
+    public boolean shouldApply(RaidContext ctx) {
+        for (RaidCondition condition : conditions) if (!condition.apply(ctx)) return false;
         return true;
     }
     
@@ -60,12 +57,12 @@ public class RaidSpawnTable {
     }
     
     public List<EntityLiving> getWaveEntities(Raid raid, BlockPos pos, int wave, boolean isBonusWave) {
-        Random rand = raid.getRandom();
         List<EntityLiving> entities = Lists.newArrayList();
         for (RaidEntry entry : entries) {
-            for (int i = 0; i < entry.getCount(raid, rand, wave, isBonusWave); i++) {
+            for (int i = 0; i < entry.getCount(raid, wave, pos, isBonusWave); i++) {
                 try {
-                    entry.spawnEntity(raid, wave, raid.getWorld().getHeight(pos.north(rand.nextInt(6)-3).east(rand.nextInt(6)-3)), entities);
+                    Random rand = raid.getRandom();
+                    entry.spawnEntity(raid, wave, raid.getWorld().getHeight(pos.north(rand.nextInt(6)-3).east(rand.nextInt(6)-3)), entities, isBonusWave);
                 } catch (Exception e) {
                     RaidsLogger.logError("Could not spawn entity for entry " + entry, e);
                 }
@@ -133,17 +130,6 @@ public class RaidSpawnTable {
     
     public String getName() {
         return name;
-    }
-    
-    public JsonObject toJson() {
-        JsonObject json = new JsonObject();
-        JsonArray entries = new JsonArray();
-        this.entries.forEach(entry -> entries.add(entry.toJson()));
-        json.add("entries", entries);
-        JsonArray conditions = new JsonArray();
-        json.add("conditions", conditions);
-        json.addProperty("sound", sound.getSoundName().toString());
-        return json;
     }
     
 }

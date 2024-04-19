@@ -19,6 +19,7 @@ import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -41,11 +42,14 @@ import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.PatrolConfig;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.config.raidevent.RaidTableLoader;
+import net.smileycorp.raids.config.raidevent.conditions.ConditionRegistry;
+import net.smileycorp.raids.config.raidevent.values.ValueRegistry;
 import net.smileycorp.raids.integration.ModIntegration;
 
 import java.util.Map;
 import java.util.Random;
 
+@Mod.EventBusSubscriber
 public class CommonProxy {
 	
 	public void preInit(FMLPreInitializationEvent event) {
@@ -73,6 +77,8 @@ public class CommonProxy {
 		addDefaultRaiders();
 		registerRaidBuffs();
 		ModIntegration.init();
+		ConditionRegistry.INSTANCE.registerDefaultConditions();
+		ValueRegistry.INSTANCE.registerDefaultValues();
 	}
 	
 	private void registerRaidBuffs() {
@@ -82,7 +88,7 @@ public class CommonProxy {
 	}
 	
 	public void postInit(FMLPostInitializationEvent event) {
-		RaidTableLoader.INSTANCE.generateDefaultData();
+		RaidTableLoader.INSTANCE.loadTables();
 	}
 	
 	public void serverStart(FMLServerStartingEvent event) {

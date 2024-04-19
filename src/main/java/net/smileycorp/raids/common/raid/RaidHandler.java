@@ -3,7 +3,6 @@ package net.smileycorp.raids.common.raid;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -15,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.smileycorp.raids.config.EntityConfig;
+import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.config.raidevent.RaidSpawnTable;
 import net.smileycorp.raids.config.raidevent.RaidTableLoader;
 
@@ -42,7 +42,7 @@ public class RaidHandler {
 	}
 	
 	public static boolean canBeCaptain(EntityLiving entity) {
-		return EntityConfig.getCaptainChance(entity) > 0;
+		return EntityConfig.getCaptainChance(entity) > 0 || RaidConfig.getCaptainPriority(entity) > 0;
 	}
 	
 	public static void findRaiders(World world, BlockPos pos) {
@@ -60,18 +60,16 @@ public class RaidHandler {
 	}
 
 	private static void chooseRaidLeader(Raid raid, int wave, List<EntityLiving> entities) {
+		EntityLiving captain = null;
+		int currentPriority = 0;
 		for (EntityLiving entity : entities) {
-			if (entity instanceof EntityVindicator) {
-				raid.setLeader(wave, entity);
-				return;
+			int priority = RaidConfig.getCaptainPriority(entity);
+			if (priority > currentPriority) {
+				captain = entity;
+				currentPriority = priority;
 			}
 		}
-		for (EntityLiving entity : entities) {
-			if (canBeCaptain(entity)) {
-				raid.setLeader(wave, entity);
-				return;
-			}
-		}
+		if (captain != null) raid.setLeader(wave, captain);
 	}
 	
 	public static void applyRaidBuffs(EntityLiving entity, Raid raid, int wave, Random rand) {
@@ -79,16 +77,15 @@ public class RaidHandler {
 			ItemStack stack = entity.getItemStackFromSlot(slot);
 			if (stack == null) continue;
 			if (stack.isEmpty()) continue;
-			for (Map.Entry<Class, RaidBuffs> buffs : RAID_BUFFS.entrySet()) {
+			for (Map.Entry<Class, RaidBuffs> buffs : RAID_BUFFS.entrySet())
 				if (buffs.getKey().isAssignableFrom(stack.getItem().getClass()))
 					stack = buffs.getValue().apply(stack, entity, raid, wave, rand);
-			}
 			entity.setItemStackToSlot(slot, stack);
 		}
 	}
 	
 	public static RaidSpawnTable getSpawnTable(WorldServer world, BlockPos pos, EntityPlayerMP player, Random rand) {
-		return RaidTableLoader.INSTANCE.getSpawnTable(world, pos, player, rand);
+		return RaidTableLoader.INSTANCE.getSpawnTable(RaidContext.Builder.of(world, rand).pos(pos).player(player).build());
 	}
 	
 	public static RaidSpawnTable getSpawnTable(String table) {
