@@ -2,6 +2,7 @@ package net.smileycorp.raids.config.raidevent.conditions;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.smileycorp.raids.common.data.LogicalOperation;
 import net.smileycorp.raids.common.raid.RaidContext;
 import net.smileycorp.raids.common.util.RaidsLogger;
@@ -35,10 +36,10 @@ public class LogicalCondition implements RaidCondition {
 		return super.toString() + "[" + builder + "]";
 	}
 
-	public static LogicalCondition deserialize(LogicalOperation operation, JsonElement json) {
+	public static LogicalCondition deserialize(LogicalOperation operation, JsonObject json) {
 		try {
 			List<RaidCondition> conditions = Lists.newArrayList();
-			for (JsonElement element : json.getAsJsonArray()) {
+			for (JsonElement element : json.get("value").getAsJsonArray()) {
 				try {
 					conditions.add(ConditionRegistry.INSTANCE.readCondition(element.getAsJsonObject()));
 				} catch(Exception e) {

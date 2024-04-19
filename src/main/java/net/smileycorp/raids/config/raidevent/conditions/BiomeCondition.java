@@ -2,6 +2,7 @@ package net.smileycorp.raids.config.raidevent.conditions;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -39,11 +40,11 @@ public class BiomeCondition implements RaidCondition {
         return false;
     }
     
-    public static BiomeCondition deserialize(JsonElement json) {
+    public static BiomeCondition deserialize(JsonObject json) {
         try {
             if (json.isJsonArray()) {
                 List<Value<String>> biomes = Lists.newArrayList();
-                for (JsonElement element : json.getAsJsonArray()) biomes.add(ValueRegistry.INSTANCE.readValue(DataType.STRING, element));
+                for (JsonElement element : json.get("value").getAsJsonArray()) biomes.add(ValueRegistry.INSTANCE.readValue(DataType.STRING, element));
                 return new BiomeCondition(biomes);
             }
             return new BiomeCondition(Lists.newArrayList(ValueRegistry.INSTANCE.readValue(DataType.STRING, json)));

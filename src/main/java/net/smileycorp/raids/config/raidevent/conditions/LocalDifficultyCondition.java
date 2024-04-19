@@ -1,6 +1,6 @@
 package net.smileycorp.raids.config.raidevent.conditions;
 
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.smileycorp.raids.common.data.DataType;
 import net.smileycorp.raids.common.raid.RaidContext;
 import net.smileycorp.raids.common.util.RaidsLogger;
@@ -20,9 +20,9 @@ public class LocalDifficultyCondition implements RaidCondition {
 		return ctx.getWorld().getDifficultyForLocation(ctx.getPos()).getClampedAdditionalDifficulty() > difficulty.get(ctx);
 	}
 
-	public static LocalDifficultyCondition deserialize(JsonElement json) {
+	public static LocalDifficultyCondition deserialize(JsonObject json) {
 		try {
-			return new LocalDifficultyCondition(ValueRegistry.INSTANCE.readValue(DataType.DOUBLE, json));
+			return new LocalDifficultyCondition(ValueRegistry.INSTANCE.readValue(DataType.DOUBLE, json.get("value")));
 		} catch(Exception e) {
 			RaidsLogger.logError("Incorrect parameters for LocalDifficultyCondition", e);
 		}

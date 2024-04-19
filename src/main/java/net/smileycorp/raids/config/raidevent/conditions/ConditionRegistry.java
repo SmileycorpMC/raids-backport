@@ -1,7 +1,6 @@
 package net.smileycorp.raids.config.raidevent.conditions;
 
 import com.google.common.collect.Maps;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraftforge.fml.common.Loader;
 import net.smileycorp.raids.common.data.LogicalOperation;
@@ -14,13 +13,13 @@ public class ConditionRegistry {
 
     public static final ConditionRegistry INSTANCE = new ConditionRegistry();
     
-    private final Map<String, Function<JsonElement, RaidCondition>> conditions;
+    private final Map<String, Function<JsonObject, RaidCondition>> conditions;
     
     private ConditionRegistry() {
         conditions = Maps.newHashMap();
     }
     
-    public void registerCondition(String name, Function<JsonElement, RaidCondition> condition) {
+    public void registerCondition(String name, Function<JsonObject, RaidCondition> condition) {
         if (!conditions.containsKey(name)) {
             RaidsLogger.logInfo("Registered condition " + name);
             conditions.put(name, condition);
@@ -29,7 +28,7 @@ public class ConditionRegistry {
     
     public RaidCondition readCondition(JsonObject json) {
         try {
-            return conditions.get(json.get("name").getAsString()).apply(json.get("value"));
+            if (json.has("name")) return conditions.get(json.get("name").getAsString()).apply(json);
         } catch (Exception e) {
             RaidsLogger.logError("Failed reading condition " + json, e);
         }
@@ -45,8 +44,8 @@ public class ConditionRegistry {
         registerCondition("biome", BiomeCondition::deserialize);
         registerCondition("local_difficulty", LocalDifficultyCondition::deserialize);
         registerCondition("game_difficulty", GameDifficultyCondition::deserialize);
-        registerCondition("advancement", AdvancementCondition::deserialize);
         registerCondition("is_bonus", IsBonusCondition::deserialize);
+        registerCondition("advancement", AdvancementCondition::deserialize);
         if (Loader.isModLoaded("gamestages")) registerCondition("gamestage", GameStageCondition::deserialize);
     }
     

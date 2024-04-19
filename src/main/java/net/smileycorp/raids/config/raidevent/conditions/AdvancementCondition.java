@@ -1,6 +1,6 @@
 package net.smileycorp.raids.config.raidevent.conditions;
 
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.smileycorp.raids.common.data.DataType;
@@ -25,9 +25,9 @@ public class AdvancementCondition implements RaidCondition {
         return player.getAdvancements().getProgress(player.getServer().getAdvancementManager().getAdvancement(advancement.get(ctx))).isDone();
     }
     
-    public static AdvancementCondition deserialize(JsonElement json) {
+    public static AdvancementCondition deserialize(JsonObject json) {
         try {
-            return new AdvancementCondition(ValueRegistry.INSTANCE.readValue(DataType.RESOURCE_LOCATION, json));
+            return new AdvancementCondition(ValueRegistry.INSTANCE.readValue(DataType.RESOURCE_LOCATION, json.get("value")));
         } catch(Exception e) {
             RaidsLogger.logError("Incorrect parameters for AdvancementCondition", e);
         }

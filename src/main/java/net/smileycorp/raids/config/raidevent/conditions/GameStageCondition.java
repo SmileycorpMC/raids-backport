@@ -1,6 +1,6 @@
 package net.smileycorp.raids.config.raidevent.conditions;
 
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.smileycorp.raids.common.data.DataType;
@@ -24,9 +24,9 @@ public class GameStageCondition implements RaidCondition {
 		return GameStageHelper.hasStage(player, stage.get(ctx));
 	}
 
-	public static GameStageCondition deserialize(JsonElement json) {
+	public static GameStageCondition deserialize(JsonObject json) {
 		try {
-			return new GameStageCondition(ValueRegistry.INSTANCE.readValue(DataType.STRING, json));
+			return new GameStageCondition(ValueRegistry.INSTANCE.readValue(DataType.STRING, json.get("value")));
 		} catch(Exception e) {
 			RaidsLogger.logError("Incorrect parameters for GameStageCondition", e);
 		}

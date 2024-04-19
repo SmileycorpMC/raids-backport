@@ -1,6 +1,6 @@
 package net.smileycorp.raids.config.raidevent.conditions;
 
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.smileycorp.raids.common.data.DataType;
 import net.smileycorp.raids.common.raid.RaidContext;
 import net.smileycorp.raids.common.util.RaidsLogger;
@@ -20,9 +20,9 @@ public class RandomCondition implements RaidCondition {
 		return ctx.getRand().nextFloat() <= chance.get(ctx);
 	}
 
-	public static RandomCondition deserialize(JsonElement json) {
+	public static RandomCondition deserialize(JsonObject json) {
 		try {
-			return new RandomCondition(ValueRegistry.INSTANCE.readValue(DataType.DOUBLE, json));
+			return new RandomCondition(ValueRegistry.INSTANCE.readValue(DataType.DOUBLE, json.get("value")));
 		} catch(Exception e) {
 			RaidsLogger.logError("Incorrect parameters for RandomCondition", e);
 		}

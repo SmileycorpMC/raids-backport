@@ -1,6 +1,5 @@
 package net.smileycorp.raids.config.raidevent.conditions;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.smileycorp.raids.common.data.ComparableOperation;
 import net.smileycorp.raids.common.data.DataType;
@@ -26,13 +25,12 @@ public class ComparisonCondition<T extends Comparable<T>> implements RaidConditi
         return operation.apply(value1.get(ctx), value2.get(ctx));
     }
     
-    public static ComparisonCondition deserialize(JsonElement json) {
+    public static ComparisonCondition deserialize(JsonObject json) {
         try {
-            JsonObject obj = json.getAsJsonObject();
-            DataType type = DataType.of(obj.get("type").getAsString());
-            ComparableOperation operation = ComparableOperation.of(obj.get("operation").getAsString());
-            Value value1 = ValueRegistry.INSTANCE.readValue(type, obj.get("value1"));
-            Value value2 = ValueRegistry.INSTANCE.readValue(type, obj.get("value2"));
+            DataType type = DataType.of(json.get("type").getAsString());
+            ComparableOperation operation = ComparableOperation.of(json.get("operation").getAsString());
+            Value value1 = ValueRegistry.INSTANCE.readValue(type, json.get("value1"));
+            Value value2 = ValueRegistry.INSTANCE.readValue(type, json.get("value2"));
             return new ComparisonCondition(value1, operation, value2);
         } catch(Exception e) {
             RaidsLogger.logError("Incorrect parameters for ComparisonCondition", e);

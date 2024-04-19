@@ -1,6 +1,6 @@
 package net.smileycorp.raids.config.raidevent.conditions;
 
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.smileycorp.raids.common.raid.RaidContext;
 
 public class IsBonusCondition implements RaidCondition {
@@ -10,7 +10,7 @@ public class IsBonusCondition implements RaidCondition {
        return ctx.isBonusWave();
     }
     
-    public static IsBonusCondition deserialize(JsonElement json) {
+    public static IsBonusCondition deserialize(JsonObject json) {
         return new IsBonusCondition();
     }
     

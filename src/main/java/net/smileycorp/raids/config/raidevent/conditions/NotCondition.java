@@ -1,6 +1,6 @@
 package net.smileycorp.raids.config.raidevent.conditions;
 
-import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.smileycorp.raids.common.raid.RaidContext;
 import net.smileycorp.raids.common.util.RaidsLogger;
 
@@ -17,9 +17,9 @@ public class NotCondition implements RaidCondition {
 		return !condition.apply(ctx);
 	}
 
-	public static NotCondition deserialize(JsonElement json) {
+	public static NotCondition deserialize(JsonObject json) {
 		try {
-			return new NotCondition(ConditionRegistry.INSTANCE.readCondition(json.getAsJsonObject()));
+			return new NotCondition(ConditionRegistry.INSTANCE.readCondition(json.get("value").getAsJsonObject()));
 		} catch(Exception e) {
 			RaidsLogger.logError("Incorrect parameters for NotCondition", e);
 		}

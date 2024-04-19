@@ -83,6 +83,7 @@ public class Raid {
 		raidEvent.setPercent(0.0F);
 		numGroups = getNumGroups(world.getDifficulty());
 		status = Status.ONGOING;
+		RaidsLogger.logInfo("Starting raid id" + id + "  with table " + table + " at " + center + " and " + numGroups + " waves ");
 	}
 	
 	public Raid(WorldServer world, NBTTagCompound nbt) {

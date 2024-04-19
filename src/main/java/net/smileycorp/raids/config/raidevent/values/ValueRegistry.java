@@ -29,12 +29,12 @@ public class ValueRegistry {
     
     public <T extends Comparable<T>> Value<T> readValue(DataType<T> type, JsonElement json) {
         if (json.isJsonPrimitive()) return new StaticValue(type.readFromJson(json));
-        if (!json.isJsonObject()) return null;
+        if (!json.isJsonObject()) return new EmptyValue<>(type);
         JsonObject obj = json.getAsJsonObject();
         try {
-            return values.get(obj.get("name").getAsString()).apply(obj, type);
+            if (obj.has("name")) return values.get(obj.get("name").getAsString()).apply(obj, type);
         } catch (Exception e) {
-            RaidsLogger.logError("Failed reading condition " + obj, e);
+            RaidsLogger.logError("Failed reading value " + obj, e);
         }
         return new EmptyValue<>(type);
     }
