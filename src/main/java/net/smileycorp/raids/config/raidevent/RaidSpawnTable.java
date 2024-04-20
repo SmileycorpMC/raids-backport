@@ -29,7 +29,10 @@ public class RaidSpawnTable {
     }
     
     public boolean shouldApply(RaidContext ctx) {
-        for (RaidCondition condition : conditions) if (!condition.apply(ctx)) return false;
+        for (RaidCondition condition : conditions) if (!condition.apply(ctx)) {
+            RaidsLogger.logInfo("Table " + name + " failed on condition " + condition);
+            return false;
+        }
         return true;
     }
     
