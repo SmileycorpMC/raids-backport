@@ -12,7 +12,7 @@ public class ClientConfig {
     public static boolean newVexModel;
     
     public static void syncConfig(FMLPreInitializationEvent event) {
-        config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/entities.cfg"));
+        config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/client.cfg"));
         try{
             config.load();
             newVexModel = config.get("general", "newVexModel", true, "Use the new vex model from 1.19.3?").getBoolean();;

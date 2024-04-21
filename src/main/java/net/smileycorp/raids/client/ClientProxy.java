@@ -12,15 +12,14 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.smileycorp.raids.client.entity.RenderPillager;
+import net.smileycorp.raids.client.entity.RenderRaidsVex;
 import net.smileycorp.raids.client.entity.RenderRavager;
-import net.smileycorp.raids.client.entity.model.RenderRaidsVex;
 import net.smileycorp.raids.common.CommonProxy;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.config.ClientConfig;
-import net.smileycorp.raids.config.EntityConfig;
 
 @EventBusSubscriber(value = Side.CLIENT, modid= Constants.MODID)
 public class ClientProxy extends CommonProxy {
