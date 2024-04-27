@@ -6,8 +6,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
-import net.minecraft.util.math.MathHelper;
-import net.smileycorp.crossbows.common.item.ItemCrossbow;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.integration.ModIntegration;
@@ -48,9 +46,7 @@ public class ModelPillager extends ModelIllager {
         hand.rotateAngleY = isRight ? -0.8F : 0.8F;
         hand.rotateAngleX = -0.97079635F;
         hand1.rotateAngleX = hand.rotateAngleX;
-        float f = (float) ItemCrossbow.getChargeDuration(entity.getActiveItemStack());
-        float f1 = -MathHelper.clamp((float)entity.getItemInUseCount(), 0.0F, f);
-        float f2 = f1 / f;
+        float f2 = ModIntegration.getChargeAmount(entity.getActiveItemStack(), entity);
         hand1.rotateAngleY = MathUtils.lerp(f2, 0.4F, 0.85F) * (float)(isRight ? 1 : -1);
         hand1.rotateAngleX = MathUtils.lerp(f2, hand1.rotateAngleX, (-(float)Math.PI / 2F));
     }

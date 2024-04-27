@@ -1,7 +1,6 @@
 package net.smileycorp.raids.common.entities;
 
 import git.jbredwards.crossbow.api.ICrossbow;
-import git.jbredwards.crossbow.api.ICrossbowUser;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.IProjectile;
@@ -43,7 +42,7 @@ import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
 import javax.vecmath.Vector3f;
 
 @Optional.Interface(iface = "git.jbredwards.crossbow.api.ICrossbowUser", modid = "crossbow")
-public class EntityPillager extends AbstractIllager implements IRangedAttackMob, ICrossbowUser {
+public class EntityPillager extends AbstractIllager implements IRangedAttackMob {
 
     private static final DataParameter<Boolean> IS_CHARGING_CROSSBOW = EntityDataManager.createKey(EntityPillager.class, DataSerializers.BOOLEAN);
 

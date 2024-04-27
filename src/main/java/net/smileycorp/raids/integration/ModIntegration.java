@@ -1,10 +1,12 @@
 package net.smileycorp.raids.integration;
 
 import com.google.common.collect.Lists;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.smileycorp.raids.common.entities.EntityPillager;
+import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.integration.crossbow.CrossbowIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
@@ -74,4 +76,12 @@ public class ModIntegration {
         if (TINKERS_LOADED && TinkersConstructIntegration.isCrossbow(stack)) return TinkersConstructIntegration.isCharged(stack, entity);
         return false;
     }
+    
+    public static float getChargeAmount(ItemStack stack, EntityLivingBase entity) {
+        if (CROSSBOWS_BACKPORT_LOADED && CrossbowsBackportIntegration.isCrossbow(stack)) return CrossbowsBackportIntegration.getChargeAmount(stack, entity);
+        if (CROSSBOW_LOADED && CrossbowIntegration.isCrossbow(stack)) return CrossbowIntegration.getChargeAmount(stack, entity);
+        if (TINKERS_LOADED && TinkersConstructIntegration.isCrossbow(stack)) return TinkersConstructIntegration.getChargeAmount(stack, entity);
+        return MathUtils.clamp((float) entity.getItemInUseCount() / (float) stack.getMaxItemUseDuration(), 0, 1);
+    }
+    
 }

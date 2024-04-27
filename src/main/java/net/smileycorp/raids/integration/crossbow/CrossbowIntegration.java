@@ -9,7 +9,9 @@ import git.jbredwards.crossbow.mod.common.item.ItemCrossbow;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootTable;
@@ -53,5 +55,12 @@ public class CrossbowIntegration {
         EnchantmentHelper.setEnchantments(map, stack);
         return stack;
     }
+    
+    public static float getChargeAmount(ItemStack stack, EntityLivingBase entity) {
+        float f = CrossbowItems.CROSSBOW.getPullTime(stack);;
+        float f1 = -MathHelper.clamp((float)entity.getItemInUseCount(), 0.0F, f);
+        return f1/f;
+    }
+    
     
 }

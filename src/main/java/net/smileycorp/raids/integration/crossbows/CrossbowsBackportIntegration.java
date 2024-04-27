@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootTable;
@@ -66,6 +67,12 @@ public class CrossbowsBackportIntegration {
     
     public static void setOwner(EntityFireworkRocket firework, EntityLivingBase owner) {
         ((IFireworksProjectile)firework).setOwner(owner);
+    }
+    
+    public static float getChargeAmount(ItemStack stack, EntityLivingBase entity) {
+        float f = ItemCrossbow.getChargeDuration(stack);
+        float f1 = -MathHelper.clamp((float)entity.getItemInUseCount(), 0.0F, f);
+        return f1/f;
     }
     
 }

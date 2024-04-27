@@ -13,6 +13,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.config.raidevent.RaidSpawnTable;
@@ -47,7 +48,8 @@ public class RaidHandler {
 	
 	public static void findRaiders(World world, BlockPos pos) {
 		AxisAlignedBB aabb = (new AxisAlignedBB(pos)).grow(48.0D);
-		for (EntityLiving entity : world.getEntitiesWithinAABB(EntityLiving.class, aabb, RaidHandler::isRaider))
+		for (EntityLiving entity : world.getEntitiesWithinAABB(EntityLiving.class, aabb, entity -> isRaider(entity)
+				&& entity.getCapability(RaidsContent.RAIDER, null).hasActiveRaid()))
 			entity.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 60));
 	}
 	

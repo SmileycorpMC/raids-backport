@@ -124,4 +124,8 @@ public class TinkersConstructIntegration {
         return TinkerRangedWeapons.crossBow.buildItem(parts);
     }
     
+    public static float getChargeAmount(ItemStack stack, EntityLivingBase entity) {
+        return ((CrossBow)stack.getItem()).getDrawbackProgress(stack, entity);
+    }
+    
 }
