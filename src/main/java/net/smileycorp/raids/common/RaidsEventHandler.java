@@ -75,7 +75,7 @@ public class RaidsEventHandler {
 		Entity entity = event.getEntity();
 		if (entity instanceof EntityVillager) {
 			EntityVillager villager = (EntityVillager) entity;
-			villager.tasks.addTask(1, new EntityAIAvoidEntity<EntityLivingBase>(villager, EntityLivingBase.class, RaidHandler::isRaider, 16.0F, 0.8D, 0.8D));
+			villager.tasks.addTask(1, new EntityAIAvoidEntity<>(villager, EntityLivingBase.class, RaidHandler::isRaider, 16.0F, 0.8D, 0.8D));
 		}
 	}
 

@@ -38,7 +38,6 @@ public abstract class MixinChunkGeneratorOverworld implements IChunkGenerator {
     public void getPossibleCreatures(EnumCreatureType type, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnListEntry>> callback) {
         MapGenOutpost outposts = MapGenOutpost.getInstance(this);
         if (mapFeaturesEnabled && type == EnumCreatureType.MONSTER && outposts.isInsideStructure(pos)) {
-            RaidsLogger.logInfo("spawn at" + pos);
             callback.setReturnValue(OutpostConfig.getSpawnEntities());
         }
     }

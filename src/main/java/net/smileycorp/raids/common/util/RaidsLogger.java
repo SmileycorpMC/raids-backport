@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 
 public class RaidsLogger {
     
-    private static Logger logger = Logger.getLogger(Constants.MODID);
     private static boolean has_errors;
     
     private static Path log_file = Paths.get("logs/raids.log");
@@ -23,20 +22,17 @@ public class RaidsLogger {
         try {
             Files.write(log_file, Lists.newArrayList(), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to write to log file", e);
             e.printStackTrace();
         }
     }
     
     public static void logInfo(Object message) {
         writeToFile(message);
-        logger.log(Level.INFO, String.valueOf(message));
     }
     
     public static void logError(Object message, Exception e) {
         writeToFile(message + " " + e);
         for (StackTraceElement traceElement : e.getStackTrace()) writeToFile(traceElement);
-        logger.log(Level.SEVERE, String.valueOf(message), e);
         e.printStackTrace();
         has_errors = true;
     }
@@ -50,7 +46,6 @@ public class RaidsLogger {
             Files.write(log_file, out, StandardCharsets.UTF_8, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             return true;
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Failed to write to log file", e);
             e.printStackTrace();
             return false;
         }
