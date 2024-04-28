@@ -46,7 +46,7 @@ public class ModelPillager extends ModelIllager {
         hand.rotateAngleY = isRight ? -0.8F : 0.8F;
         hand.rotateAngleX = -0.97079635F;
         hand1.rotateAngleX = hand.rotateAngleX;
-        float f2 = ModIntegration.getChargeAmount(entity.getActiveItemStack(), entity);
+        float f2 = MathUtils.clamp(ModIntegration.getChargeAmount(entity.getActiveItemStack(), entity),-1, 0);
         hand1.rotateAngleY = MathUtils.lerp(f2, 0.4F, 0.85F) * (float)(isRight ? 1 : -1);
         hand1.rotateAngleX = MathUtils.lerp(f2, hand1.rotateAngleX, (-(float)Math.PI / 2F));
     }

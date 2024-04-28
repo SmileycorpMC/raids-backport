@@ -81,7 +81,7 @@ public class ModIntegration {
         if (CROSSBOWS_BACKPORT_LOADED && CrossbowsBackportIntegration.isCrossbow(stack)) return CrossbowsBackportIntegration.getChargeAmount(stack, entity);
         if (CROSSBOW_LOADED && CrossbowIntegration.isCrossbow(stack)) return CrossbowIntegration.getChargeAmount(stack, entity);
         if (TINKERS_LOADED && TinkersConstructIntegration.isCrossbow(stack)) return TinkersConstructIntegration.getChargeAmount(stack, entity);
-        return MathUtils.clamp((float) entity.getItemInUseCount() / (float) stack.getMaxItemUseDuration(), 0, 1);
+        return (float) -entity.getItemInUseCount() / (float) stack.getMaxItemUseDuration();
     }
     
 }
