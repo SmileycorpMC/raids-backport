@@ -6,7 +6,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.smileycorp.raids.common.entities.EntityPillager;
-import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.integration.crossbow.CrossbowIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;

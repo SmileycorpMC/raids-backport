@@ -8,7 +8,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import net.minecraft.world.gen.IChunkGenerator;
-import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.common.world.MapGenOutpost;
 import net.smileycorp.raids.config.OutpostConfig;
 import org.spongepowered.asm.mixin.Final;
