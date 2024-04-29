@@ -43,11 +43,12 @@ import net.minecraftforge.event.village.MerchantTradeOffersEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.smileycorp.raids.common.entities.ai.EntityAIGiveGift;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.raid.*;
-import net.smileycorp.raids.common.util.ILootPool;
 import net.smileycorp.raids.common.util.MathUtils;
+import net.smileycorp.raids.common.util.accessors.ILootPool;
 import net.smileycorp.raids.common.world.MapGenOutpost;
 import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.RaidConfig;
@@ -76,6 +77,7 @@ public class RaidsEventHandler {
 		if (entity instanceof EntityVillager) {
 			EntityVillager villager = (EntityVillager) entity;
 			villager.tasks.addTask(1, new EntityAIAvoidEntity<>(villager, EntityLivingBase.class, RaidHandler::isRaider, 16.0F, 0.8D, 0.8D));
+			villager.tasks.addTask(3, new EntityAIGiveGift(villager));
 		}
 	}
 

@@ -2,7 +2,7 @@ package net.smileycorp.raids.mixin;
 
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootPool;
-import net.smileycorp.raids.common.util.ILootPool;
+import net.smileycorp.raids.common.util.accessors.ILootPool;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

@@ -41,9 +41,9 @@ public class RaidTableLoader {
         if (!directory.exists()) {
             RaidsLogger.logInfo("Raid table folder does not exist, generating default data");
             directory.mkdirs();
-            File file = new File(directory, "default.json");
+            File file = new File(directory, "config-defaults/default.json");
             try {
-                FileUtils.copyInputStreamToFile(RaidTableLoader.class.getResourceAsStream("/default.json"), file);
+                FileUtils.copyInputStreamToFile(RaidTableLoader.class.getResourceAsStream("/config-defaults/default.json"), file);
             } catch (Exception e) {
                 RaidsLogger.logError("Failed generating default raid table", e);
             }

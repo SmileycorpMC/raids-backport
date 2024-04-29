@@ -1,4 +1,4 @@
-package net.smileycorp.raids.common.util;
+package net.smileycorp.raids.common.util.accessors;
 
 public interface ILootPool {
     

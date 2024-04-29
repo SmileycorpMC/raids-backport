@@ -12,7 +12,9 @@
     "MixinLootPool",
     "MixinMerchantRecipe",
     "MixinMerchantRecipeList",
-    "MixinSlotMerchantResult"
+    "MixinSlotMerchantResult",
+    "MixinVillagerProfession",
+    "MixinVillagerRegistry"
   ],
   "client": [
     "MixinGuiMerchant",

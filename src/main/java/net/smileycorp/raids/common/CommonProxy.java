@@ -37,10 +37,7 @@ import net.smileycorp.raids.common.raid.Raider;
 import net.smileycorp.raids.common.world.MapGenOutpost;
 import net.smileycorp.raids.common.world.RaidsWorldGenerator;
 import net.smileycorp.raids.common.world.StructureOutpostPieces;
-import net.smileycorp.raids.config.EntityConfig;
-import net.smileycorp.raids.config.OutpostConfig;
-import net.smileycorp.raids.config.PatrolConfig;
-import net.smileycorp.raids.config.RaidConfig;
+import net.smileycorp.raids.config.*;
 import net.smileycorp.raids.config.raidevent.RaidTableLoader;
 import net.smileycorp.raids.config.raidevent.conditions.ConditionRegistry;
 import net.smileycorp.raids.config.raidevent.values.ValueRegistry;
@@ -58,6 +55,7 @@ public class CommonProxy {
 		PatrolConfig.syncConfig(event);
 		RaidConfig.syncConfig(event);
 		RaidTableLoader.init(event);
+		VillagerGiftsConfig.init(event);
 		PacketHandler.initPackets();
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());
 		MinecraftForge.EVENT_BUS.register(new RaidsWorldGenerator());
@@ -89,6 +87,7 @@ public class CommonProxy {
 	
 	public void postInit(FMLPostInitializationEvent event) {
 		RaidTableLoader.INSTANCE.loadTables();
+		VillagerGiftsConfig.INSTANCE.loadGifts();
 	}
 	
 	public void serverStart(FMLServerStartingEvent event) {
