@@ -6,7 +6,7 @@ Pillagers
 
 Ravagers
 
-Raid Events and Bad Omen
+Raid Events and Bad Omen with Fully Customisable Raids
 
 Pillager Patrols
 
@@ -18,6 +18,8 @@ Pillager Outposts (Watchtowers Only)
 
 Ominous Bottles
 
+1.19.3 Vex Model
+
 Mod support with Crossbow, Spartan's Weaponry and Tinker's Constructs crossbows
 
 ### Future Plans
@@ -25,7 +27,5 @@ Mod support with Crossbow, Spartan's Weaponry and Tinker's Constructs crossbows
 Bells (and/or FutureMC bell support)
 
 Allays
-
-Fully customisable raids, with muliple raid types based on various conditions like gamstages or advancements.
 
 Tektopia support?
