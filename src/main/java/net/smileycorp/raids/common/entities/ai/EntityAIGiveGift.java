@@ -36,7 +36,7 @@ public class EntityAIGiveGift  extends EntityAIBase {
             double dz = hero.posZ - villager.posZ;
             double magnitude = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2));
             item.setVelocity(dx / magnitude, dy / magnitude, dz / magnitude);
-            villager.world.onEntityAdded(item);
+            villager.world.spawnEntity(item);
         }
         cooldown = 600 + villager.getRNG().nextInt(6001);
         hero = null;

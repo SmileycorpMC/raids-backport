@@ -117,11 +117,8 @@ public class VillagerGiftsConfig {
     }
     
     public List<ItemStack> getPossibleGifts(VillagerRegistry.VillagerProfession profession, int career) {
-        if (gifts.containsKey(profession)) {
-            List<VillagerRegistry.VillagerCareer> careers = ((IVillagerProfession) profession).getCareers();
-            return career >= careers.size() ? Lists.newArrayList() : getPossibleGifts(careers.get(career));
-        }
-        return Lists.newArrayList();
+        List<VillagerRegistry.VillagerCareer> careers = ((IVillagerProfession) profession).getCareers();
+        return career >= careers.size() ? Lists.newArrayList() : getPossibleGifts(careers.get(career));
     }
     
     public ItemStack getGift(EntityVillager villager) {

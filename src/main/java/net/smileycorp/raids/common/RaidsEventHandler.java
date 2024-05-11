@@ -83,9 +83,7 @@ public class RaidsEventHandler {
 
 	@SubscribeEvent
 	public void worldTick(TickEvent.WorldTickEvent event) {
-		if (event.phase == TickEvent.Phase.END && event.world instanceof WorldServer) {
-			WorldDataRaids.getData((WorldServer) event.world).tick();
-		}
+		if (event.phase == TickEvent.Phase.END && event.world instanceof WorldServer) WorldDataRaids.getData((WorldServer) event.world).tick();
 	}
 
 	@SubscribeEvent
