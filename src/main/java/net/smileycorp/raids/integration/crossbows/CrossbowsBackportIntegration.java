@@ -40,7 +40,7 @@ public class CrossbowsBackportIntegration {
     }
     
     public static void setCharged(ItemStack stack, boolean charged) {
-        ItemCrossbow.setCharged(stack, charged);
+        if (charged == false) ItemCrossbow.setCharged(stack, charged);
     }
     
     public static void shoot(EntityPillager entity, ItemStack stack, float velocity) {
