@@ -37,8 +37,8 @@ public class MixinMerchantRecipeList extends ArrayList<MerchantRecipe> {
             buffer.writeBoolean(merchantrecipe.isRecipeDisabled());
             buffer.writeInt(merchantrecipe.getToolUses());
             buffer.writeInt(merchantrecipe.getMaxTradeUses());
-            buffer.writeInt(((ITradeDiscount)merchantrecipe).getDiscountedPrice());
         }
+        for (MerchantRecipe recipe : this) buffer.writeInt(((ITradeDiscount)recipe).getDiscountedPrice());
         callback.cancel();
     }
 
