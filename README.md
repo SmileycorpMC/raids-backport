@@ -12,7 +12,7 @@ Pillager Patrols
 
 Advancements
 
-Hero of the Village Effects
+Hero of the Village Effects with customizable villager gifts
 
 Pillager Outposts (Watchtowers Only)
 
