@@ -12,7 +12,7 @@ Pillager Patrols
 
 Advancements
 
-Hero of the Village Effects (Discounts only for the moment)
+Hero of the Village Effects
 
 Pillager Outposts (Watchtowers Only)
 
@@ -28,4 +28,6 @@ Bells (and/or FutureMC bell support)
 
 Allays
 
-Tektopia support?
+Tektopia support
+
+Fully Implememented Outposts With all Structures and Customizable cages
