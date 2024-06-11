@@ -35,10 +35,7 @@ import net.minecraft.world.storage.loot.functions.SetMetadata;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.village.MerchantTradeOffersEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -84,6 +81,16 @@ public class RaidsEventHandler {
 	@SubscribeEvent
 	public void worldTick(TickEvent.WorldTickEvent event) {
 		if (event.phase == TickEvent.Phase.END && event.world instanceof WorldServer) WorldDataRaids.getData((WorldServer) event.world).tick();
+	}
+	
+	@SubscribeEvent
+	public void livingTick(LivingEvent.LivingUpdateEvent event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (entity == null) return;
+		if (entity.world.isRemote) return;
+		if (entity.ticksExisted % 100 == 0 && entity.getRNG().nextInt(2) == 0 && RaidConfig.isTickableVillager(entity)) {
+			entity.world.getVillageCollection().addToVillagerPositionList(entity.getPosition());
+		}
 	}
 
 	@SubscribeEvent
