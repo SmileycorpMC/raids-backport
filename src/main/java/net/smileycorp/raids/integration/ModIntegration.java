@@ -9,6 +9,7 @@ import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.integration.crossbow.CrossbowIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
+import net.smileycorp.raids.integration.futuremc.FutureMCIntegration;
 import net.smileycorp.raids.integration.spartanweaponry.SpartanWeaponryIntegration;
 import net.smileycorp.raids.integration.tconstruct.TinkersConstructIntegration;
 
@@ -33,6 +34,7 @@ public class ModIntegration {
         if (CROSSBOW_LOADED) CrossbowIntegration.init();
         if (SPARTAN_LOADED) SpartanWeaponryIntegration.init();
         if (TINKERS_LOADED) TinkersConstructIntegration.init();
+        if (FUTUREMC_LOADED) FutureMCIntegration.init();
     }
     
     public static boolean isCrossbow(ItemStack stack) {
