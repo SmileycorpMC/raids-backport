@@ -1,34 +1,15 @@
 package net.smileycorp.raids.integration.futuremc;
 
 import com.google.common.collect.Lists;
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.monster.EntityIronGolem;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.entities.ai.EntityAILongDistancePatrol;
-import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
-import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.RaidHandler;
-import net.smileycorp.raids.common.raid.WorldDataRaids;
-import net.smileycorp.raids.config.EntityConfig;
-import net.smileycorp.raids.integration.ModIntegration;
-import net.smileycorp.raids.integration.tektopia.TektopiaIntegration;
 
 import java.util.List;
 
@@ -60,6 +41,13 @@ public interface BellTimer {
 		@Override
 		public void updateTimer() {
 			if (timer-- > 0) return;
+			if (timer == 40) {
+				if (tile != null &! tile.getWorld().getEntitiesWithinAABB(EntityLiving.class,
+						new AxisAlignedBB(tile.getPos()).grow(48.0D), RaidHandler::hasActiveRaid).isEmpty()) {
+					timer = 0;
+					ACTIVE_BELLS.remove(this);
+				}
+			}
 			if (tile != null) RaidHandler.findRaiders(tile.getWorld(), tile.getPos());
 			ACTIVE_BELLS.remove(this);
 		}

@@ -42,14 +42,16 @@ public class RaidHandler {
 		return entity == null ? false : RAIDERS.contains(entity.getClass());
 	}
 	
+	public static boolean hasActiveRaid(Entity entity) {
+		return isRaider(entity) && entity.getCapability(RaidsContent.RAIDER, null).hasActiveRaid();
+	}
+	
 	public static boolean canBeCaptain(EntityLiving entity) {
 		return EntityConfig.getCaptainChance(entity) > 0 || RaidConfig.getCaptainPriority(entity) > 0;
 	}
 	
 	public static void findRaiders(World world, BlockPos pos) {
-		AxisAlignedBB aabb = (new AxisAlignedBB(pos)).grow(48.0D);
-		for (EntityLiving entity : world.getEntitiesWithinAABB(EntityLiving.class, aabb, entity -> isRaider(entity)
-				&& entity.getCapability(RaidsContent.RAIDER, null).hasActiveRaid()))
+		for (EntityLiving entity : world.getEntitiesWithinAABB(EntityLiving.class, new AxisAlignedBB(pos).grow(48.0D), RaidHandler::hasActiveRaid))
 			entity.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 60));
 	}
 	
