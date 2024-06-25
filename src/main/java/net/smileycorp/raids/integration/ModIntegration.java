@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.config.EntityConfig;
+import net.smileycorp.raids.config.IntegrationConfig;
 import net.smileycorp.raids.integration.crossbow.CrossbowIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
 import net.smileycorp.raids.integration.futuremc.FutureMCIntegration;
@@ -18,12 +19,12 @@ import java.util.Random;
 import java.util.function.Function;
 
 public class ModIntegration {
-    public static boolean CROSSBOWS_BACKPORT_LOADED = Loader.isModLoaded("crossbows");
-    public static boolean CROSSBOW_LOADED = Loader.isModLoaded("crossbow");
-    public static boolean SPARTAN_LOADED = Loader.isModLoaded("spartanweaponry");
-    public static boolean TINKERS_LOADED = Loader.isModLoaded("tconstruct");
-    public static boolean FUTUREMC_LOADED = Loader.isModLoaded("futuremc");
-    public static boolean TEKTOPIA_LOADED = Loader.isModLoaded("tektopia");
+    public static boolean CROSSBOWS_BACKPORT_LOADED = Loader.isModLoaded("crossbows") && IntegrationConfig.crossbows;
+    public static boolean CROSSBOW_LOADED = Loader.isModLoaded("crossbow") && IntegrationConfig.crossbow;
+    public static boolean SPARTAN_LOADED = Loader.isModLoaded("spartanweaponry") && IntegrationConfig.spartanweaponry;
+    public static boolean TINKERS_LOADED = Loader.isModLoaded("tconstruct") && IntegrationConfig.tconstruct;
+    public static boolean FUTUREMC_LOADED = Loader.isModLoaded("futuremc") && IntegrationConfig.futuremc;
+    public static boolean TEKTOPIA_LOADED = Loader.isModLoaded("tektopia") && IntegrationConfig.tektopia;
     
     public static boolean HAS_CROSSBOW_MOD = CROSSBOWS_BACKPORT_LOADED || CROSSBOW_LOADED || SPARTAN_LOADED || TINKERS_LOADED;
     
