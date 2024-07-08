@@ -19,9 +19,9 @@ import java.util.Random;
 import java.util.function.Function;
 
 public class ModIntegration {
-    public static boolean CROSSBOWS_BACKPORT_LOADED = Loader.isModLoaded("crossbows") && IntegrationConfig.crossbows;
+    public static boolean CROSSBOWS_BACKPORT_LOADED = Loader.isModLoaded("crossbows") && IntegrationConfig.crossbowsBackport;
     public static boolean CROSSBOW_LOADED = Loader.isModLoaded("crossbow") && IntegrationConfig.crossbow;
-    public static boolean SPARTAN_LOADED = Loader.isModLoaded("spartanweaponry") && IntegrationConfig.spartanweaponry;
+    public static boolean SPARTAN_LOADED = Loader.isModLoaded("spartanweaponry") && IntegrationConfig.spartanWeaponry;
     public static boolean TINKERS_LOADED = Loader.isModLoaded("tconstruct") && IntegrationConfig.tconstruct;
     public static boolean FUTUREMC_LOADED = Loader.isModLoaded("futuremc") && IntegrationConfig.futuremc;
     public static boolean TEKTOPIA_LOADED = Loader.isModLoaded("tektopia") && IntegrationConfig.tektopia;

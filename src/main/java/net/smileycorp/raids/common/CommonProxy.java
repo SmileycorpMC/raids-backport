@@ -50,13 +50,13 @@ import java.util.Random;
 public class CommonProxy {
 	
 	public void preInit(FMLPreInitializationEvent event) {
+		IntegrationConfig.syncConfig(event);
 		EntityConfig.syncConfig(event);
 		OutpostConfig.syncConfig(event);
 		PatrolConfig.syncConfig(event);
 		RaidConfig.syncConfig(event);
 		RaidTableLoader.init(event);
 		VillagerGiftsConfig.init(event);
-		IntegrationConfig.syncConfig(event);
 		PacketHandler.initPackets();
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());
 		MinecraftForge.EVENT_BUS.register(new RaidsWorldGenerator());

@@ -8,9 +8,9 @@ import java.io.File;
 public class IntegrationConfig {
     private static Configuration config;
 
-    public static boolean crossbows = true;
+    public static boolean crossbowsBackport = true;
     public static boolean crossbow = true;
-    public static boolean spartanweaponry = true;
+    public static boolean spartanWeaponry = true;
     public static boolean tconstruct = true;
     public static boolean futuremc = true;
     public static boolean tektopia = true;
@@ -19,15 +19,16 @@ public class IntegrationConfig {
         config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/integration.cfg"));
         try {
             config.load();
-            crossbows = config.get("general", "crossbows", true, "Only works if crossbows mod is installed").getBoolean();
-            crossbow = config.get("general", "crossbow", true, "Only works if crossbow mod is installed").getBoolean();
-            spartanweaponry = config.get("general", "spartanweaponry", true, "Only works if spartanweaponry mod is installed").getBoolean();
-            tconstruct = config.get("general", "tconstruct", true, "Only works if tconstruct mod is installed").getBoolean();
-            futuremc = config.get("general", "futuremc", true, "Only works if futuremc mod is installed").getBoolean();
-            tektopia = config.get("general", "tektopia", true, "Only works if tektopia mod is installed").getBoolean();
+            crossbowsBackport = config.get("general", "crossbowsBackport", true, "Enable mod integration with Crossbows Backport (Only works if the mod is installed)").getBoolean();
+            crossbow = config.get("general", "crossbow", true, "Enable mod integration with crossbow (Only works if the mod is installed)").getBoolean();
+            spartanWeaponry = config.get("general", "spartanWeaponry", true, "Enable mod integration with Spartan Weaponry (Only works if the mod is installed)").getBoolean();
+            tconstruct = config.get("general", "tconstruct", true, "Enable mod integration with Tinker's Construct (Only works if the mod is installed)").getBoolean();
+            futuremc = config.get("general", "futuremc", true, "Enable mod integration with FutureMC (Only works if the mod is installed)").getBoolean();
+            tektopia = config.get("general", "tektopia", true, "Enable mod integration with Tektopia (Only works if the mod is installed)").getBoolean();
         } catch (Exception e) {
         } finally {
             if (config.hasChanged()) config.save();
         }
     }
+    
 }
