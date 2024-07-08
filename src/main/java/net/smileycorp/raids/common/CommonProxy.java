@@ -56,6 +56,7 @@ public class CommonProxy {
 		RaidConfig.syncConfig(event);
 		RaidTableLoader.init(event);
 		VillagerGiftsConfig.init(event);
+		IntegrationConfig.syncConfig(event);
 		PacketHandler.initPackets();
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());
 		MinecraftForge.EVENT_BUS.register(new RaidsWorldGenerator());
