@@ -63,6 +63,7 @@ public class RaidsEventHandler {
 	public void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> event) {
 		Entity entity = event.getObject();
 		if (!(entity instanceof EntityLiving) || entity == null) return;
+		if (entity.world == null) return;
 		if (entity.world.isRemote) return;
 		if (RaidHandler.isRaider(entity)) event.addCapability(Constants.loc("Raider"), new Raider.Provider((EntityLiving) entity));
 		if (entity instanceof EntityPlayer && RaidConfig.raidCenteredOnPlayer) event.addCapability(Constants.loc("RaidOmen"), new RaidOmenTracker.Provider());
