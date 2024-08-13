@@ -30,7 +30,7 @@ public class RaidTableLoader {
     public static RaidTableLoader INSTANCE;
     private final File directory;
     private final TreeSet<RaidSpawnTable> tables = Sets.newTreeSet(RaidSpawnTable::sort);
-    private RaidSpawnTable default_table;
+    private RaidSpawnTable default_table = getDefaultTable();
     
     public static void init(FMLPreInitializationEvent event) {
         INSTANCE = new RaidTableLoader(new File(event.getModConfigurationDirectory().getPath() + "/raids/raid_tables"));
@@ -41,7 +41,7 @@ public class RaidTableLoader {
         if (!directory.exists()) {
             RaidsLogger.logInfo("Raid table folder does not exist, generating default data");
             directory.mkdirs();
-            File file = new File(directory, "config-defaults/default.json");
+            File file = new File(directory, "default.json");
             try {
                 FileUtils.copyInputStreamToFile(RaidTableLoader.class.getResourceAsStream("/config-defaults/default.json"), file);
             } catch (Exception e) {
