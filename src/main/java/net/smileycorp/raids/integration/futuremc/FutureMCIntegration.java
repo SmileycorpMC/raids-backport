@@ -38,6 +38,7 @@ public class FutureMCIntegration {
 		if (world.isRemote) return;
 		BlockPos pos = event.getPos();
 		TileEntity tile = world.getTileEntity(pos);
+		if (tile == null) return;
 		if (!tile.hasCapability(BELL_TIMER, null)) return;
 		BellTimer timer = tile.getCapability(BELL_TIMER, null);
 		if (!timer.isRinging()) timer.setRinging();
