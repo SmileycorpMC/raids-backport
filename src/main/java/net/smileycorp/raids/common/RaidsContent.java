@@ -66,9 +66,7 @@ public class RaidsContent {
 			patterns.appendTag(pattern);
 		}
 		ItemStack banner = ItemBanner.makeBanner(EnumDyeColor.WHITE, patterns);
-		ITextComponent name = new TextComponentTranslation("item."+ Constants.name("OminousBanner.name"));
-		name.setStyle(new Style().setColor(TextFormatting.GOLD).setItalic(true));
-		banner.setTranslatableName(name.getFormattedText());
+		banner.setTranslatableName("item."+ Constants.name("OminousBanner.name"));
 		banner.getTagCompound().setInteger("HideFlags", 32);
 		return banner;
 	}
