@@ -50,6 +50,7 @@ public class ValueRegistry {
         registerValue("number_spawned", NumberSpawnedValue::deserialize);
         registerValue("groups_spawned", GroupsSpawnedValue::deserialize);
         registerValue("groups_for_difficulty", GroupsSpawnedForDifficultyValue::deserialize);
+        registerValue("omen_level", OmenLevelValue::deserialize);
     }
     
 }
