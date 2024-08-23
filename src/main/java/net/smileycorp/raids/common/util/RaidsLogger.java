@@ -30,7 +30,6 @@ public class RaidsLogger {
     public static void logError(Object message, Exception e) {
         writeToFile(message + " " + e);
         for (StackTraceElement traceElement : e.getStackTrace()) writeToFile(traceElement);
-        e.printStackTrace();
         has_errors = true;
     }
     
