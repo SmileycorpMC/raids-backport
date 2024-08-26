@@ -1,6 +1,7 @@
 package net.smileycorp.raids.common;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 
 public class Constants {
 	
@@ -23,5 +24,10 @@ public class Constants {
 	public static ResourceLocation loc(String name) {
 		return new ResourceLocation(MODID, name.toLowerCase());
 	}
-	
+
+	public static SoundEvent registerSound(String name) {
+		SoundEvent newSound = new SoundEvent(new ResourceLocation(MODID, name));
+		newSound.setRegistryName(name);
+		return newSound;
+	}
 }
