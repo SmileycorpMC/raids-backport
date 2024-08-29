@@ -6,10 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.RegistryEvent;
@@ -108,5 +105,25 @@ public class RaidsContent {
 		registry.register(PILLAGER);
 		registry.register(RAVAGER);
 	}
-	
+
+	@SubscribeEvent
+	public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
+		IForgeRegistry<SoundEvent> registry = event.getRegistry();
+		registry.register(RaidsSoundEvents.RAID_HORN);
+		registry.register(RaidsSoundEvents.PILLAGER_AMBIENT);
+		registry.register(RaidsSoundEvents.PILLAGER_HURT);
+		registry.register(RaidsSoundEvents.PILLAGER_DEATH);
+		registry.register(RaidsSoundEvents.PILLAGER_CELEBRATE);
+		registry.register(RaidsSoundEvents.RAVAGER_AMBIENT);
+		registry.register(RaidsSoundEvents.RAVAGER_ATTACK);
+		registry.register(RaidsSoundEvents.RAVAGER_CELEBRATE);
+		registry.register(RaidsSoundEvents.RAVAGER_DEATH);
+		registry.register(RaidsSoundEvents.RAVAGER_HURT);
+		registry.register(RaidsSoundEvents.RAVAGER_STEP);
+		registry.register(RaidsSoundEvents.RAVAGER_STUNNED);
+		registry.register(RaidsSoundEvents.RAVAGER_ROAR);
+		registry.register(RaidsSoundEvents.BAD_OMEN);
+		registry.register(RaidsSoundEvents.RAID_OMEN);
+		registry.register(RaidsSoundEvents.OMINOUS_BOTTLE_USE);
+	}
 }
