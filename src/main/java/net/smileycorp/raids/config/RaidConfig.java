@@ -102,7 +102,7 @@ public class RaidConfig {
                         ResourceLocation loc = new ResourceLocation(str);
                         if (GameData.getEntityRegistry().containsKey(loc)) {
                             clazz = GameData.getEntityRegistry().getValue(loc).getEntityClass();
-                        } else RaidsLogger.logInfo("Error adding villager " + str +", Entity " + str + " is not registered");
+                        } else continue;
                     }
                     if (clazz == null) throw new Exception("Entry " + str + " is not in the correct format");
                     if (EntityLiving.class.isAssignableFrom(clazz) && priority > 0) {
