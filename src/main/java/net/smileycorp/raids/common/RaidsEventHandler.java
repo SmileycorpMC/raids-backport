@@ -128,7 +128,7 @@ public class RaidsEventHandler {
 					EntityLivingBase owner = ((EntityTameable) attacker).getOwner();
 					if (owner instanceof EntityPlayer) player = (EntityPlayer) owner;
 				}
-				if (!itemstack.isEmpty() && ItemStack.areItemStacksEqual(itemstack, RaidsContent.createOminousBanner()) && player != null) {
+				if (!itemstack.isEmpty() && ItemStack.areItemStacksEqual(itemstack, Constants.ominousBanner()) && player != null) {
 					if (RaidConfig.ominousBottles) entity.entityDropItem(ItemOminousBottle.createStack(entity.getRNG().nextInt(5)),0);
 					else {
 						PotionEffect effect = player.getActivePotionEffect(RaidsContent.BAD_OMEN);
@@ -199,7 +199,7 @@ public class RaidsEventHandler {
 			float chance = raider.getCaptainChance();
 			if (chance > 0 && entity.getRNG().nextFloat() <= chance) {
 				raider.setPatrolLeader(true);
-				entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, RaidsContent.createOminousBanner());
+				entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner());
 			}
 		}
 	}

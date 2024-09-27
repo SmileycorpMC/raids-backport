@@ -6,7 +6,7 @@ import net.minecraft.item.ItemBanner;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.Constants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,7 +21,7 @@ public class MixinItemBanner extends ItemBlock {
 
     @Inject(method = "getSubItems", at = @At("TAIL"))
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items, CallbackInfo callback) {
-        if (isInCreativeTab(tab)) items.add(RaidsContent.createOminousBanner());
+        if (isInCreativeTab(tab)) items.add(Constants.ominousBanner());
     }
 
 }

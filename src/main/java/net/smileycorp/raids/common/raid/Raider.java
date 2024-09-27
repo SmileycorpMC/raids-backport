@@ -16,6 +16,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.ai.EntityAILongDistancePatrol;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
@@ -133,7 +134,7 @@ public interface Raider {
 		public void setLeader() {
 			if (entity != null) {
 				if (entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
-					entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, RaidsContent.createOminousBanner());
+					entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner());
 					entity.setDropChance(EntityEquipmentSlot.HEAD, 2.0F);
 				}
 			}

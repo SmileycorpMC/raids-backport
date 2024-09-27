@@ -29,6 +29,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.Village;
 import net.minecraft.world.*;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
 import net.smileycorp.raids.common.util.MathUtils;
@@ -504,7 +505,7 @@ public class Raid {
 	
 	public void setLeader(int index, EntityLiving entity) {
 		groupToLeaderMap.put(index, entity);
-		entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, RaidsContent.createOminousBanner());
+		entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner());
 		entity.setDropChance(EntityEquipmentSlot.HEAD, 2.0F);
 	}
 	

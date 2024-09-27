@@ -1,6 +1,16 @@
 package net.smileycorp.raids.common;
 
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemBanner;
+import net.minecraft.item.ItemDye;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.Random;
 
 public class Constants {
 	
@@ -23,5 +33,38 @@ public class Constants {
 	public static ResourceLocation loc(String name) {
 		return new ResourceLocation(MODID, name.toLowerCase());
 	}
-
+    
+    public static ItemStack ominousBanner() {
+        NBTTagList patterns = new NBTTagList();
+        String[] shapes = {"mr", "bs", "cs", "ms", "hh", "mc", "bo"};
+        int[] colours = {6, 7, 8, 0, 7, 7, 0};
+        for (int i = 0; i < shapes.length; i++) {
+            NBTTagCompound pattern = new NBTTagCompound();
+            pattern.setString("Pattern", shapes[i]);
+            pattern.setInteger("Color", colours[i]);
+            patterns.appendTag(pattern);
+        }
+        ItemStack banner = ItemBanner.makeBanner(EnumDyeColor.WHITE, patterns);
+        banner.setTranslatableName("item."+ name("OminousBanner.name"));
+        banner.getTagCompound().setInteger("HideFlags", 32);
+        return banner;
+    }
+    
+    public static ItemStack villagerFirework(Random rand) {
+        ItemStack firework = new ItemStack(Items.FIREWORKS);
+        NBTTagCompound nbt = new NBTTagCompound();
+        NBTTagCompound fireworks = new NBTTagCompound();
+        fireworks.setByte("Flight", (byte)(rand.nextInt(3)+1));
+        NBTTagList explosions = new NBTTagList();
+        NBTTagCompound explosion = new NBTTagCompound();
+        explosion.setByte("Type", (byte)4);
+        NBTTagIntArray colours = new NBTTagIntArray(new int[]{ItemDye.DYE_COLORS[rand.nextInt(ItemDye.DYE_COLORS.length)]});
+        explosion.setTag("Colors", colours);
+        explosions.appendTag(explosion);
+        fireworks.setTag("Explosions", explosions);
+        nbt.setTag("Fireworks", fireworks);
+        firework.setTagCompound(nbt);
+        return firework;
+    }
+    
 }

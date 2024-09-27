@@ -8,7 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.WorldDataRaids;
@@ -43,7 +43,7 @@ public abstract class MixinEntityVillager extends EntityAgeable implements IVill
         if (raid == null) return;
         if (raid.isVictory() && rand.nextInt(200) == 0) {
             if (world.getHeight((int) posX, (int) posZ) > posY) return;
-            ItemStack stack = RaidsContent.getVillagerFirework(rand);
+            ItemStack stack = Constants.villagerFirework(rand);
             EntityFireworkRocket firework = new EntityFireworkRocket(world, posX, posY + getEyeHeight(), posZ, stack );
             if (ModIntegration.CROSSBOWS_BACKPORT_LOADED) CrossbowsBackportIntegration.setOwner(firework, this);
             world.spawnEntity(firework);
