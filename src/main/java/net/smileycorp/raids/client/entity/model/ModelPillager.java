@@ -1,11 +1,17 @@
 package net.smileycorp.raids.client.entity.model;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelIllager;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.ResourceLocation;
+import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.integration.ModIntegration;
@@ -13,8 +19,13 @@ import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
 
 public class ModelPillager extends ModelIllager {
     
+    private static final ResourceLocation UPGRADED_1_HAT = Constants.loc("textures/entity/illager/pillager_upgraded1_hat.png");
+    private static final ResourceLocation UPGRADED_2_HAT = Constants.loc("textures/entity/illager/pillager_upgraded2_hat.png");
+    
     public ModelPillager() {
         super(0.0F, 0.0F, 64, 64);
+        hat = new ModelRenderer(this, 0, 0);
+        hat.addBox(-5, -11, -5, 10, 8, 10, 0);
     }
     
     @Override
@@ -31,6 +42,18 @@ public class ModelPillager extends ModelIllager {
                 animateCrossbowHold(rightArm, leftArm, head, ((EntityLivingBase) entity).getPrimaryHand() == EnumHandSide.RIGHT);
             
         }
+        copyModelAngles(head, hat);
+    }
+    
+    @Override
+    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+        if (! (entity instanceof EntityLivingBase)) return;
+        ItemStack chest = ((EntityLivingBase)entity).getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+        if (!(chest.getItem() instanceof ItemArmor)) return;
+        Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(
+                ((ItemArmor) chest.getItem()).damageReduceAmount > 6 ? UPGRADED_2_HAT : UPGRADED_1_HAT);
+        hat.render(scale);
     }
     
     public static void animateCharge(EntityLivingBase entity, ModelRenderer rightArm, ModelRenderer leftArm) {
