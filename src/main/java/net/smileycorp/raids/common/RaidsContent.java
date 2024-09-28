@@ -1,6 +1,6 @@
 package net.smileycorp.raids.common;
 
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.Capability;

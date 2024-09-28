@@ -2,6 +2,7 @@ package net.smileycorp.raids.client;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.monster.EntityVex;
+import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.smileycorp.raids.client.entity.RenderPillager;
 import net.smileycorp.raids.client.entity.RenderRaidsVex;
+import net.smileycorp.raids.client.entity.RenderRaidsVindicator;
 import net.smileycorp.raids.client.entity.RenderRavager;
 import net.smileycorp.raids.common.CommonProxy;
 import net.smileycorp.raids.common.Constants;
@@ -45,6 +47,7 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityPillager.class, RenderPillager::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityRavager.class, RenderRavager::new);
 		if (ClientConfig.newVexModel) RenderingRegistry.registerEntityRenderingHandler(EntityVex.class, RenderRaidsVex::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityVindicator.class, RenderRaidsVindicator::new);
 		for (int i = 0; i < 255; i++) ModelLoader.setCustomModelResourceLocation(RaidsContent.OMINOUS_BOTTLE, i, new ModelResourceLocation(Constants.loc("ominous_bottle"), "normal"));
 	}
 	

@@ -23,8 +23,7 @@
     "MixinMerchantRecipeListClient",
     "MixinRenderEvoker",
     "MixinRenderIllusionIllager",
-    "MixinRenderItem",
-    "MixinRenderVindicator"
+    "MixinRenderItem"
   ],
   "server": []
 }
