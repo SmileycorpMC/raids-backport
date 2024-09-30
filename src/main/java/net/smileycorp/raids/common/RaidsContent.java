@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.smileycorp.raids.common.entities.EntityAllay;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
@@ -40,6 +41,8 @@ public class RaidsContent {
 	public static final EntityEntry PILLAGER = EntityEntryBuilder.create().entity(EntityPillager.class).id(Constants.loc("pillager"), ID++).name(Constants.name("Pillager")).egg(5451574, 9804699)
 			.tracker(64, 3, true).build();
 	public static EntityEntry RAVAGER = EntityEntryBuilder.create().entity(EntityRavager.class).id(Constants.loc("ravager"), ID++).name(Constants.name("Ravager")).egg(7697520, 5984329)
+			.tracker(64, 3, true).build();
+	public static EntityEntry ALLAY = EntityEntryBuilder.create().entity(EntityAllay.class).id(Constants.loc("allay"), ID++).name(Constants.name("Allay")).egg(56063, 44543)
 			.tracker(64, 3, true).build();
 	
 	public static final Potion BAD_OMEN = new BadOmenPotion();

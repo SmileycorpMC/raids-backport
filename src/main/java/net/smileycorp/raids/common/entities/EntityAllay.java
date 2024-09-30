@@ -117,7 +117,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         return dataManager.get(CAN_DUPLICATE);
     }
     
-    private boolean isDancing() {
+    public boolean isDancing() {
         return dataManager.get(IS_DANCING);
     }
     
@@ -135,6 +135,14 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     @Override
     public Entity getOwner() {
         return owner;
+    }
+    
+    public float getSpinningProcess(float f2) {
+        return f2;
+    }
+    
+    public boolean isSpinning() {
+        return false;
     }
     
 }
