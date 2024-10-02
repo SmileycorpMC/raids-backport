@@ -27,13 +27,13 @@ public abstract class MixinChunkGeneratorFlat implements IChunkGenerator {
     @Shadow @Final private boolean hasDecoration;
     
     @Inject(method = "getPossibleCreatures", at = @At("HEAD"), cancellable = true)
-    public void getPossibleCreatures(EnumCreatureType type, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnListEntry>> callback) {
+    public void raids$getPossibleCreatures(EnumCreatureType type, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnListEntry>> callback) {
         MapGenOutpost outposts = MapGenOutpost.getInstance(this);
         if (hasDecoration && type == EnumCreatureType.MONSTER && outposts.isInsideStructure(pos)) callback.setReturnValue(OutpostConfig.getSpawnEntities());
     }
     
     @Inject(method = "recreateStructures", at = @At(value = "TAIL"))
-    public void recreateStructures(Chunk chunkIn, int x, int z, CallbackInfo callback) {
+    public void raids$recreateStructures(Chunk chunkIn, int x, int z, CallbackInfo callback) {
         if (hasDecoration) MapGenOutpost.getInstance(this).generate(world, x, z, null);
     }
 

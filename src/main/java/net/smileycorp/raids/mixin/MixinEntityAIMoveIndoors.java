@@ -26,7 +26,7 @@ public class MixinEntityAIMoveIndoors {
     @Shadow public VillageDoorInfo doorInfo;
     
     @Inject(at = @At("HEAD"), method = "shouldExecute", cancellable = true)
-    public void shouldExecute(CallbackInfoReturnable<Boolean> callback) {
+    public void raids$shouldExecute(CallbackInfoReturnable<Boolean> callback) {
         BlockPos pos = new BlockPos(entity);
         if (WorldDataRaids.getData((WorldServer) entity.world).getRaidAt(pos) == null) return;
         if (entity.getRNG().nextInt(50) != 0) {

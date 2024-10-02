@@ -29,12 +29,12 @@ public abstract class MixinChunkGeneratorOverworld implements IChunkGenerator {
     @Shadow @Final private boolean mapFeaturesEnabled;
     
     @Inject(method = "generateChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/Chunk;<init>(Lnet/minecraft/world/World;Lnet/minecraft/world/chunk/ChunkPrimer;II)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void generateChunk(int x, int z, CallbackInfoReturnable<Chunk> callback, ChunkPrimer primer) {
+    public void raids$generateChunk(int x, int z, CallbackInfoReturnable<Chunk> callback, ChunkPrimer primer) {
         if (mapFeaturesEnabled) MapGenOutpost.getInstance(this).generate(world, x, z, primer);
     }
     
     @Inject(method = "getPossibleCreatures", at = @At("HEAD"), cancellable = true)
-    public void getPossibleCreatures(EnumCreatureType type, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnListEntry>> callback) {
+    public void raids$getPossibleCreatures(EnumCreatureType type, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnListEntry>> callback) {
         MapGenOutpost outposts = MapGenOutpost.getInstance(this);
         if (mapFeaturesEnabled && type == EnumCreatureType.MONSTER && outposts.isInsideStructure(pos)) {
             callback.setReturnValue(OutpostConfig.getSpawnEntities());

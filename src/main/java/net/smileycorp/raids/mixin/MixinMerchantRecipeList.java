@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class MixinMerchantRecipeList extends ArrayList<MerchantRecipe> {
     
     @Redirect(method = "canRecipeBeUsed", at = @At(value = "INVOKE", target = "Lnet/minecraft/village/MerchantRecipe;getItemToBuy()Lnet/minecraft/item/ItemStack;"))
-    public ItemStack canRecipeBeUsed$getItemToBuy(MerchantRecipe instance) {
+    public ItemStack raids$canRecipeBeUsed$getItemToBuy(MerchantRecipe instance) {
         if (!((ITradeDiscount)instance).hasDiscount()) return instance.getItemToBuy();
         ItemStack stack = instance.getItemToBuy().copy();
         stack.setCount(((ITradeDiscount)instance).getDiscountedPrice());
@@ -25,7 +25,7 @@ public class MixinMerchantRecipeList extends ArrayList<MerchantRecipe> {
     }
     
     @Inject(at = @At(value = "HEAD"), method = "writeToBuf", cancellable = true)
-    public void writeToBuf(PacketBuffer buffer, CallbackInfo callback) {
+    public void raids$writeToBuf(PacketBuffer buffer, CallbackInfo callback) {
         buffer.writeByte((byte)(size() & 255));
         for (int i = 0; i < this.size(); ++i) {
             MerchantRecipe merchantrecipe = get(i);

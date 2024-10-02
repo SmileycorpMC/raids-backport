@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class MixinSlotMerchantResult {
     
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/village/MerchantRecipe;getItemToBuy()Lnet/minecraft/item/ItemStack;"), method = "doTrade")
-    public ItemStack getItemToBuy(MerchantRecipe instance) {
+    public ItemStack raids$getItemToBuy(MerchantRecipe instance) {
         if (!((ITradeDiscount)instance).hasDiscount()) return instance.getItemToBuy();
         ItemStack stack = instance.getItemToBuy().copy();
         stack.setCount(((ITradeDiscount)instance).getDiscountedPrice());

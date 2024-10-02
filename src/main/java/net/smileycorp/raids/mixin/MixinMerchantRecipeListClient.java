@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class MixinMerchantRecipeListClient extends ArrayList<MerchantRecipe> {
     
     @Inject(at = @At(value = "TAIL"), method = "readFromBuf", locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void readFromBuf(PacketBuffer buffer, CallbackInfoReturnable<MerchantRecipeList> callback, MerchantRecipeList list) {
+    private static void raids$readFromBuf(PacketBuffer buffer, CallbackInfoReturnable<MerchantRecipeList> callback, MerchantRecipeList list) {
         int x = 0;
         while (buffer.isReadable()) {
             ((ITradeDiscount)list.get(x)).setDiscountedPrice(buffer.readInt());

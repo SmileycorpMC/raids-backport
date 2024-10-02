@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class MixinListEnchantedBookForEmeralds {
     
     @Redirect(method = "addMerchantRecipe", at = @At(value = "INVOKE", target = "Lnet/minecraft/village/MerchantRecipeList;add(Ljava/lang/Object;)Z"), remap = false)
-    public boolean addMerchantRecipe(MerchantRecipeList instance, Object object) {
+    public boolean raids$addMerchantRecipe(MerchantRecipeList instance, Object object) {
         MerchantRecipe recipe = (MerchantRecipe) object;
         return instance.add(new MerchantRecipe(recipe.getSecondItemToBuy(), recipe.getItemToBuy(), recipe.getItemToSell()));
     }

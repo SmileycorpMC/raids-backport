@@ -37,7 +37,7 @@ public abstract class MixinEntityVillager extends EntityAgeable implements IVill
     }
     
     @Inject(at = @At("HEAD"), method = "updateAITasks", cancellable = true)
-    protected void updateAITasks(CallbackInfo callback) {
+    protected void raids$updateAITasks(CallbackInfo callback) {
         if (world.isRemote) return;
         Raid raid = WorldDataRaids.getData((WorldServer) world).getRaidAt(getPos());
         if (raid == null) return;
@@ -52,7 +52,7 @@ public abstract class MixinEntityVillager extends EntityAgeable implements IVill
     }
     
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getCount()I"), method = "useRecipe")
-    public int useRecipe(ItemStack instance, MerchantRecipe recipe) {
+    public int raids$useRecipe(ItemStack instance, MerchantRecipe recipe) {
         return ((ITradeDiscount)recipe).hasDiscount() ? ((ITradeDiscount) recipe).getDiscountedPrice() : instance.getCount();
     }
     

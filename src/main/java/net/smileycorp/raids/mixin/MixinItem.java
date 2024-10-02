@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinItem {
 
     @Inject(method = "getRarity", at = @At("HEAD"), cancellable = true)
-    public void getSubItems(ItemStack stack, CallbackInfoReturnable<EnumRarity> callback) {
+    public void raids$getRarity(ItemStack stack, CallbackInfoReturnable<EnumRarity> callback) {
         if (!stack.isItemEqual(Constants.ominousBanner())) return;
         if (stack.getTagCompound() == null) return;
         callback.setReturnValue(EnumRarity.UNCOMMON);

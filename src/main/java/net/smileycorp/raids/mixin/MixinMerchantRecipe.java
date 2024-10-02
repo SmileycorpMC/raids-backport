@@ -40,13 +40,13 @@ public class MixinMerchantRecipe implements ITradeDiscount {
     }
     
     @Inject(at = @At("TAIL"), method = "getItemToBuy")
-    public void getItemToBuy(CallbackInfoReturnable<ItemStack> callback) {
+    public void raids$getItemToBuy(CallbackInfoReturnable<ItemStack> callback) {
         if (ModIntegration.FUTUREMC_LOADED && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
             FutureMCClientIntegration.setCachedStack(callback.getReturnValue(), discountedPrice);
     }
     
     @Inject(at = @At("TAIL"), method = "readFromTags")
-    public void readFromTags(NBTTagCompound nbt, CallbackInfo callback) {
+    public void raids$readFromTags(NBTTagCompound nbt, CallbackInfo callback) {
         if (nbt.hasKey("discountedPrice")) discountedPrice = nbt.getInteger("discountedPrice");
         if (itemToBuy != null && itemToBuy.getItem() == Items.BOOK && secondItemToBuy != null && secondItemToBuy.getItem() == Items.EMERALD) {
             ItemStack stack = itemToBuy;
@@ -56,7 +56,7 @@ public class MixinMerchantRecipe implements ITradeDiscount {
     }
     
     @Inject(at = @At("RETURN"), method = "writeToTags")
-    public void writeToTags(CallbackInfoReturnable<NBTTagCompound> callback) {
+    public void raids$writeToTags(CallbackInfoReturnable<NBTTagCompound> callback) {
         callback.getReturnValue().setInteger("discountedPrice", discountedPrice);
     }
     
