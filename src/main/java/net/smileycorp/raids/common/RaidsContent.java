@@ -68,6 +68,7 @@ public class RaidsContent {
 		IForgeRegistry<EntityEntry> registry = event.getRegistry();
 		registry.register(PILLAGER);
 		registry.register(RAVAGER);
+		registry.register(ALLAY);
 	}
 
 	@SubscribeEvent

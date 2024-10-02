@@ -2,6 +2,7 @@ package net.smileycorp.raids.config;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraftforge.common.config.Configuration;
 
 public class EntityAttributesEntry {
@@ -27,14 +28,18 @@ public class EntityAttributesEntry {
     }
     
     public void applyAttributes(EntityLivingBase entity) {
-        entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(movementSpeed);
-        entity.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(followRange);
-        entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
-        entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(maxHealth);
-        entity.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
-        entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).setBaseValue(armorToughness);
-        entity.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(knockbackResistance);
-        if (flyingSpeed != 0) entity.getEntityAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(flyingSpeed);
+        AbstractAttributeMap map = entity.getAttributeMap();
+        map.getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(movementSpeed);
+        map.getAttributeInstance(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(followRange);
+        map.getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
+        map.getAttributeInstance(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(maxHealth);
+        map.getAttributeInstance(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
+        map.getAttributeInstance(SharedMonsterAttributes.ARMOR_TOUGHNESS).setBaseValue(armorToughness);
+        map.getAttributeInstance(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(knockbackResistance);
+        if (flyingSpeed != 0) {
+            map.registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
+            map.getAttributeInstance(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(flyingSpeed);
+        }
     }
     
 }

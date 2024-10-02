@@ -14,8 +14,10 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.AIMoveRandomFlying;
 import net.smileycorp.raids.common.entities.ai.FlyingMoveControl;
 import net.smileycorp.raids.config.EntityConfig;
@@ -36,6 +38,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     public EntityAllay(World world) {
         super(world);
         moveHelper = new FlyingMoveControl(this);
+        setSize(0.35f, 0.6f);
     }
     
     @Override
