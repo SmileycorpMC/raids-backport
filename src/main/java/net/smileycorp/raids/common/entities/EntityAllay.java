@@ -1,5 +1,6 @@
 package net.smileycorp.raids.common.entities;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -7,6 +8,7 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
@@ -146,6 +148,33 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     
     public boolean isSpinning() {
         return false;
+    }
+    
+    @Override
+    public void fall(float distance, float damageMultiplier) {}
+    
+    @Override
+    protected void playStepSound(BlockPos pos, Block block) {}
+    
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return hasItemInSlot(EntityEquipmentSlot.MAINHAND) ? RaidsSoundEvents.ALLAY_AMBIENT_WITH_ITEM
+                : RaidsSoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM;
+    }
+    
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return RaidsSoundEvents.ALLAY_HURT;
+    }
+    
+    @Override
+    protected SoundEvent getDeathSound() {
+        return RaidsSoundEvents.ALLAY_DEATH;
+    }
+    
+    @Override
+    protected float getSoundVolume() {
+        return 0.4F;
     }
     
 }

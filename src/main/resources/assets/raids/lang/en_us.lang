@@ -3,6 +3,7 @@ item.raids.OminousBottle.name=Ominous Bottle
 
 entity.raids.Pillager.name=Pillager
 entity.raids.Ravager.name=Ravager
+entity.raids.Allay.name=Allay
 
 subtitles.raids.entity.pillager.ambient=Pillager murmurs
 subtitles.raids.entity.pillager.celebrate=Pillager cheers
@@ -20,6 +21,13 @@ subtitles.raids.item.ominous_bottle.dispose=Bottle breaks
 subtitles.raids.event.raid.horn=Ominous horn blares
 subtitles.raids.event.mob_effect.bad_omen=Omen takes hold
 subtitles.raids.event.mob_effect.raid_omen=Raid looms nearby
+subtitles.raids.entity.allay.ambient_with_item=Allay seeks
+subtitles.raids.entity.allay.ambient_without_item=Allay yearns
+subtitles.raids.entity.allay.death=Allay dies
+subtitles.raids.entity.allay.hurt=Allay hurts
+subtitles.raids.entity.allay.item_given=Allay chortles
+subtitles.raids.entity.allay.item_taken=Allay allays
+subtitles.raids.entity.allay.item_thrown=Allay tosses
 
 effect.raids.bad_omen=Bad Omen
 effect.raids.hero_of_the_village=Hero of the Village
