@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.AIMoveRandomFlying;
 import net.smileycorp.raids.common.entities.ai.FlyingMoveControl;
+import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.config.EntityConfig;
 
 import javax.annotation.Nullable;
@@ -36,6 +37,8 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     private BlockPos jukebox;
     private EntityPlayer owner;
     private int duplicationCooldown;
+    private float holdingItemAnimationTicks;
+    private float holdingItemAnimationTicks0;
     
     public EntityAllay(World world) {
         super(world);
@@ -70,12 +73,25 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     }
     
     @Override
+    public void onEntityUpdate() {
+        super.onEntityUpdate();
+        if (!world.isRemote |! isEntityAlive()) return;
+        holdingItemAnimationTicks0 = holdingItemAnimationTicks;
+        holdingItemAnimationTicks = MathUtils.clamp(holdingItemAnimationTicks + (hasItemInSlot(EntityEquipmentSlot.MAINHAND) ? 1 : -1), 0, 5);
+    }
+    
+    @Override
     public void updateAITasks() {
         super.updateAITasks();
-        if (world.isRemote |! isEntityAlive()) return;
+        if (!isEntityAlive()) return;
         if (ticksExisted % 10 == 0) heal(1);
         if (duplicationCooldown > 0) duplicationCooldown--;
         if (duplicationCooldown == 0 &! canDuplicate()) dataManager.set(CAN_DUPLICATE, true);
+    }
+    
+    @Override
+    public boolean hasNoGravity() {
+        return true;
     }
     
     @Override
@@ -86,19 +102,25 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
             stack.shrink(1);
             duplicate();
             player.setActiveHand(hand);
+            player.swingArm(hand);
             return true;
         }
         if (!stack.isEmpty() &!(ItemStack.areItemStacksEqual(stack, stack1))) {
-            if (!stack1.isEmpty()) entityDropItem(stack1, 0);
+            if (!stack1.isEmpty() &! world.isRemote) entityDropItem(stack1, 0);
             owner = player;
             stack1 = stack.copy();
             stack1.setCount(1);
             setHeldItem(EnumHand.MAIN_HAND, stack1);
             player.setActiveHand(hand);
+            player.swingArm(hand);
             stack.shrink(1);
             return true;
         }
         return false;
+    }
+    
+    public float getHoldingItemAnimationProgress(float pt) {
+        return MathUtils.lerp(pt, holdingItemAnimationTicks0, holdingItemAnimationTicks) / 5f;
     }
     
     public void duplicate() {

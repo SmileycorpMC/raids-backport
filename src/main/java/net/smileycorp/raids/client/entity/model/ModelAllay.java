@@ -4,7 +4,6 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
 import net.smileycorp.raids.common.entities.EntityAllay;
 import net.smileycorp.raids.common.util.MathUtils;
@@ -61,7 +60,7 @@ public class ModelAllay extends ModelBase {
         float f3 = ageInTicks * 9f * 0.017453292f;
         float f4 = Math.min(ageInTicks / 0.3f, 1.0f);
         float f5 = 1.0f - f4;
-        float f6 = ((EntityAllay)entity).getSwingProgress(f2);
+        float f6 = ((EntityAllay)entity).getHoldingItemAnimationProgress(f2);
         float f12;
         float f13;
         float f14;
@@ -104,7 +103,9 @@ public class ModelAllay extends ModelBase {
     
     public void translateToHand() {
         root.postRender(0.0625f);
+        body.postRender(0.0625f);
         GlStateManager.translate(0.0F, 0.0625f, 0.1875f);
+        GlStateManager.rotate(right_arm.rotateAngleX * 180f / (float) Math.PI, 1, 0, 0);
         GlStateManager.scale(0.7F, 0.7f, 0.7f);
         GlStateManager.translate(0.0625f, 0, 0);
     }
