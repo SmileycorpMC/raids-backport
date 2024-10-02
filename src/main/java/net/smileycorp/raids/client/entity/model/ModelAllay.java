@@ -23,32 +23,34 @@ public class ModelAllay extends ModelBase {
         textureWidth = 32;
         textureHeight = 32;
         root = new ModelRenderer(this);
+        root.setRotationPoint(0, 23, 0);
         head = new ModelRenderer(this, 0, 0);
-        head.setRotationPoint(0.0f, -3.99f, 0.0f);
-        head.addBox(-2.5f, -5.0f, -2.5f, 5, 5, 5);
+        head.setRotationPoint(0, -3.99f, 0);
+        head.addBox(-2.5f, -5, -2.5f, 5, 5, 5);
         root.addChild(head);
         body = new ModelRenderer(this, 0, 10);
-        body.addBox(-1.5f, 0.0f, -1.0f, 3, 4, 2);
-        root.addChild(body);
+        body.setRotationPoint(0, -4, 0);
+        body.addBox(-1.5f, 0, -1, 3, 4, 2);
         ModelRenderer body2 = new ModelRenderer(this, 0, 16);
-        body2.setRotationPoint(0.0f, -4.0f, 0.0f);
-        body2.addBox(-1.5f, 0.0f, -1.0f, 3, 5, 2, -2);
+        body2.addBox(-1.5f, 0, -1, 3, 5, 2, -0.2f);
         body.addChild(body2);
+        root.addChild(body);
         right_arm = new ModelRenderer(this, 23, 0);
-        right_arm.setRotationPoint(-1.75f, 0.5f, 0.0f);
-        right_arm.addBox(-0.75f, -0.5f, -1.0f, 1, 4, 2, -0.01f);
+        right_arm.setRotationPoint(-1.75f, 0.5f, 0);
+        right_arm.addBox(-0.75f, -0.5f, -1, 1, 4, 2, -0.01f);
         body.addChild(right_arm);
         left_arm = new ModelRenderer(this, 23, 6);
-        left_arm.setRotationPoint(1.75f, 0.5f, 0.0f);
-        left_arm.addBox(-0.25f, -0.5f, -1.0f, 1, 4, 2, -0.01f);
+        left_arm.setRotationPoint(1.75f, 0.5f, 0);
+        left_arm.addBox(-0.25f, -0.5f, -1, 1, 4, 2, -0.01f);
         body.addChild(left_arm);
         right_wing = new ModelRenderer(this, 16, 14);
-        right_wing.setRotationPoint(-0.5f, 0.0f, 0.6f);
-        right_wing.addBox(0.0f, 1.0f, 0.0f, 0, 5, 8);
+        right_wing.setRotationPoint(-0.5f, 0, 0.6f);
+        right_wing.addBox(0, 1, 0, 0, 5, 8);
         body.addChild(right_wing);
         left_wing = new ModelRenderer(this, 16, 14);
-        left_wing.setRotationPoint(0.5f, 0.0f, 0.6f);
-        left_wing.addBox(0.0f, 1.0f, 0.0f, 0, 5, 8);
+        left_wing.setRotationPoint(0.5f, 0, 0.6f);
+        left_wing.addBox(0, 1, 0, 0, 5, 8);
+        body.addChild(left_wing);
     }
     
     @Override
@@ -77,10 +79,10 @@ public class ModelAllay extends ModelBase {
             head.rotateAngleX = headPitch * 0.017453292f;
             head.rotateAngleY = netHeadYaw * 0.017453292f;
         }
-        right_wing.rotateAngleX = 0.43633232f * (1 - f4);
-        right_wing.rotateAngleY = -0.7853982f + f1;
-        left_wing.rotateAngleX = 0.43633232f * (1 - f4);
-        left_wing.rotateAngleY = 0.7853982f - f1;
+        right_wing.rotateAngleX = 0.43633232F * (1.0F - f4);
+        right_wing.rotateAngleY = (-(float)Math.PI / 4F) + f1;
+        left_wing.rotateAngleX = 0.43633232F * (1.0F - f4);
+        left_wing.rotateAngleY = ((float)Math.PI / 4F) - f1;
         body.rotateAngleX = f4 * 0.7853982f;
         f12 = f6 * MathUtils.lerp(f4, -1.0471976f, -1.134464f);
         root.offsetY += (float)Math.cos(f3) * 0.25f * f5;
@@ -100,11 +102,11 @@ public class ModelAllay extends ModelBase {
         root.render(scale);
     }
     
-    public void translateToHand(EnumHandSide side) {
-        root.postRender(0.0625F);
-        GlStateManager.translate(0.0F, 0.0625F, 0.1875F);
-        GlStateManager.scale(0.7F, 0.7F, 0.7F);
-        GlStateManager.translate(0.0625F, 0.0F, 0.0F);
+    public void translateToHand() {
+        root.postRender(0.0625f);
+        GlStateManager.translate(0.0F, 0.0625f, 0.1875f);
+        GlStateManager.scale(0.7F, 0.7f, 0.7f);
+        GlStateManager.translate(0.0625f, 0, 0);
     }
     
 }

@@ -16,7 +16,7 @@ public class RenderAllay extends RenderLiving<EntityAllay> {
     private static final ResourceLocation TEXTURE = Constants.loc("textures/entity/allay.png");
     
     public RenderAllay(RenderManager rm) {
-        super(rm, new ModelAllay(), 0.3F);
+        super(rm, new ModelAllay(), 0.4F);
         addLayer(new LayerHeldItemAllay(this));
     }
     
@@ -48,7 +48,7 @@ public class RenderAllay extends RenderLiving<EntityAllay> {
         
         @Override
         protected void translateToHand(EnumHandSide side) {
-            ((ModelAllay)livingEntityRenderer.getMainModel()).translateToHand(side);
+            ((ModelAllay)livingEntityRenderer.getMainModel()).translateToHand();
         }
         
     }
