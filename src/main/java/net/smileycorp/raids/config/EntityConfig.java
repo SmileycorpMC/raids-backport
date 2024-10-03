@@ -23,6 +23,7 @@ public class EntityConfig {
     public static boolean tinkersConstructCrossbows;
     public static EntityAttributesEntry ravager;
     public static EntityAttributesEntry allay;
+    public static boolean mansionAllays;
     
     private static Map<Class<? extends EntityLiving>, Float> captainChance;
     
@@ -39,6 +40,7 @@ public class EntityConfig {
             tinkersConstructCrossbows = config.get("pillager", "tinkersConstructCrossbows", true, "Can pillagers spawn with tinkers construct crossbows? (Requires Tinker's Construct to be installed)").getBoolean();
             ravager = new EntityAttributesEntry(config, "ravager", 0.3, 32, 12, 100, 0, 0, 0.75, 0);
             allay = new EntityAttributesEntry(config, "allay", 0.1, 48, 2, 20, 0, 0, 0, 0.1);
+            mansionAllays = config.get("allay", "mansionAllays", true, "Do allays spawn in Woodland Mansion jails?").getBoolean();
             captainChanceStr = config.get("general", "captainChance", new String[] {"raids:pillager-0.06",
                     "minecraft:vindication_illager-0.06", "minecraft:evocation_illager-0.06", "minecraft:illusion_illager-0.06"}, "What's the chance for entities to be patrol captains (also applies when spawned naturally, format is registry name-chance, chance is any number between 0 and 1)").getStringList();
         } catch(Exception e) {

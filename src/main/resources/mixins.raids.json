@@ -11,6 +11,7 @@
     "MixinItemBanner",
     "MixinListEnchantedBookForEmeralds",
     "MixinLootPool",
+    "MixinMansionTemplate",
     "MixinMerchantRecipe",
     "MixinMerchantRecipeList",
     "MixinSlotMerchantResult",
