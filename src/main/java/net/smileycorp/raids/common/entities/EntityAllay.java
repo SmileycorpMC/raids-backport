@@ -11,6 +11,8 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -36,6 +38,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     private final InventoryBasic inventory = new InventoryBasic(getName(), false, 1);
     private BlockPos jukebox;
     private EntityPlayer owner;
+    private UUID ownerUUID;
     private int duplicationCooldown;
     private float holdingItemAnimationTicks;
     private float holdingItemAnimationTicks0;
@@ -67,9 +70,9 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     }
     
     @Override
-    protected void damageEntity(DamageSource src, float amount) {
-        if (src.getTrueSource() == owner) return;
-        super.damageEntity(src, amount);
+    public boolean attackEntityFrom(DamageSource src, float amount) {
+        if (src.getTrueSource() != null) if (src.getTrueSource() == getOwner()) return false;
+        return super.attackEntityFrom(src, amount);
     }
     
     @Override
@@ -108,6 +111,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         if (!stack.isEmpty() &!(ItemStack.areItemStacksEqual(stack, stack1))) {
             if (!stack1.isEmpty() &! world.isRemote) entityDropItem(stack1, 0);
             owner = player;
+            ownerUUID = player.getUniqueID();
             stack1 = stack.copy();
             stack1.setCount(1);
             setHeldItem(EnumHand.MAIN_HAND, stack1);
@@ -115,6 +119,12 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
             player.swingArm(hand);
             stack.shrink(1);
             return true;
+        }
+        if (hand == EnumHand.OFF_HAND && stack.isEmpty() &! stack1.isEmpty() && player.getHeldItem(EnumHand.MAIN_HAND).isEmpty()) {
+            if (!world.isRemote) entityDropItem(stack1, 0);
+            owner = null;
+            ownerUUID = null;
+            setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
         }
         return false;
     }
@@ -155,13 +165,26 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     @Nullable
     @Override
     public UUID getOwnerId() {
-        return owner == null ? null : owner.getUniqueID();
+        return ownerUUID;
     }
     
     @Nullable
     @Override
     public Entity getOwner() {
+        if (owner == null && ownerUUID != null) owner = world.getMinecraftServer().getPlayerList().getPlayerByUUID(ownerUUID);
         return owner;
+    }
+    
+    @Override
+    public void readEntityFromNBT(NBTTagCompound nbt) {
+        super.readEntityFromNBT(nbt);
+        if (nbt.hasKey("owner")) ownerUUID = NBTUtil.getUUIDFromTag(nbt.getCompoundTag("owner"));
+    }
+    
+    @Override
+    public void writeEntityToNBT(NBTTagCompound nbt) {
+        super.writeEntityToNBT(nbt);
+        if (ownerUUID != null) nbt.setTag("owner", NBTUtil.createUUIDTag(ownerUUID));
     }
     
     public float getSpinningProcess(float f2) {
