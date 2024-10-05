@@ -4,11 +4,11 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.math.BlockPos;
 
-public class AIMoveRandomFlying extends EntityAIBase {
+public class EntityAIMoveRandomFlying extends EntityAIBase {
 
     private final EntityLiving entity;
 
-    public AIMoveRandomFlying(EntityLiving entity) {
+    public EntityAIMoveRandomFlying(EntityLiving entity) {
         setMutexBits(1);
         this.entity = entity;
     }

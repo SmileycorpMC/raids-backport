@@ -22,7 +22,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.smileycorp.raids.common.RaidsSoundEvents;
-import net.smileycorp.raids.common.entities.ai.AIMoveRandomFlying;
+import net.smileycorp.raids.common.entities.ai.EntityAIAllayStayNearTarget;
+import net.smileycorp.raids.common.entities.ai.EntityAIMoveRandomFlying;
 import net.smileycorp.raids.common.entities.ai.FlyingMoveControl;
 import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.config.EntityConfig;
@@ -37,6 +38,8 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     
     private final InventoryBasic inventory = new InventoryBasic(getName(), false, 1);
     private BlockPos jukebox;
+    private BlockPos noteBlock;
+    private ItemStack items = ItemStack.EMPTY;
     private EntityPlayer owner;
     private UUID ownerUUID;
     private int duplicationCooldown;
@@ -53,7 +56,8 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     protected void initEntityAI() {
         super.initEntityAI();
         tasks.addTask(0, new EntityAISwimming(this));
-        tasks.addTask(8, new AIMoveRandomFlying(this));
+        tasks.addTask(1, new EntityAIAllayStayNearTarget(this));
+        tasks.addTask(8, new EntityAIMoveRandomFlying(this));
     }
     
     @Override
@@ -173,6 +177,20 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     public Entity getOwner() {
         if (owner == null && ownerUUID != null) owner = world.getMinecraftServer().getPlayerList().getPlayerByUUID(ownerUUID);
         return owner;
+    }
+    
+    public BlockPos getJukeboxPos() {
+        return jukebox;
+    }
+    
+    public BlockPos getNoteBlockPos() {
+        return noteBlock;
+    }
+    
+    public BlockPos getWantedPos() {
+        if (noteBlock != null) return noteBlock;
+        if (getOwner() != null) return owner.getPosition();
+        return null;
     }
     
     @Override
