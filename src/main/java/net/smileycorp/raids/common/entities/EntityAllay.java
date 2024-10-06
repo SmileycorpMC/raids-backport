@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -22,6 +23,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.smileycorp.raids.common.RaidsSoundEvents;
+import net.smileycorp.raids.common.entities.ai.EntityAIAllayPickupItem;
 import net.smileycorp.raids.common.entities.ai.EntityAIAllayStayNearTarget;
 import net.smileycorp.raids.common.entities.ai.EntityAIMoveRandomFlying;
 import net.smileycorp.raids.common.entities.ai.FlyingMoveControl;
@@ -57,6 +59,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         super.initEntityAI();
         tasks.addTask(0, new EntityAISwimming(this));
         tasks.addTask(1, new EntityAIAllayStayNearTarget(this));
+        tasks.addTask(2, new EntityAIAllayPickupItem(this));
         tasks.addTask(8, new EntityAIMoveRandomFlying(this));
     }
     
@@ -85,6 +88,23 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         if (!world.isRemote |! isEntityAlive()) return;
         holdingItemAnimationTicks0 = holdingItemAnimationTicks;
         holdingItemAnimationTicks = MathUtils.clamp(holdingItemAnimationTicks + (hasItemInSlot(EntityEquipmentSlot.MAINHAND) ? 1 : -1), 0, 5);
+    }
+    
+    @Override
+    protected void collideWithEntity(Entity entity) {
+        super.collideWithEntity(entity);
+        if (canPickupItem(entity)) {
+            EntityItem item = (EntityItem) entity;
+            if (items.isEmpty()) {
+                items = item.getItem();
+                item.setDead();
+                return;
+            }
+            int count = Math.min(item.getItem().getCount(), items.getMaxStackSize() - items.getCount());
+            items.grow(count);
+            item.getItem().shrink(count);
+            if (item.getItem().getCount() <= 0) entity.setDead();
+        }
     }
     
     @Override
@@ -205,6 +225,15 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         if (ownerUUID != null) nbt.setTag("owner", NBTUtil.createUUIDTag(ownerUUID));
     }
     
+    public boolean canPickupItem(Entity entity) {
+        if (!(entity instanceof EntityItem)) return false;
+        EntityItem item = (EntityItem) entity;
+        ItemStack stack = items.isEmpty() ? getHeldItemMainhand() : items;
+        ItemStack stack1 = item.getItem();
+        return stack.getItem() == stack1.getItem() && stack.getMetadata() == stack1.getMetadata()
+            && (items.isEmpty() || ItemStack.areItemStackTagsEqual(stack, stack1)) && items.getCount() < stack1.getMaxStackSize();
+    }
+    
     public float getSpinningProcess(float f2) {
         return f2;
     }
@@ -238,6 +267,10 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     @Override
     protected float getSoundVolume() {
         return 0.4F;
+    }
+    
+    public boolean isFull() {
+        return !items.isEmpty() && items.getCount() < items.getMaxStackSize();
     }
     
 }
