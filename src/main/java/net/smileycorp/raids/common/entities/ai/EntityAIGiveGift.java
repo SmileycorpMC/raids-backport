@@ -1,11 +1,12 @@
 package net.smileycorp.raids.common.entities.ai;
 
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
 import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.config.VillagerGiftsConfig;
 
 public class EntityAIGiveGift  extends EntityAIBase {
@@ -28,18 +29,7 @@ public class EntityAIGiveGift  extends EntityAIBase {
     @Override
     public void startExecuting() {
         ItemStack stack = VillagerGiftsConfig.INSTANCE.getGift(villager);
-        if (!stack.isEmpty()) {
-            double y = villager.posY + villager.getEyeHeight() - 0.30000001192092896;
-            EntityItem item = new EntityItem(villager.world, villager.posX, y, villager.posZ, stack);
-            double dx = hero.posX - villager.posX;
-            double dy = hero.posY - y;
-            double dz = hero.posZ - villager.posZ;
-            double magnitude = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2));
-            item.motionX = dx / magnitude;
-            item.motionY = dy / magnitude;
-            item.motionZ = dz / magnitude;
-            villager.world.spawnEntity(item);
-        }
+        if (!stack.isEmpty()) MathUtils.throwItem(villager, stack, new Vec3d(hero.posX, hero.posY, hero.posZ));
         cooldown = 600 + villager.getRNG().nextInt(6001);
         hero = null;
     }
