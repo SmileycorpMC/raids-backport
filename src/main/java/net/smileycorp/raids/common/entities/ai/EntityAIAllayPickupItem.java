@@ -2,6 +2,7 @@ package net.smileycorp.raids.common.entities.ai;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.math.BlockPos;
 import net.smileycorp.raids.common.entities.EntityAllay;
 
@@ -27,5 +28,11 @@ public class EntityAIAllayPickupItem extends EntityAIBase {
             allay.getMoveHelper().setMoveTo(entity.posX, entity.posY, entity.posZ, 2);
             return;
         }
+    }
+    
+    @Override
+    public void updateTask() {
+        for (Entity entity : allay.world.getEntitiesInAABBexcluding(allay, allay.getEntityBoundingBox().grow(3, 3, 3),
+                allay::canPickupItem)) allay.pickupItem((EntityItem)entity);
     }
 }

@@ -1,6 +1,7 @@
 package net.smileycorp.raids.common.entities;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -9,6 +10,7 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
@@ -87,23 +89,6 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         if (!world.isRemote |! isEntityAlive()) return;
         holdingItemAnimationTicks0 = holdingItemAnimationTicks;
         holdingItemAnimationTicks = MathUtils.clamp(holdingItemAnimationTicks + (hasItemInSlot(EntityEquipmentSlot.MAINHAND) ? 1 : -1), 0, 5);
-    }
-    
-    @Override
-    protected void collideWithEntity(Entity entity) {
-        super.collideWithEntity(entity);
-        if (canPickupItem(entity)) {
-            EntityItem item = (EntityItem) entity;
-            if (items.isEmpty()) {
-                items = item.getItem();
-                item.setDead();
-                return;
-            }
-            int count = Math.min(item.getItem().getCount(), items.getMaxStackSize() - items.getCount());
-            items.grow(count);
-            item.getItem().shrink(count);
-            if (item.getItem().getCount() <= 0) entity.setDead();
-        }
     }
     
     @Override
@@ -227,6 +212,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     public boolean canPickupItem(Entity entity) {
         if (!(entity instanceof EntityItem)) return false;
         EntityItem item = (EntityItem) entity;
+        if (item.cannotPickup()) return false;
         ItemStack stack = items.isEmpty() ? getHeldItemMainhand() : items;
         ItemStack stack1 = item.getItem();
         return stack.getItem() == stack1.getItem() && stack.getMetadata() == stack1.getMetadata()
@@ -243,6 +229,9 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     
     @Override
     public void fall(float distance, float damageMultiplier) {}
+    
+    @Override
+    protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos) {}
     
     @Override
     protected void playStepSound(BlockPos pos, Block block) {}
@@ -274,6 +263,19 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     
     public ItemStack getItems() {
         return items;
+    }
+    
+    public void pickupItem(EntityItem item) {
+        playSound(SoundEvents.ENTITY_ITEM_PICKUP, 0.2f, ((rand.nextFloat() - rand.nextFloat()) * 0.7f + 1) * 2f);
+        if (items.isEmpty()) {
+            items = item.getItem();
+            item.setDead();
+            return;
+        }
+        int count = Math.min(item.getItem().getCount(), items.getMaxStackSize() - items.getCount());
+        items.grow(count);
+        item.getItem().shrink(count);
+        if (item.getItem().getCount() <= 0) item.setDead();
     }
     
 }

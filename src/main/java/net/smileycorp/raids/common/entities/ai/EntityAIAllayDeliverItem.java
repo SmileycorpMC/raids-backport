@@ -2,6 +2,7 @@ package net.smileycorp.raids.common.entities.ai;
 
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.math.Vec3d;
+import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.EntityAllay;
 import net.smileycorp.raids.common.util.MathUtils;
 
@@ -31,7 +32,7 @@ public class EntityAIAllayDeliverItem extends EntityAIBase {
     @Override
     public void startExecuting() {
         Vec3d wantedPos = allay.getWantedPos();
-        if (allay.getDistanceSq(wantedPos.x, wantedPos.y, wantedPos.z) >= 4) return;
+        if (allay.getDistanceSq(wantedPos.x, wantedPos.y, wantedPos.z) <= 4) return;
         allay.getMoveHelper().setMoveTo(wantedPos.x, wantedPos.y, wantedPos.z, 2);
         super.startExecuting();
     }
@@ -40,6 +41,7 @@ public class EntityAIAllayDeliverItem extends EntityAIBase {
     public void updateTask() {
         Vec3d wantedPos = allay.getWantedPos();
         if (allay.getDistanceSq(wantedPos.x, wantedPos.y, wantedPos.z) >= 4) return;
+        allay.playSound(RaidsSoundEvents.ALLAY_THROW, 1, allay.getRNG().nextFloat() * 3.5f + 0.5f);
         MathUtils.throwItem(allay, allay.getItems().splitStack(1), wantedPos);
     }
     
