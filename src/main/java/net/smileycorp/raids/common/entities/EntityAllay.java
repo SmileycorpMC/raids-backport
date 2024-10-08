@@ -21,12 +21,10 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.smileycorp.raids.common.RaidsSoundEvents;
-import net.smileycorp.raids.common.entities.ai.EntityAIAllayPickupItem;
-import net.smileycorp.raids.common.entities.ai.EntityAIAllayStayNearTarget;
-import net.smileycorp.raids.common.entities.ai.EntityAIMoveRandomFlying;
-import net.smileycorp.raids.common.entities.ai.FlyingMoveControl;
+import net.smileycorp.raids.common.entities.ai.*;
 import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.config.EntityConfig;
 
@@ -60,6 +58,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         tasks.addTask(0, new EntityAISwimming(this));
         tasks.addTask(1, new EntityAIAllayStayNearTarget(this));
         tasks.addTask(2, new EntityAIAllayPickupItem(this));
+        tasks.addTask(3, new EntityAIAllayDeliverItem(this));
         tasks.addTask(8, new EntityAIMoveRandomFlying(this));
     }
     
@@ -207,9 +206,9 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         return noteBlock;
     }
     
-    public BlockPos getWantedPos() {
-        if (noteBlock != null) return noteBlock;
-        if (getOwner() != null) return owner.getPosition();
+    public Vec3d getWantedPos() {
+        if (noteBlock != null) return new Vec3d(noteBlock.getX() + 0.5f, noteBlock.getY() + 0.5f, noteBlock.getZ() + 0.5f);
+        if (getOwner() != null) return new Vec3d(owner.posX, owner.posY + owner.getEyeHeight(), owner.posZ);
         return null;
     }
     
@@ -271,6 +270,10 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     
     public boolean isFull() {
         return !items.isEmpty() && items.getCount() < items.getMaxStackSize();
+    }
+    
+    public ItemStack getItems() {
+        return items;
     }
     
 }
