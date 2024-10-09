@@ -16,7 +16,8 @@
     "MixinMerchantRecipeList",
     "MixinSlotMerchantResult",
     "MixinVillagerProfession",
-    "MixinVillagerRegistry"
+    "MixinVillagerRegistry",
+    "MixinWorldServer"
   ],
   "client": [
     "MixinGuiMerchant",

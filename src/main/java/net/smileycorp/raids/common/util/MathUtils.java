@@ -3,6 +3,7 @@ package net.smileycorp.raids.common.util;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 public class MathUtils {
@@ -37,6 +38,22 @@ public class MathUtils {
         item.motionZ = vel.z;
         item.setDefaultPickupDelay();
         entity.world.spawnEntity(item);
+    }
+    
+    public static Vec3d centerOf(BlockPos pos) {
+        return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+    }
+    
+    public static Vec3d getDirection(Vec3d startpos, Vec3d endpos) {
+        if (startpos.equals(endpos)) return new Vec3d(0,0,0);
+        double dx = endpos.x-startpos.x;
+        double dy = endpos.y-startpos.y;
+        double dz = endpos.z-startpos.z;
+        double magnitude = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2));
+        double mx = (endpos.x-startpos.x)/magnitude;
+        double my = (endpos.y-startpos.y)/magnitude;
+        double mz = (endpos.z-startpos.z)/magnitude;
+        return new Vec3d(mx, my, mz);
     }
     
 }

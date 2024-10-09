@@ -47,6 +47,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     private int duplicationCooldown;
     private float holdingItemAnimationTicks;
     private float holdingItemAnimationTicks0;
+    private int noteBlockCooldown = 0;
     
     public EntityAllay(World world) {
         super(world);
@@ -95,6 +96,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     public void updateAITasks() {
         super.updateAITasks();
         if (!isEntityAlive()) return;
+        if (noteBlockCooldown > 0) if (noteBlockCooldown-- <=0) noteBlock = null;
         if (ticksExisted % 10 == 0) heal(1);
         if (duplicationCooldown > 0) duplicationCooldown--;
         if (duplicationCooldown == 0 &! canDuplicate()) dataManager.set(CAN_DUPLICATE, true);
@@ -192,7 +194,11 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     }
     
     public Vec3d getWantedPos() {
-        if (noteBlock != null) return new Vec3d(noteBlock.getX() + 0.5f, noteBlock.getY() + 0.5f, noteBlock.getZ() + 0.5f);
+        if (noteBlock != null) {
+            if (world.getBlockState(noteBlock).getBlock() == Blocks.NOTEBLOCK) return MathUtils.centerOf(noteBlock);
+            noteBlock = null;
+            noteBlockCooldown = 0;
+        }
         if (getOwner() != null) return new Vec3d(owner.posX, owner.posY + owner.getEyeHeight(), owner.posZ);
         return null;
     }
@@ -276,6 +282,28 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         items.grow(count);
         item.getItem().shrink(count);
         if (item.getItem().getCount() <= 0) item.setDead();
+    }
+    
+    public boolean canHearBlock(Vec3d pos) {
+         if (getDistanceSq(pos.x, pos.y, pos.z) > 256) return false;
+        Vec3d endpos = new Vec3d(posX, posY + getEyeHeight(), posZ);
+        double dx = endpos.x - pos.x;
+        double dy = endpos.y - pos.y;
+        double dz = endpos.z - pos.z;
+        double magnitude = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2));
+        double mx = (endpos.x- pos.x) / (magnitude * 4d);
+        double my = (endpos.y- pos.y)/ (magnitude * 4d);
+        double mz = (endpos.z- pos.z) / (magnitude * 4d);
+        for (int i = 0; i < Math.ceil(magnitude) * 4; i++) {
+            pos = pos.addVector(mx, my, mz);
+            if (world.getBlockState(new BlockPos(pos)).getBlock() == Blocks.WOOL) return false;
+        }
+        return true;
+    }
+    
+    public void setNoteBlockPos(BlockPos pos) {
+        noteBlock = pos;
+        noteBlockCooldown = 6000;
     }
     
 }
