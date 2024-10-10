@@ -1,8 +1,13 @@
 package net.smileycorp.raids.common.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.smileycorp.raids.client.ClientHandler;
+import net.smileycorp.raids.client.ClientProxy;
 
 public class RaidSoundMessage implements IMessage {
 	
@@ -28,9 +33,10 @@ public class RaidSoundMessage implements IMessage {
 			buf.writeDouble(pos.getZ());
 		}
 	}
+    
+    public IMessage process(MessageContext ctx) {
+		if (ctx.side == Side.CLIENT) Minecraft.getMinecraft().addScheduledTask(() -> ClientHandler.playRaidSound(pos));
+		return null;
+    }
 	
-	
-	public BlockPos getPos() {
-		return pos;
-	}
 }

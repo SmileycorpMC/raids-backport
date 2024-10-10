@@ -9,8 +9,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.relauncher.Side;
+import net.smileycorp.raids.client.particle.ParticleRaidOmen;
+import net.smileycorp.raids.client.particle.ParticleVibration;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsSoundEvents;
+import net.smileycorp.raids.common.util.EnumRaidsParticle;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientHandler {
@@ -29,5 +32,15 @@ public class ClientHandler {
 		float pitch = 1 + ((world.rand.nextInt(6) - 3) / 10);
 		world.playSound(player, soundPos, RaidsSoundEvents.RAID_HORN, SoundCategory.HOSTILE, 0.3f, pitch);
 	}
-
+	
+	public static void spawnParticle(EnumRaidsParticle type, double x, double y, double z, Double... data) {
+		Minecraft mc = Minecraft.getMinecraft();
+		switch (type) {
+			case RAID_OMEN:
+				mc.effectRenderer.addEffect(new ParticleRaidOmen(mc.world, x, y, z, (int)(double)data[0]));
+			case VIBRATION:
+				mc.effectRenderer.addEffect(new ParticleVibration(mc.world, x, y, z, data[0], data[1], data[2]));
+		}
+	}
+	
 }

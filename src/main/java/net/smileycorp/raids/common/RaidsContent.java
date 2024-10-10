@@ -16,6 +16,7 @@ import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.entities.EntityRavager;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.potion.BadOmenPotion;
+import net.smileycorp.raids.common.potion.RaidOmenPotion;
 import net.smileycorp.raids.common.potion.RaidsPotion;
 import net.smileycorp.raids.common.raid.RaidOmenTracker;
 import net.smileycorp.raids.common.raid.Raider;
@@ -47,7 +48,7 @@ public class RaidsContent {
 	
 	public static final Potion BAD_OMEN = new BadOmenPotion();
 	public static final Potion HERO_OF_THE_VILLAGE = new RaidsPotion(false, 0x44FF44, "hero_of_the_village");
-	public static final Potion RAID_OMEN = new RaidsPotion(true, 0xDE4058, "raid_omen");
+	public static final Potion RAID_OMEN = new RaidOmenPotion();
 	
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {

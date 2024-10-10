@@ -9,7 +9,11 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.smileycorp.raids.common.entities.EntityAllay;
+import net.smileycorp.raids.common.network.PacketHandler;
+import net.smileycorp.raids.common.network.RaidsParticleMessage;
+import net.smileycorp.raids.common.util.EnumRaidsParticle;
 import net.smileycorp.raids.common.util.MathUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,8 +31,12 @@ public abstract class MixinWorldServer extends World {
     public void raids$fireBlockEvent(BlockEventData event, CallbackInfoReturnable<Boolean> callback) {
         if (event.getBlock() != Blocks.NOTEBLOCK) return;
         Vec3d pos = MathUtils.centerOf(event.getPosition());
-        for (EntityAllay allay : getEntities(EntityAllay.class, e -> !e.getHeldItemMainhand().isEmpty() && e.canHearBlock(pos)))
+        for (EntityAllay allay : getEntities(EntityAllay.class, e -> !e.getHeldItemMainhand().isEmpty() && e.canHearBlock(pos))) {
             allay.setNoteBlockPos(event.getPosition());
+            PacketHandler.NETWORK_INSTANCE.sendToAllTracking(new RaidsParticleMessage(EnumRaidsParticle.VIBRATION, pos.x, pos.y, pos.z,
+                            allay.posX, allay.posY + allay.getEyeHeight(), allay.posZ),
+                    new NetworkRegistry.TargetPoint(allay.dimension, pos.x, pos.y, pos.z, 32));
+        }
     }
     
 }
