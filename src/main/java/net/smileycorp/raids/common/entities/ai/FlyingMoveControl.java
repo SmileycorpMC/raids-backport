@@ -6,12 +6,20 @@ import net.minecraft.util.math.MathHelper;
 
 public class FlyingMoveControl extends EntityMoveHelper {
 
+    private int ticksStuck = 0;
+    
     public FlyingMoveControl(EntityLiving entity) {
         super(entity);
     }
 
     public void onUpdateMoveHelper() {
         if (action != Action.MOVE_TO) return;
+        if (entity.posX == entity.prevPosX && entity.posY == entity.prevPosY && entity.posZ == entity.prevPosZ) {
+            if (ticksStuck++ >= 40) {
+                action = Action.WAIT;
+                return;
+            }
+        } else ticksStuck = 0;
         double d0 = posX - entity.posX;
         double d1 = posY - entity.posY;
         double d2 = posZ - entity.posZ;
