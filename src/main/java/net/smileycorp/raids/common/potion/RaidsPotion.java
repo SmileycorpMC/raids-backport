@@ -24,25 +24,25 @@ public class RaidsPotion extends Potion {
     @Override
     @SideOnly(Side.CLIENT)
     public void renderInventoryEffect(PotionEffect effect, Gui gui, int x, int y, float z) {
-        renderEffect(x + 6, y + 7, 1);
+        renderEffect(effect, x + 6, y + 7, 1);
     }
     
     @Override
     @SideOnly(Side.CLIENT)
     public void renderHUDEffect(PotionEffect effect, Gui gui, int x, int y, float z, float alpha) {
-        renderEffect(x + 3, y + 3, alpha);
+        renderEffect(effect, x + 3, y + 3, alpha);
     }
     
     @SideOnly(Side.CLIENT)
-    private void renderEffect(int x, int y, float alpha) {
+    protected void renderEffect(PotionEffect effect, int x, int y, float alpha) {
         GlStateManager.pushMatrix();
         GlStateManager.color(1, 1, 1, alpha);
-        Minecraft.getMinecraft().renderEngine.bindTexture(getTexture());
+        Minecraft.getMinecraft().renderEngine.bindTexture(getTexture(effect));
         Gui.drawScaledCustomSizeModalRect(x, y, 0, 0 , 18, 18, 18, 18, 18, 18);
         GlStateManager.popMatrix();
     }
     
-    protected ResourceLocation getTexture() {
+    protected ResourceLocation getTexture(PotionEffect effect) {
         return texture;
     }
     

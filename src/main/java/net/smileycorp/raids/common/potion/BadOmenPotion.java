@@ -46,8 +46,8 @@ public class BadOmenPotion extends RaidsPotion {
         }
     }
     
-    protected ResourceLocation getTexture() {
-        return RaidConfig.ominousBottles ? OMINOUS_TEXTURE : super.getTexture();
+    protected ResourceLocation getTexture(PotionEffect effect) {
+        return RaidConfig.ominousBottles ? OMINOUS_TEXTURE : super.getTexture(effect);
     }
     
 }
