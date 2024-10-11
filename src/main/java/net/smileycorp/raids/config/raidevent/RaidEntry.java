@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -24,21 +25,18 @@ import java.util.Map;
 
 public class RaidEntry {
     
-    private final EntityEntry entity;
+    private final NBTTagCompound nbt;
     private final int[] count;
     private final Value<ResourceLocation> rider;
     private final Value<Integer> bonusSpawns;
     private Map<Class<? extends EntityLiving>, Integer> numSpawned = Maps.newHashMap();
     
-    public RaidEntry(ResourceLocation entity, int[] count, @Nullable Value<ResourceLocation> rider, @Nullable Value<Integer> bonusSpawns) throws Exception {
-       this(GameData.getEntityRegistry().getValue(entity), count, rider, bonusSpawns);
-    }
-    
-    public RaidEntry(EntityEntry entity, int[] count, @Nullable Value<ResourceLocation> rider, @Nullable Value<Integer> bonusSpawns) throws Exception {
-        if (entity == null) {
+    public RaidEntry(ResourceLocation entity, @Nullable NBTTagCompound nbt, int[] count, @Nullable Value<ResourceLocation> rider, @Nullable Value<Integer> bonusSpawns) throws Exception {
+        if (GameData.getEntityRegistry().getValue(entity) == null) {
             throw new Exception("Entry is null ");
         }
-        this.entity = entity;
+        this.nbt = nbt == null ? new NBTTagCompound() : nbt;
+        nbt.setString("id", entity.toString());
         this.count = count;
         this.rider = rider;
         this.bonusSpawns = bonusSpawns;

@@ -18,8 +18,6 @@ import java.util.Map;
 
 public class RaidConfig {
     
-    private static Configuration config;
-    
     public static boolean ominousBottles = true;
     public static boolean raidCenteredOnPlayer = true;
     public static int easyWaves = 3;
@@ -31,7 +29,7 @@ public class RaidConfig {
     private static List<Class<? extends EntityLiving>> villagerEntities;
     
     public static void syncConfig(FMLPreInitializationEvent event) {
-        config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/raids.cfg"));
+        Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/raids.cfg"));
         try{
             config.load();
             ominousBottles = config.get("general", "ominousBottles", true, "Use ominous bottles and the version of bad omen from 1.21+?").getBoolean();

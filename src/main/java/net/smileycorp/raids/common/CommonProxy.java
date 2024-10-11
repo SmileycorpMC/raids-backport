@@ -55,6 +55,7 @@ public class CommonProxy {
 		OutpostConfig.syncConfig(event);
 		PatrolConfig.syncConfig(event);
 		RaidConfig.syncConfig(event);
+		MansionConfig.syncConfig(event);
 		RaidTableLoader.init(event);
 		VillagerGiftsConfig.init(event);
 		PacketHandler.initPackets();

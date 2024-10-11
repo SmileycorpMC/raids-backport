@@ -15,14 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 public class PatrolConfig {
-    
-    private static Configuration config;
 
     private static Map.Entry<Integer, List<Map.Entry<Class<? extends EntityLiving>, Integer>>> spawnEntities;
     private static String[] spawnEntitiesStr;
     
     public static void syncConfig(FMLPreInitializationEvent event) {
-        config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/patrols.cfg"));
+        Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/patrols.cfg"));
         try{
             config.load();
             spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-1"}, "Which entities should spawn in patrols? (format is registry name-spawn weight, weight is a positive integer)").getStringList();

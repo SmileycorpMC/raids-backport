@@ -14,9 +14,7 @@ import java.io.File;
 import java.util.List;
 
 public class OutpostConfig {
-    
-    private static Configuration config;
-    
+
     //generation
     public static int maxDistance;
     public static int distanceFromVillage;
@@ -36,7 +34,7 @@ public class OutpostConfig {
     public static boolean tinkersConstructCrossbows;
     
     public static void syncConfig(FMLPreInitializationEvent event) {
-        config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/outposts.cfg"));
+        Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/outposts.cfg"));
         try{
             config.load();
             maxDistance = config.get("generation", "maxDistance", 32, "Maximum chunk distance between two watchtowers, the lower the number the more likely the generation.").getInt();

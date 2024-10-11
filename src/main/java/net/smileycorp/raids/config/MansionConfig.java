@@ -5,16 +5,16 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.File;
 
-public class ClientConfig {
+public class MansionConfig {
     
-    public static boolean newVexModel;
+    public static boolean allayJails;
     
     public static void syncConfig(FMLPreInitializationEvent event) {
-        Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/client.cfg"));
-        try{
+        Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/mansions.cfg"));
+        try {
             config.load();
-            newVexModel = config.get("general", "newVexModel", true, "Use the new vex model from 1.19.3?").getBoolean();
-        } catch(Exception e) {
+            allayJails = config.get("entities", "allayJails", true, "Do allays spawn in Woodland Mansion jails?").getBoolean();
+        } catch (Exception e) {
         } finally {
             if (config.hasChanged()) config.save();
         }

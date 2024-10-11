@@ -11,7 +11,7 @@ import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.gen.structure.template.TemplateManager;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.entities.EntityAllay;
-import net.smileycorp.raids.config.EntityConfig;
+import net.smileycorp.raids.config.MansionConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,7 +39,7 @@ public class MixinMansionTemplate {
     
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/structure/template/TemplateManager;getTemplate(Lnet/minecraft/server/MinecraftServer;Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/world/gen/structure/template/Template;"), method = "loadTemplate")
     public Template raids$loadTemplate$getTemplate(TemplateManager instance, MinecraftServer server, ResourceLocation loc) {
-       return instance.getTemplate(server, EntityConfig.mansionAllays && loc.getResourcePath().equals("mansion/2x2_a1") ? Constants.loc(loc.getResourcePath()) : loc);
+       return instance.getTemplate(server, MansionConfig.allayJails && loc.getResourcePath().equals("mansion/2x2_a1") ? Constants.loc(loc.getResourcePath()) : loc);
     }
 
 }

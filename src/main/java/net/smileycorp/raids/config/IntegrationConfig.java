@@ -6,7 +6,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import java.io.File;
 
 public class IntegrationConfig {
-    private static Configuration config;
 
     public static boolean crossbowsBackport = true;
     public static boolean crossbow = true;
@@ -17,7 +16,7 @@ public class IntegrationConfig {
     public static boolean deeperDepths = true;
 
     public static void syncConfig(FMLPreInitializationEvent event) {
-        config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/integration.cfg"));
+        Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/integration.cfg"));
         try {
             config.load();
             crossbowsBackport = config.get("general", "crossbowsBackport", true, "Enable mod integration with Crossbows Backport (Only works if the mod is installed)").getBoolean();
