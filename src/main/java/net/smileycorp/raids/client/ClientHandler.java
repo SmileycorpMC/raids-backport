@@ -38,8 +38,10 @@ public class ClientHandler {
 		switch (type) {
 			case RAID_OMEN:
 				mc.effectRenderer.addEffect(new ParticleRaidOmen(mc.world, x, y, z, (int)(double)data[0]));
+				break;
 			case VIBRATION:
 				mc.effectRenderer.addEffect(new ParticleVibration(mc.world, x, y, z, data[0], data[1], data[2]));
+				break;
 		}
 	}
 	
