@@ -5,10 +5,12 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.registries.GameData;
 import net.smileycorp.raids.common.data.DataType;
@@ -25,18 +27,20 @@ import java.util.Map;
 
 public class RaidEntry {
     
-    private final NBTTagCompound nbt;
+    private final ResourceLocation entity;
+    private final Value<String> nbt;
     private final int[] count;
-    private final Value<ResourceLocation> rider;
+    private final Value<String> rider;
     private final Value<Integer> bonusSpawns;
     private Map<Class<? extends EntityLiving>, Integer> numSpawned = Maps.newHashMap();
     
-    public RaidEntry(ResourceLocation entity, @Nullable NBTTagCompound nbt, int[] count, @Nullable Value<ResourceLocation> rider, @Nullable Value<Integer> bonusSpawns) throws Exception {
-        if (GameData.getEntityRegistry().getValue(entity) == null) {
-            throw new Exception("Entry is null ");
-        }
-        this.nbt = nbt == null ? new NBTTagCompound() : nbt;
-        nbt.setString("id", entity.toString());
+    public RaidEntry(ResourceLocation entity, @Nullable Value<String> nbt, int[] count, @Nullable Value<String> rider, @Nullable Value<Integer> bonusSpawns) throws Exception {
+        EntityEntry entry = GameData.getEntityRegistry().getValue(entity);
+        if (entry == null) throw new Exception("Entry is null ");
+        if (!EntityLiving.class.isAssignableFrom(entry.getEntityClass())) throw new Exception(entity + " is not an instanceof EntityLiving");
+        RaidHandler.addRaider((Class<? extends EntityLiving>) entry.getEntityClass());
+        this.entity = entity;
+        this.nbt = nbt;
         this.count = count;
         this.rider = rider;
         this.bonusSpawns = bonusSpawns;
@@ -58,47 +62,59 @@ public class RaidEntry {
     }
     
     public void spawnEntity(Raid raid, int wave, BlockPos pos, List<EntityLiving> entities, boolean isBonusWave) throws Exception {
+        RaidContext ctx = RaidContext.Builder.of(raid).spawned(numSpawned).bonus(isBonusWave).pos(pos).build();
         World world = raid.getWorld();
-        EntityLiving entity = (EntityLiving) this.entity.newInstance(world);
-        entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
-        if (world.spawnEntity(entity)) {
-            entities.add(entity);
-            entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
-            raid.joinRaid(wave, entity, false);
+        NBTTagCompound nbt;
+        try {
+            nbt = JsonToNBT.getTagFromJson(this.nbt.get(ctx));
+        } catch (Exception e) {
+            nbt = new NBTTagCompound();
+        }
+        nbt.setString("id", entity.toString());
+        Entity entity = AnvilChunkLoader.readWorldEntityPos(nbt, world, pos.getX(), pos.getY(), pos.getZ(), false);
+        if (!(entity instanceof EntityLiving)) return;
+        EntityLiving living = (EntityLiving) entity;
+        if (world.spawnEntity(living)) {
+            entities.add(living);
+            living.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+            raid.joinRaid(wave, living, false);
         }
         if (rider != null) {
-            ResourceLocation loc = this.rider.get(RaidContext.Builder.of(raid).spawned(numSpawned).bonus(isBonusWave).pos(pos).build());
-            EntityEntry entry = GameData.getEntityRegistry().getValue(loc);
-            if (entry == null) return;
-            Entity rider = entry.newInstance(world);
+            String str = this.rider.get(ctx);
+            NBTTagCompound riderNbt;
+            try {
+                riderNbt = JsonToNBT.getTagFromJson(str);
+            } catch (Exception e) {
+                riderNbt = new NBTTagCompound();
+                riderNbt.setString("id", str);
+            }
+            Entity rider = AnvilChunkLoader.readWorldEntityPos(riderNbt, world, pos.getX(), pos.getY(), pos.getZ(), false);
             if (rider == null |!(rider instanceof EntityLiving)) return;
             EntityLiving riderLiving = (EntityLiving) rider;
             numSpawned.putIfAbsent(riderLiving.getClass(), 0);
             numSpawned.put(riderLiving.getClass(), numSpawned.get(riderLiving.getClass()) + 1);
-            riderLiving.setPosition(pos.getX(), pos.getY(), pos.getZ());
             if (world.spawnEntity(riderLiving)) {
                 riderLiving.onInitialSpawn(world.getDifficultyForLocation(pos), null);
                 entities.add(riderLiving);
                 raid.joinRaid(wave, riderLiving, false);
-                riderLiving.startRiding(entity, true);
+                riderLiving.startRiding(living, true);
             }
         }
     }
     
     public EntityEntry getEntity() {
-        return entity;
+        return GameData.getEntityRegistry().getValue(entity);
     }
     
     public static RaidEntry deserialize(JsonObject json) {
         try {
-            EntityEntry entity = GameData.getEntityRegistry().getValue(new ResourceLocation(json.get("entity").getAsString()));
-            if (!EntityLiving.class.isAssignableFrom(entity.getEntityClass())) throw new Exception(json.get("entity").getAsString() + " is not an instanceof EntityLiving");
+            ResourceLocation entity = new ResourceLocation(json.get("entity").getAsString());
+            Value<String> nbt = ValueRegistry.INSTANCE.readValue(DataType.STRING, json.get("nbt"));
             List<Integer> count = Lists.newArrayList();
             json.get("spawn_counts").getAsJsonArray().forEach(e -> count.add(e.getAsInt()));
-            Value<ResourceLocation> rider = ValueRegistry.INSTANCE.readValue(DataType.RESOURCE_LOCATION, json.get("rider"));
+            Value<String> rider = ValueRegistry.INSTANCE.readValue(DataType.STRING, json.get("rider"));
             Value<Integer> bonusSpawns = ValueRegistry.INSTANCE.readValue(DataType.INT, json.get("bonus_spawns"));
-            RaidHandler.addRaider((Class<? extends EntityLiving>) entity.getEntityClass());
-            return new RaidEntry(entity, count.stream().mapToInt(i->i).toArray(), rider, bonusSpawns);
+            return new RaidEntry(entity, nbt, count.stream().mapToInt(i->i).toArray(), rider, bonusSpawns);
         } catch (Exception e) {
             RaidsLogger.logError("Failed to read raid entry " + json, e);
         }

@@ -28,6 +28,7 @@ public class ValueRegistry {
     }
     
     public <T extends Comparable<T>> Value<T> readValue(DataType<T> type, JsonElement json) {
+        if (json == null) return new EmptyValue<>(type);
         if (json.isJsonPrimitive()) return new StaticValue(type.readFromJson(json));
         if (!json.isJsonObject()) return new EmptyValue<>(type);
         JsonObject obj = json.getAsJsonObject();

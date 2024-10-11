@@ -99,12 +99,12 @@ public class RaidTableLoader {
     public RaidSpawnTable getDefaultTable() {
         List<RaidEntry> entries = Lists.newArrayList();
         try {
-            entries.add(new RaidEntry(RaidsContent.PILLAGER, new int[]{4, 3, 3, 4, 4, 4, 2}, null, null));
+            entries.add(new RaidEntry(Constants.loc("pillager"), null, new int[]{4, 3, 3, 4, 4, 4, 2}, null, null));
             
-            entries.add(new RaidEntry(new ResourceLocation("vindication_illager"), new int[]{0, 0, 2, 0, 1, 4, 2, 5}, null, ctx ->
+            entries.add(new RaidEntry(new ResourceLocation("vindication_illager"), null, new int[]{0, 0, 2, 0, 1, 4, 2, 5}, null, ctx ->
                     ctx.getDifficulty() == EnumDifficulty.EASY ? ctx.getRand().nextInt(2) : ctx.getDifficulty() == EnumDifficulty.NORMAL ? 1 : 2));
             
-            entries.add(new RaidEntry(RaidsContent.RAVAGER, new int[]{0, 1, 0, 0, 0, 0, 2}, ctx -> {
+            entries.add(new RaidEntry(Constants.loc("ravager"), null, new int[]{0, 1, 0, 0, 0, 0, 2}, ctx -> {
                 Raid raid = ctx.getRaid();
                 int i = raid.getGroupsSpawned() + 1;
                 if (i == raid.getNumGroups(EnumDifficulty.NORMAL)) return Constants.loc("pillager");
@@ -113,10 +113,10 @@ public class RaidTableLoader {
                 return null;
             }, ctx -> ctx.getDifficulty() != EnumDifficulty.EASY && ctx.isBonusWave() ? 1 : 0));
             
-            entries.add(new RaidEntry(new ResourceLocation("witch"), new int[]{0, 0, 0, 3, 0, 0, 1}, null, ctx ->
+            entries.add(new RaidEntry(new ResourceLocation("witch"), null, new int[]{0, 0, 0, 3, 0, 0, 1}, null, ctx ->
                     (ctx.getDifficulty() == EnumDifficulty.EASY || ctx.getWave() <= 2 || ctx.getWave() == 4) ? 0 : 1));
             
-            entries.add(new RaidEntry(new ResourceLocation("evocation_illager"), new int[]{0, 0, 1, 0, 1, 0, 2}, null, null));
+            entries.add(new RaidEntry(new ResourceLocation("evocation_illager"), null, new int[]{0, 0, 1, 0, 1, 0, 2}, null, null));
         } catch (Exception e) {
             RaidsLogger.logError("Failed adding default entries", e);
         }
