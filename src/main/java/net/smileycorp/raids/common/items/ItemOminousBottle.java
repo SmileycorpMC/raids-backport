@@ -54,7 +54,9 @@ public class ItemOminousBottle extends Item {
         if (!world.isRemote) {
             world.playSound(null, entity.getPosition(), RaidsSoundEvents.OMINOUS_BOTTLE_USE, entity.getSoundCategory(), 1, 1);
             entity.removePotionEffect(RaidsContent.BAD_OMEN);
-            entity.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000, getAmplifier(stack), false, false));
+            if (ModIntegration.DEEPER_DEPTHS_LOADED) entity.removePotionEffect(DeeperDepthsIntegration.getBadOmen());
+            entity.addPotionEffect(new PotionEffect(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getBadOmen() :
+                    RaidsContent.BAD_OMEN, 120000, getAmplifier(stack), false, false));
             if (entity instanceof EntityPlayerMP) CriteriaTriggers.CONSUME_ITEM.trigger((EntityPlayerMP) entity, stack);
             if (!(entity instanceof EntityPlayer && ((EntityPlayer) entity).func_184812_l_())) stack.shrink(1);
         }
