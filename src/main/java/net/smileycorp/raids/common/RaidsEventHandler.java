@@ -11,9 +11,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -34,6 +36,7 @@ import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraft.world.storage.loot.functions.SetMetadata;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.village.MerchantTradeOffersEvent;
@@ -52,6 +55,7 @@ import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.crossbow.CrossbowIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
+import net.smileycorp.raids.integration.deeperdepths.DeeperDepthsIntegration;
 import net.smileycorp.raids.integration.spartanweaponry.SpartanWeaponryIntegration;
 import net.smileycorp.raids.integration.tconstruct.TinkersConstructIntegration;
 
@@ -237,7 +241,8 @@ public class RaidsEventHandler {
 			LootTable table = event.getTable();
 			if (RaidConfig.ominousBottles && OutpostConfig.ominousBottles) {
 				LootPool bottlePool = table.getPool("raids:ominous_bottle");
-				bottlePool.addEntry(new LootEntryItem(RaidsContent.OMINOUS_BOTTLE, 1, 1, new LootFunction[] {new SetMetadata(new LootCondition[0], new RandomValueRange(0, 4))}, new LootCondition[0], "raids:ominous_bottle"));
+				bottlePool.addEntry(new LootEntryItem(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getOminousBottle() :
+						RaidsContent.OMINOUS_BOTTLE, 1, 1, new LootFunction[] {new SetMetadata(new LootCondition[0], new RandomValueRange(0, 4))}, new LootCondition[0], "raids:ominous_bottle"));
 			}
 			if (ModIntegration.CROSSBOWS_BACKPORT_LOADED && OutpostConfig.crossbowsBackportCrossbows) CrossbowsBackportIntegration.addLoot(table);
 			if (ModIntegration.CROSSBOW_LOADED && OutpostConfig.crossbowCrossbows) CrossbowIntegration.addLoot(table);
@@ -245,6 +250,28 @@ public class RaidsEventHandler {
 			if (ModIntegration.TINKERS_LOADED && OutpostConfig.tinkersConstructCrossbows) TinkersConstructIntegration.addLoot(table);
 			LootPool crossbowPool = table.getPool("raids:outpost_crossbow");
 			if (((ILootPool)crossbowPool).isEmpty()) crossbowPool.addEntry(new LootEntryItem(Items.BOW, 1, 1, new LootFunction[0], new LootCondition[0], "raids:bow"));
+		}
+	}
+	
+	@SubscribeEvent
+	public void remapItems(RegistryEvent.MissingMappings<Item> event) {
+		if (ModIntegration.DEEPER_DEPTHS_LOADED) return;
+		for (RegistryEvent.MissingMappings.Mapping<Item> mapping : event.getAllMappings()) {
+			if (mapping.key.equals(new ResourceLocation("deeperdepths:ominous_bottle"))) {
+				mapping.remap(RaidsContent.OMINOUS_BOTTLE);
+				return;
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void remapEffects(RegistryEvent.MissingMappings<Potion> event) {
+		if (ModIntegration.DEEPER_DEPTHS_LOADED) return;
+		for (RegistryEvent.MissingMappings.Mapping<Potion> mapping : event.getAllMappings()) {
+			if (mapping.key.equals(new ResourceLocation("deeperdepths:bad_omen"))) {
+				mapping.remap(RaidsContent.BAD_OMEN);
+				return;
+			}
 		}
 	}
 	

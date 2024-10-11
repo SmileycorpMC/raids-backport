@@ -25,6 +25,7 @@ public class ModIntegration {
     public static boolean TINKERS_LOADED = Loader.isModLoaded("tconstruct") && IntegrationConfig.tconstruct;
     public static boolean FUTUREMC_LOADED = Loader.isModLoaded("futuremc") && IntegrationConfig.futuremc;
     public static boolean TEKTOPIA_LOADED = Loader.isModLoaded("tektopia") && IntegrationConfig.tektopia;
+    public static boolean DEEPER_DEPTHS_LOADED = Loader.isModLoaded("deeperdepths") && IntegrationConfig.deeperDepths;
     
     public static boolean HAS_CROSSBOW_MOD = CROSSBOWS_BACKPORT_LOADED || CROSSBOW_LOADED || SPARTAN_LOADED || TINKERS_LOADED;
     

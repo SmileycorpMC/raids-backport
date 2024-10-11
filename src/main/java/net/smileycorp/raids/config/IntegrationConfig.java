@@ -14,6 +14,7 @@ public class IntegrationConfig {
     public static boolean tconstruct = true;
     public static boolean futuremc = true;
     public static boolean tektopia = true;
+    public static boolean deeperDepths = true;
 
     public static void syncConfig(FMLPreInitializationEvent event) {
         config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/integration.cfg"));
@@ -25,6 +26,7 @@ public class IntegrationConfig {
             tconstruct = config.get("general", "tconstruct", true, "Enable mod integration with Tinker's Construct (Only works if the mod is installed)").getBoolean();
             futuremc = config.get("general", "futuremc", true, "Enable mod integration with FutureMC (Only works if the mod is installed)").getBoolean();
             tektopia = config.get("general", "tektopia", true, "Enable mod integration with Tektopia (Only works if the mod is installed)").getBoolean();
+            deeperDepths = config.get("general", "deeperDepths", true, "Enable mod integration with Deeper Depths (Only works if the mod is installed)").getBoolean();
         } catch (Exception e) {
         } finally {
             if (config.hasChanged()) config.save();

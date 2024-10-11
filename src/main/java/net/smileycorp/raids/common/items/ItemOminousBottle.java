@@ -25,6 +25,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
+import net.smileycorp.raids.integration.ModIntegration;
+import net.smileycorp.raids.integration.deeperdepths.DeeperDepthsIntegration;
 
 import java.util.List;
 
@@ -87,7 +89,8 @@ public class ItemOminousBottle extends Item {
     }
     
     public static ItemStack createStack(int amplifier) {
-        ItemStack stack = new ItemStack(RaidsContent.OMINOUS_BOTTLE, 1, amplifier);
+        ItemStack stack = new ItemStack(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getOminousBottle() :
+                RaidsContent.OMINOUS_BOTTLE, 1, amplifier);
         return stack;
     }
     

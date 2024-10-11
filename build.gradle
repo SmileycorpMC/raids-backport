@@ -88,6 +88,7 @@ dependencies {
 	implementation "curse.maven:spartan-weaponry-278141:4467344"
     implementation "curse.maven:tektopia-333029:2763046"
     implementation "curse.maven:gamestages-268655:2951840"
+    implementation "curse.maven:deeperdepths-1101129:5753202"
     implementation "maven.modrinth:crossbow:1.1.0"
 }
 

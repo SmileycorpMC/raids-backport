@@ -7,7 +7,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.smileycorp.raids.client.ClientHandler;
-import net.smileycorp.raids.client.ClientProxy;
 
 public class RaidSoundMessage implements IMessage {
 	
