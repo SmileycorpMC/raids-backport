@@ -27,11 +27,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
-import net.minecraft.world.storage.loot.LootEntryItem;
-import net.minecraft.world.storage.loot.LootPool;
-import net.minecraft.world.storage.loot.LootTable;
-import net.minecraft.world.storage.loot.RandomValueRange;
+import net.minecraft.world.storage.loot.*;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraft.world.storage.loot.conditions.RandomChance;
 import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraft.world.storage.loot.functions.SetMetadata;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -50,6 +48,7 @@ import net.smileycorp.raids.common.raid.*;
 import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.common.util.accessors.ILootPool;
 import net.smileycorp.raids.common.world.MapGenOutpost;
+import net.smileycorp.raids.config.MansionConfig;
 import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.integration.ModIntegration;
@@ -250,6 +249,20 @@ public class RaidsEventHandler {
 			if (ModIntegration.TINKERS_LOADED && OutpostConfig.tinkersConstructCrossbows) TinkersConstructIntegration.addLoot(table);
 			LootPool crossbowPool = table.getPool("raids:outpost_crossbow");
 			if (((ILootPool)crossbowPool).isEmpty()) crossbowPool.addEntry(new LootEntryItem(Items.BOW, 1, 1, new LootFunction[0], new LootCondition[0], "raids:bow"));
+		}
+		if (LootTableList.CHESTS_WOODLAND_MANSION.equals(event.getName())) {
+			LootTable table =  event.getTable();
+			if (RaidConfig.ominousBottles && MansionConfig.ominousBottles) {
+				if (table.pools.size() >= 3) table.pools.get(2).addEntry(new LootEntryItem(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getOminousBottle() :
+						RaidsContent.OMINOUS_BOTTLE, 6, 1, new LootFunction[] {new SetMetadata(new LootCondition[0], new RandomValueRange(2, 4))},
+						new LootCondition[0], "raids:ominous_bottle"));
+			}
+			if (RaidConfig.ominousBottles && MansionConfig.superOminousBottles) {
+				event.getTable().addPool(new LootPool(new LootEntry[]{new LootEntryItem(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getOminousBottle() :
+						RaidsContent.OMINOUS_BOTTLE, 1, 1, new LootFunction[] {new SetMetadata(new LootCondition[0], new RandomValueRange(5, 7))},
+						new LootCondition[0], "raids:ominous_bottle")}, new LootCondition[]{new RandomChance(0.25f)},
+						new RandomValueRange(1), new RandomValueRange(0), "raids:super_ominous_bottle"));
+			}
 		}
 	}
 	

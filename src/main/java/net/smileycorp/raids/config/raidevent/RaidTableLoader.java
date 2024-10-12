@@ -11,7 +11,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.smileycorp.raids.common.Constants;
-import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.RaidContext;
@@ -30,7 +29,7 @@ public class RaidTableLoader {
     public static RaidTableLoader INSTANCE;
     private final File directory;
     private final TreeSet<RaidSpawnTable> tables = Sets.newTreeSet(RaidSpawnTable::sort);
-    private RaidSpawnTable default_table = getDefaultTable();
+    private RaidSpawnTable default_table;
     
     public static void init(FMLPreInitializationEvent event) {
         INSTANCE = new RaidTableLoader(new File(event.getModConfigurationDirectory().getPath() + "/raids/raid_tables"));
@@ -43,7 +42,9 @@ public class RaidTableLoader {
             directory.mkdirs();
             File file = new File(directory, "default.json");
             try {
-                FileUtils.copyInputStreamToFile(RaidTableLoader.class.getResourceAsStream("/config-defaults/default.json"), file);
+                FileUtils.copyInputStreamToFile(RaidTableLoader.class.getResourceAsStream("/config-defaults/raid_tables/default.json"), file);
+                FileUtils.copyInputStreamToFile(RaidTableLoader.class.getResourceAsStream("/config-defaults/raid_tables/advanced.json"),
+                        new File(directory, "advanced.json"));
             } catch (Exception e) {
                 RaidsLogger.logError("Failed generating default raid table", e);
             }
@@ -97,6 +98,7 @@ public class RaidTableLoader {
     }
     
     public RaidSpawnTable getDefaultTable() {
+        if (default_table != null) return default_table;
         List<RaidEntry> entries = Lists.newArrayList();
         try {
             entries.add(new RaidEntry(Constants.loc("pillager"), null, new int[]{4, 3, 3, 4, 4, 4, 2}, null, null));
@@ -107,9 +109,9 @@ public class RaidTableLoader {
             entries.add(new RaidEntry(Constants.loc("ravager"), null, new int[]{0, 1, 0, 0, 0, 0, 2}, ctx -> {
                 Raid raid = ctx.getRaid();
                 int i = raid.getGroupsSpawned() + 1;
-                if (i == raid.getNumGroups(EnumDifficulty.NORMAL)) return Constants.loc("pillager");
+                if (i == raid.getNumGroups(EnumDifficulty.NORMAL)) return Constants.locStr("pillager");
                 if (i >= raid.getNumGroups(EnumDifficulty.HARD))
-                    return ctx.getNumSpawned(EntityEvoker.class) > 0 ? new ResourceLocation("vindication_illager") : new ResourceLocation("evocation_illager");
+                    return ctx.getNumSpawned(EntityEvoker.class) > 0 ? "vindication_illager" : "evocation_illager";
                 return null;
             }, ctx -> ctx.getDifficulty() != EnumDifficulty.EASY && ctx.isBonusWave() ? 1 : 0));
             
@@ -120,7 +122,8 @@ public class RaidTableLoader {
         } catch (Exception e) {
             RaidsLogger.logError("Failed adding default entries", e);
         }
-        return new RaidSpawnTable("default", entries, Lists.newArrayList(), RaidsSoundEvents.RAID_HORN);
+        default_table = new RaidSpawnTable("default", entries, Lists.newArrayList(), RaidsSoundEvents.RAID_HORN);
+        return default_table;
     }
     
 }

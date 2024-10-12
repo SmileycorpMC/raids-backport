@@ -84,7 +84,7 @@ public class Raid {
 		raidEvent.setPercent(0.0F);
 		numGroups = getNumGroups(world.getDifficulty());
 		status = Status.ONGOING;
-		RaidsLogger.logInfo("Starting raid id" + id + "  with table " + table + " at " + center + " and " + numGroups + " waves ");
+		RaidsLogger.logInfo("Starting raid id " + id + "  with table " + table.getName() + " at " + center + " and " + numGroups + " waves ");
 	}
 	
 	public Raid(WorldServer world, NBTTagCompound nbt) {
@@ -166,7 +166,7 @@ public class Raid {
 	}
 	
 	public int getMaxBadOmenLevel() {
-		return 5;
+		return 8;
 	}
 	
 	public int getBadOmenLevel() {
@@ -179,8 +179,10 @@ public class Raid {
 	
 	public void absorbBadOmen(EntityPlayerMP player) {
 		if ((player.isPotionActive(RaidsContent.BAD_OMEN) &! RaidConfig.ominousBottles) || (player.isPotionActive(RaidsContent.RAID_OMEN) && RaidConfig.ominousBottles)) {
-			badOmenLevel += player.getActivePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN).getAmplifier() + 1;
-			badOmenLevel = MathUtils.clamp(badOmenLevel, 0, getMaxBadOmenLevel());
+			int level = player.getActivePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN).getAmplifier() + 1;
+			if (level > 5) badOmenLevel = level;
+			else badOmenLevel += MathUtils.clamp(level,
+					0, Math.max(0, getMaxBadOmenLevel() - badOmenLevel));
 		}
 		player.removePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN);
 	}

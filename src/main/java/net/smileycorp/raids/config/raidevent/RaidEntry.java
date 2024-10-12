@@ -36,7 +36,7 @@ public class RaidEntry {
     
     public RaidEntry(ResourceLocation entity, @Nullable Value<String> nbt, int[] count, @Nullable Value<String> rider, @Nullable Value<Integer> bonusSpawns) throws Exception {
         EntityEntry entry = GameData.getEntityRegistry().getValue(entity);
-        if (entry == null) throw new Exception("Entry is null ");
+        if (entry == null) throw new Exception("Entry is null for entity " + entity);
         if (!EntityLiving.class.isAssignableFrom(entry.getEntityClass())) throw new Exception(entity + " is not an instanceof EntityLiving");
         RaidHandler.addRaider((Class<? extends EntityLiving>) entry.getEntityClass());
         this.entity = entity;
@@ -68,6 +68,7 @@ public class RaidEntry {
         try {
             nbt = JsonToNBT.getTagFromJson(this.nbt.get(ctx));
         } catch (Exception e) {
+            RaidsLogger.logError("Failed loading nbt for " + this, e);
             nbt = new NBTTagCompound();
         }
         nbt.setString("id", entity.toString());

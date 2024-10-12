@@ -34,6 +34,10 @@ public class Constants {
 		return new ResourceLocation(MODID, name.toLowerCase());
 	}
     
+    public static String locStr(String name) {
+        return MODID + ":" + name.toLowerCase();
+    }
+    
     public static ItemStack ominousBanner() {
         NBTTagList patterns = new NBTTagList();
         String[] shapes = {"mr", "bs", "cs", "ms", "hh", "mc", "bo"};

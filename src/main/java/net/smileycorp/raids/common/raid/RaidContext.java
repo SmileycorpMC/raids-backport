@@ -2,9 +2,12 @@ package net.smileycorp.raids.common.raid;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.WorldServer;
+import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.config.RaidConfig;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -18,6 +21,7 @@ public class RaidContext {
     private final BlockPos pos;
     private final EntityPlayerMP player;
     private final int wave;
+    private final int omenLevel;
     private final boolean isBonusWave;
     private final Map<Class<? extends EntityLiving>, Integer> numSpawned;
     
@@ -28,6 +32,7 @@ public class RaidContext {
         pos = builder.pos;
         player = builder.player;
         wave = builder.wave;
+        omenLevel = builder.omenLevel;
         isBonusWave = builder.isBonusWave;
         numSpawned = builder.numSpawned;
     }
@@ -56,6 +61,10 @@ public class RaidContext {
         return wave;
     }
     
+    public int getOmenLevel() {
+        return omenLevel;
+    }
+    
     public boolean isBonusWave() {
         return isBonusWave;
     }
@@ -68,7 +77,6 @@ public class RaidContext {
         return world.getDifficulty();
     }
     
-    
     public static class Builder {
     
         private final WorldServer world;
@@ -77,6 +85,7 @@ public class RaidContext {
         private BlockPos pos;
         private EntityPlayerMP player;
         private int wave;
+        private int omenLevel;
         private boolean isBonusWave;
         private Map<Class<? extends EntityLiving>, Integer> numSpawned;
     
@@ -84,6 +93,7 @@ public class RaidContext {
             this.world =  world;
             this.rand = rand;
             this.raid = raid;
+            if (raid != null) omenLevel = raid.getBadOmenLevel();
         }
         
         public static Builder of(WorldServer world, Random rand) {
@@ -101,6 +111,10 @@ public class RaidContext {
     
         public Builder player(EntityPlayerMP player) {
             this.player = player;
+            if (player != null) {
+                PotionEffect effect = player.getActivePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN);
+                if (effect != null) omenLevel = effect.getAmplifier() + 1;
+            }
             return this;
         }
     
