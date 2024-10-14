@@ -18,12 +18,20 @@ public class PatrolConfig {
 
     private static Map.Entry<Integer, List<Map.Entry<Class<? extends EntityLiving>, Integer>>> spawnEntities;
     private static String[] spawnEntitiesStr;
+    public static int patrolMinTime;
+    public static int patrolMaxDelay;
+    public static int patrolChance;
+    public static int dayLength;
     
     public static void syncConfig(FMLPreInitializationEvent event) {
         Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/patrols.cfg"));
         try{
             config.load();
             spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-1"}, "Which entities should spawn in patrols? (format is registry name-spawn weight, weight is a positive integer)").getStringList();
+            patrolMinTime = config.get("general", "patrolMinTime", 12000, "Minimum time before the game attempts to spawn patrols per session.").getInt();
+            patrolMaxDelay = config.get("general", "patrolMaxDelay", 12000, "Max delay the game can wait to attempt spawn a patrol.").getInt();
+            patrolChance = config.get("general", "patrolChance", 5, "Chance for a patrol to spawn").getInt();
+            dayLength = config.get("general", "dayLength", 24000, "How many ticks are days? (Change if you have a mod that changes this)").getInt();
         } catch(Exception e) {
         } finally {
             if (config.hasChanged()) config.save();
