@@ -1,6 +1,7 @@
 package net.smileycorp.raids.common.potion;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -57,23 +58,31 @@ public class RaidOmenPotion extends RaidsPotion {
     @SideOnly(Side.CLIENT)
     @Override
     protected void renderEffect(PotionEffect effect, int x, int y, float alpha) {
-        if (effect.getAmplifier() > 4) {
-            GlStateManager.pushMatrix();
-            GlStateManager.color(1, 1, 1, alpha);
-            Minecraft mc = Minecraft.getMinecraft();
-            TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_1");
-            mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder buffer = tessellator.getBuffer();
-            buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-            buffer.pos(x + 1, y + 12, 0).tex(sprite.getMinU(), sprite.getMaxV()).endVertex();
-            buffer.pos(x + 17, y + 12, 0).tex(sprite.getMaxU(), sprite.getMaxV()).endVertex();
-            buffer.pos(x + 17, y - 4, 0).tex(sprite.getMaxU(), sprite.getMinV()).endVertex();
-            buffer.pos(x + 1, y - 4, 0).tex(sprite.getMinU(), sprite.getMinV()).endVertex();
-            tessellator.draw();
-            GlStateManager.popMatrix();
-        }
-        super.renderEffect(effect, x, y, alpha);
+        if (effect.getAmplifier() <= 4) super.renderEffect(effect, x, y, alpha);
+        GlStateManager.pushMatrix();
+        GlStateManager.color(1, 1, 1, alpha);
+        Minecraft mc = Minecraft.getMinecraft();
+        TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_1");
+        mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        buffer.pos(x + 1, y + 12, 0).tex(sprite.getMinU(), sprite.getMaxV()).endVertex();
+        buffer.pos(x + 17, y + 12, 0).tex(sprite.getMaxU(), sprite.getMaxV()).endVertex();
+        buffer.pos(x + 17, y - 4, 0).tex(sprite.getMaxU(), sprite.getMinV()).endVertex();
+        buffer.pos(x + 1, y - 4, 0).tex(sprite.getMinU(), sprite.getMinV()).endVertex();
+        tessellator.draw();
+        GlStateManager.popMatrix();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x + 9, y + 9, 0);
+        float t = (float) Math.sin((float) mc.player.ticksExisted / 10f);
+        float t2 = (float) Math.sin((float) mc.player.ticksExisted / 5f);
+        GlStateManager.scale( 0.95 + 0.05 * t2,0.95 - 0.05 * t2, 1);
+        GlStateManager.rotate(2 * t, 0, 0 , 1);
+        GlStateManager.color(1, 1, 1, alpha);
+        Minecraft.getMinecraft().renderEngine.bindTexture(getTexture(effect));
+        Gui.drawScaledCustomSizeModalRect(-9, -9, 0, 0 , 18, 18, 18, 18, 18, 18);
+        GlStateManager.popMatrix();
     }
     
 }
