@@ -1,12 +1,18 @@
 package net.smileycorp.raids.client.particle;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class ParticleVibration extends Particle {
     
     public static TextureAtlasSprite SPRITE;
+    private final Vec3d start, end;
     
     public ParticleVibration(World world, double x, double y, double z, double targetX, double targetY, double targetZ) {
         super(world, x, y, z, 0, 0, 0);
@@ -15,7 +21,8 @@ public class ParticleVibration extends Particle {
         this.motionX = (targetX - x) * 0.05;
         this.motionY = (targetY - y) * 0.05;
         this.motionZ = (targetZ - z) * 0.05;
-        prevParticleAngle = particleAngle = (float) Math.atan2(targetX, targetZ);
+        start = new Vec3d(x, y, z);
+        end = new Vec3d(targetX, targetY, targetZ);
         canCollide = false;
         particleTexture = SPRITE;
         particleTextureJitterX = 0;
@@ -28,6 +35,29 @@ public class ParticleVibration extends Particle {
     @Override
     public int getFXLayer() {
         return 1;
+    }
+    
+    @Override
+    public void renderParticle(BufferBuilder buffer, Entity entity, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        Minecraft mc = Minecraft.getMinecraft();
+        float fov = mc.entityRenderer.getFOVModifier(partialTicks, true);
+        Vec3d pos = entity.getPositionEyes(partialTicks);
+        float yaw = entity.rotationYaw + (entity.prevRotationYaw - entity.rotationYaw) * partialTicks;
+        float pitch = entity.rotationPitch + (entity.prevRotationPitch - entity.rotationPitch) * partialTicks;
+        Vec2f start = getProjectedPos(this.start, pos, yaw, pitch, mc.displayWidth, mc.displayHeight, fov);
+        Vec2f end = getProjectedPos(this.end, pos, yaw, pitch, mc.displayWidth, mc.displayHeight, fov);
+        particleAngle = (float) Math.atan2(end.y - start.y, end.x - start.x) + 1.570796f;
+        prevParticleAngle = particleAngle;
+        super.renderParticle(buffer, entity, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+    }
+    
+    public static Vec2f getProjectedPos(Vec3d pos, Vec3d cameraPos, float yaw, float pitch, int screenWidth, int screenHeight, float fov) {
+        double scaledFov = Math.tan(Math.toRadians(fov) / 2f);
+        double aspectRatio = (double) screenWidth / (double) screenHeight;
+        pos = pos.subtract(cameraPos);
+        pos.rotateYaw(-yaw);
+        pos.rotatePitch(-pitch);
+        return new Vec2f((float) (pos.x / (-pos.z * scaledFov)) * screenWidth, (float) ((pos.y * aspectRatio) / (-pos.z * scaledFov)) * screenHeight);
     }
     
 }
