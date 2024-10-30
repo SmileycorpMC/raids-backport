@@ -1,8 +1,8 @@
 package net.smileycorp.raids.config.raidevent.conditions;
 
 import com.google.gson.JsonObject;
-import net.smileycorp.raids.common.data.ComparableOperation;
-import net.smileycorp.raids.common.data.DataType;
+import net.smileycorp.atlas.api.data.ComparableOperation;
+import net.smileycorp.atlas.api.data.DataType;
 import net.smileycorp.raids.common.raid.RaidContext;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.raidevent.values.Value;

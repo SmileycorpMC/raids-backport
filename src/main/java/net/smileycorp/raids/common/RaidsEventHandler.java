@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.EnumDifficulty;
@@ -45,7 +46,6 @@ import net.smileycorp.raids.common.entities.ai.EntityAIGiveGift;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.raid.*;
-import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.common.util.accessors.ILootPool;
 import net.smileycorp.raids.common.world.MapGenOutpost;
 import net.smileycorp.raids.config.MansionConfig;
@@ -138,7 +138,7 @@ public class RaidsEventHandler {
 						int i = 1;
 						if (effect != null) i += effect.getAmplifier();
 						else i--;
-						i = MathUtils.clamp(i, 0, 4);
+						i = MathHelper.clamp(i, 0, 4);
 						player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000, i, false, true));
 					}
 					if (player instanceof EntityPlayerMP) RaidsContent.VOLUNTARY_EXILE.trigger((EntityPlayerMP) player);

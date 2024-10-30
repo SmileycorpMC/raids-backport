@@ -3,10 +3,10 @@ package net.smileycorp.raids.config.raidevent.values;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.smileycorp.raids.common.data.DataType;
+import net.smileycorp.atlas.api.data.DataType;
+import net.smileycorp.atlas.api.recipe.WeightedOutputs;
 import net.smileycorp.raids.common.raid.RaidContext;
 import net.smileycorp.raids.common.util.RaidsLogger;
-import net.smileycorp.raids.common.util.WeightedOutputs;
 
 import java.util.Map;
 

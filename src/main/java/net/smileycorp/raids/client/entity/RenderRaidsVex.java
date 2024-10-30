@@ -17,7 +17,7 @@ public class RenderRaidsVex extends RenderLiving<EntityVex> {
     private static final ResourceLocation ANGRY_TEXTURE = Constants.loc("textures/entity/illager/vex_charging.png");
     
     public RenderRaidsVex(RenderManager rm) {
-        super(rm, new ModelRaidsVex(), 0.3F);
+        super(rm, new ModelRaidsVex(), 0.3f);
         addLayer(new LayerHeldItemVex(this));
     }
     
@@ -28,7 +28,7 @@ public class RenderRaidsVex extends RenderLiving<EntityVex> {
     
     @Override
     public void doRender(EntityVex vex, double x, double y, double z, float yaw, float pt) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1, 1, 1, 1);
         GlStateManager.enableNormalize();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

@@ -3,9 +3,9 @@ package net.smileycorp.raids.config.raidevent.values;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.smileycorp.raids.common.data.BinaryOperation;
-import net.smileycorp.raids.common.data.DataType;
-import net.smileycorp.raids.common.data.UnaryOperation;
+import net.smileycorp.atlas.api.data.BinaryOperation;
+import net.smileycorp.atlas.api.data.DataType;
+import net.smileycorp.atlas.api.data.UnaryOperation;
 import net.smileycorp.raids.common.util.RaidsLogger;
 
 import java.util.Map;

@@ -1,7 +1,7 @@
 package net.smileycorp.raids.config.raidevent.values;
 
 import com.google.gson.JsonObject;
-import net.smileycorp.raids.common.data.DataType;
+import net.smileycorp.atlas.api.data.DataType;
 import net.smileycorp.raids.common.raid.RaidContext;
 
 public interface Value<T extends Comparable<T>> {

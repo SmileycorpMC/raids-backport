@@ -24,14 +24,14 @@ public class RenderRaidsVindicator extends RenderLiving<EntityMob> {
     private static final ResourceLocation UPGRADED_2 = Constants.loc("textures/entity/illager/vindicator_upgraded2.png");
     
     public RenderRaidsVindicator(RenderManager rm) {
-        super(rm, new ModelVindicator(), 0.5F);
+        super(rm, new ModelVindicator(), 0.5f);
         addLayer(new LayerHeldItem(this) {
             public void doRenderLayer(EntityLivingBase entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
                 if (!((EntityVindicator)entity).isAggressive()) return;
                 super.doRenderLayer(entity, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
             }
             protected void translateToHand(EnumHandSide hand) {
-                ((ModelIllager)livingEntityRenderer.getMainModel()).getArm(hand).postRender(0.0625F);
+                ((ModelIllager)livingEntityRenderer.getMainModel()).getArm(hand).postRender(0.0625f);
             }
         });
         addLayer(new LayerCustomHead(((ModelIllager)getMainModel()).head));
@@ -46,7 +46,7 @@ public class RenderRaidsVindicator extends RenderLiving<EntityMob> {
     
     @Override
     protected void preRenderCallback(EntityMob entity, float partialTicks) {
-        GlStateManager.scale(0.9375F, 0.9375F, 0.9375F);
+        GlStateManager.scale(0.9375f, 0.9375f, 0.9375f);
     }
     
 }

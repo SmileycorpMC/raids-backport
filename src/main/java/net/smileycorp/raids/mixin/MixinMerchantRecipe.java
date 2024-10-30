@@ -3,11 +3,11 @@ package net.smileycorp.raids.mixin;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
-import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.futuremc.FutureMCClientIntegration;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,7 +31,7 @@ public class MixinMerchantRecipe implements ITradeDiscount {
     
     @Override
     public void setDiscountedPrice(int price) {
-        discountedPrice = MathUtils.clamp(price, 0, 64);
+        discountedPrice = MathHelper.clamp(price, 0, 64);
     }
     
     @Override

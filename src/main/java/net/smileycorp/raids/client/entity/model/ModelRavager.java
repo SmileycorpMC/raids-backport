@@ -5,8 +5,8 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.MathHelper;
+import net.smileycorp.atlas.api.util.MathUtils;
 import net.smileycorp.raids.common.entities.EntityRavager;
-import net.smileycorp.raids.common.util.MathUtils;
 
 public class ModelRavager extends ModelBase {
     
@@ -22,49 +22,47 @@ public class ModelRavager extends ModelBase {
     public ModelRavager() {
         textureWidth = 128;
         textureHeight = 128;
-        int i = 16;
-        float f = 0.0F;
         neck = new ModelRenderer(this).setTextureSize(textureWidth, textureHeight);
-        neck.setRotationPoint(0.0F, -7.0F, -1.5F);
-        neck.setTextureOffset(68, 73).addBox(-5.0F, -1.0F, -18.0F, 10, 10, 18, 0.0F);
+        neck.setRotationPoint(0, -7, -1.5f);
+        neck.setTextureOffset(68, 73).addBox(-5, -1, -18, 10, 10, 18, 0);
         head = new ModelRenderer(this).setTextureSize(textureWidth, textureHeight);
-        head.setRotationPoint(0.0F, 16.0F, -17.0F);
-        head.setTextureOffset(0, 0).addBox(-8.0F, -20.0F, -14.0F, 16, 20, 16, 0.0F);
-        head.setTextureOffset(0, 0).addBox(-2.0F, -6.0F, -18.0F, 4, 8, 4, 0.0F);
+        head.setRotationPoint(0, 16, -17);
+        head.setTextureOffset(0, 0).addBox(-8, -20, -14, 16, 20, 16, 0);
+        head.setTextureOffset(0, 0).addBox(-2, -6, -18, 4, 8, 4, 0);
         ModelRenderer modelrenderer = new ModelRenderer(this).setTextureSize(textureWidth, textureHeight);
-        modelrenderer.setRotationPoint(-10.0F, -14.0F, -8.0F);
-        modelrenderer.setTextureOffset(74, 55).addBox(0.0F, -14.0F, -2.0F, 2, 14, 4, 0.0F);
-        modelrenderer.rotateAngleX = 1.0995574F;
+        modelrenderer.setRotationPoint(-10, -14, -8);
+        modelrenderer.setTextureOffset(74, 55).addBox(0, -14, -2, 2, 14, 4, 0);
+        modelrenderer.rotateAngleX = 1.0995574f;
         head.addChild(modelrenderer);
         ModelRenderer modelrenderer1 = new ModelRenderer(this).setTextureSize(textureWidth, textureHeight);
         modelrenderer1.mirror = true;
-        modelrenderer1.setRotationPoint(8.0F, -14.0F, -8.0F);
-        modelrenderer1.setTextureOffset(74, 55).addBox(0.0F, -14.0F, -2.0F, 2, 14, 4, 0.0F);
-        modelrenderer1.rotateAngleX = 1.0995574F;
+        modelrenderer1.setRotationPoint(8, -14, -8);
+        modelrenderer1.setTextureOffset(74, 55).addBox(0, -14, -2, 2, 14, 4, 0);
+        modelrenderer1.rotateAngleX = 1.0995574f;
         head.addChild(modelrenderer1);
         mouth = new ModelRenderer(this).setTextureSize(textureWidth, textureHeight);
-        mouth.setRotationPoint(0.0F, -2.0F, 2.0F);
-        mouth.setTextureOffset(0, 36).addBox(-8.0F, 0.0F, -16.0F, 16, 3, 16, 0.0F);
+        mouth.setRotationPoint(0, -2, 2);
+        mouth.setTextureOffset(0, 36).addBox(-8, 0, -16, 16, 3, 16, 0);
         head.addChild(mouth);
         neck.addChild(head);
         body = new ModelRenderer(this).setTextureSize(textureWidth, textureHeight);
-        body.setTextureOffset(0, 55).addBox(-7.0F, -10.0F, -7.0F, 14, 16, 20, 0.0F);
-        body.setTextureOffset(0, 91).addBox(-6.0F, 6.0F, -7.0F, 12, 13, 18, 0.0F);
-        body.setRotationPoint(0.0F, 1.0F, 2.0F);
+        body.setTextureOffset(0, 55).addBox(-7, -10, -7, 14, 16, 20, 0);
+        body.setTextureOffset(0, 91).addBox(-6, 6, -7, 12, 13, 18, 0);
+        body.setRotationPoint(0, 1, 2);
         leg0 = new ModelRenderer(this, 96, 0);
-        leg0.addBox(-4.0F, 0.0F, -4.0F, 8, 37, 8, 0.0F);
-        leg0.setRotationPoint(-8.0F, -13.0F, 18.0F);
+        leg0.addBox(-4, 0, -4, 8, 37, 8, 0);
+        leg0.setRotationPoint(-8, -13, 18);
         leg1 = new ModelRenderer(this, 96, 0);
         leg1.mirror = true;
-        leg1.addBox(-4.0F, 0.0F, -4.0F, 8, 37, 8, 0.0F);
-        leg1.setRotationPoint(8.0F, -13.0F, 18.0F);
+        leg1.addBox(-4, 0, -4, 8, 37, 8, 0);
+        leg1.setRotationPoint(8, -13, 18);
         leg2 = new ModelRenderer(this, 64, 0);
-        leg2.addBox(-4.0F, 0.0F, -4.0F, 8, 37, 8, 0.0F);
-        leg2.setRotationPoint(-8.0F, -13.0F, -5.0F);
+        leg2.addBox(-4, 0, -4, 8, 37, 8, 0);
+        leg2.setRotationPoint(-8, -13, -5);
         leg3 = new ModelRenderer(this, 64, 0);
         leg3.mirror = true;
-        leg3.addBox(-4.0F, 0.0F, -4.0F, 8, 37, 8, 0.0F);
-        leg3.setRotationPoint(8.0F, -13.0F, -5.0F);
+        leg3.addBox(-4, 0, -4, 8, 37, 8, 0);
+        leg3.setRotationPoint(8, -13, -5);
     }
     
     @Override
@@ -78,15 +76,15 @@ public class ModelRavager extends ModelBase {
     }
     
     @Override
-    public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entity) {
-        head.rotateAngleX = headPitch * ((float)Math.PI / 180F);
-        head.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F);
-        body.rotateAngleX = ((float)Math.PI / 2F);
-        float f = 0.4F * limbSwingAmount;
-        leg0.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * f;
-        leg1.rotateAngleX = MathHelper.cos(limbSwing* 0.6662F + (float)Math.PI) * f;
-        leg2.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * f;
-        leg3.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * f;
+    public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scalefactor, Entity entity) {
+        head.rotateAngleX = headPitch * ((float)Math.PI / 180f);
+        head.rotateAngleY = netHeadYaw * ((float)Math.PI / 180f);
+        body.rotateAngleX = ((float)Math.PI / 2f);
+        float f = 0.4f * limbSwingAmount;
+        leg0.rotateAngleX = MathHelper.cos(limbSwing * 0.6662f) * f;
+        leg1.rotateAngleX = MathHelper.cos(limbSwing* 0.6662f + (float)Math.PI) * f;
+        leg2.rotateAngleX = MathHelper.cos(limbSwing * 0.6662f + (float)Math.PI) * f;
+        leg3.rotateAngleX = MathHelper.cos(limbSwing * 0.6662f) * f;
     }
     
     @Override
@@ -98,28 +96,28 @@ public class ModelRavager extends ModelBase {
         int j = ravager.getRoarTick();
         int l = ravager.getAttackTick();
         if (l > 0) {
-            float f = MathUtils.wrap((float) l - partialTicks, 10.0F);
-            float f1 = (1.0F + f) * 0.5F;
-            float f2 = f1 * f1 * f1 * 12.0F;
+            float f = MathUtils.wrap((float) l - partialTicks, 10);
+            float f1 = (1 + f) * 0.5f;
+            float f2 = f1 * f1 * f1 * 12;
             float f3 = f2 * MathHelper.sin(neck.rotateAngleX);
-            neck.rotationPointZ = -6.5F + f2;
-            neck.rotationPointY = -7.0F - f3;
-            if (l > 5) mouth.rotateAngleX = MathHelper.sin(((float) (-4 + l) - partialTicks) / 4.0F) * (float) Math.PI * 0.4F;
-            else mouth.rotateAngleX = 0.15707964F * MathHelper.sin((float) Math.PI * ((float) l - partialTicks) / 10.0F);
+            neck.rotationPointZ = -6.5f + f2;
+            neck.rotationPointY = -7 - f3;
+            if (l > 5) mouth.rotateAngleX = MathHelper.sin(((float) (-4 + l) - partialTicks) / 4) * (float) Math.PI * 0.4f;
+            else mouth.rotateAngleX = 0.15707964f * MathHelper.sin((float) Math.PI * ((float) l - partialTicks) / 10);
         } else {
-            float f6 = -1.0F * MathHelper.sin(neck.rotateAngleX);
-            neck.rotationPointX = 0.0F;
-            neck.rotationPointY = -7.0F - f6;
-            neck.rotationPointZ = 5.5F;
+            float f6 = -1 * MathHelper.sin(neck.rotateAngleX);
+            neck.rotationPointX = 0;
+            neck.rotationPointY = -7 - f6;
+            neck.rotationPointZ = 5.5f;
             boolean flag = i > 0;
-            neck.rotateAngleX = flag ? 0.21991149F : 0.0F;
-            mouth.rotateAngleX = (float) Math.PI * (flag ? 0.05F : 0.01F);
+            neck.rotateAngleX = flag ? 0.21991149f : 0;
+            mouth.rotateAngleX = (float) Math.PI * (flag ? 0.05f : 0.01f);
             if (flag) {
                 double d0 = (double) i / 40.0D;
-                neck.rotationPointX = (float) Math.sin(d0 * 10.0D) * 3.0F;
+                neck.rotationPointX = (float) Math.sin(d0 * 10.0D) * 3;
             } else if (j > 0) {
-                float f7 = MathHelper.sin(((float) (20 - j) - partialTicks) / 20.0F * (float) Math.PI * 0.25F);
-                mouth.rotateAngleX = ((float) Math.PI / 2F) * f7;
+                float f7 = MathHelper.sin(((float) (20 - j) - partialTicks) / 20 * (float) Math.PI * 0.25f);
+                mouth.rotateAngleX = ((float) Math.PI / 2f) * f7;
             }
         }
     }

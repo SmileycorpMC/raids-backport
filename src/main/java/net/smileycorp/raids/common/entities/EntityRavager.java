@@ -25,11 +25,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.smileycorp.atlas.api.util.MathUtils;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.EntityAIRavagerAttackMelee;
 import net.smileycorp.raids.common.raid.RaidHandler;
-import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.config.EntityConfig;
 
 import java.util.List;

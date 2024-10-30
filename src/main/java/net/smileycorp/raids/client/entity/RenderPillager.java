@@ -22,10 +22,10 @@ public class RenderPillager extends RenderLiving<EntityMob> {
     private static final ResourceLocation UPGRADED_2 = Constants.loc("textures/entity/illager/pillager_upgraded2.png");
 
     public RenderPillager(RenderManager rm) {
-        super(rm, new ModelPillager(), 0.5F);
+        super(rm, new ModelPillager(), 0.5f);
         addLayer(new LayerHeldItem(this) {
 			protected void translateToHand(EnumHandSide hand) {
-                ((ModelIllager)livingEntityRenderer.getMainModel()).getArm(hand).postRender(0.0625F);
+                ((ModelIllager)livingEntityRenderer.getMainModel()).getArm(hand).postRender(0.0625f);
             }
         });
         addLayer(new LayerCustomHead(((ModelPillager)getMainModel()).head));
@@ -40,7 +40,7 @@ public class RenderPillager extends RenderLiving<EntityMob> {
 
     @Override
 	protected void preRenderCallback(EntityMob entity, float partialTicks) {
-        GlStateManager.scale(0.9375F, 0.9375F, 0.9375F);
+        GlStateManager.scale(0.9375f, 0.9375f, 0.9375f);
     }
     
 }

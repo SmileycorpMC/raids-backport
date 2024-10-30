@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.smileycorp.raids.common.data.DataType;
+import net.smileycorp.atlas.api.data.DataType;
 import net.smileycorp.raids.common.raid.RaidContext;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.raidevent.values.Value;
