@@ -119,7 +119,10 @@ public interface Raider {
 					entity.tasks.addTask(4, new EntityAIMoveThroughVillage((EntityCreature) entity, 1, true));
 					entity.targetTasks.addTask(3, new EntityAINearestAttackableTarget((EntityCreature) entity, EntityVillager.class, true));
 					entity.targetTasks.addTask(3, new EntityAINearestAttackableTarget((EntityCreature) entity, EntityIronGolem.class, true));
-					if (ModIntegration.TEKTOPIA_LOADED) TektopiaIntegration.addTargetTask((EntityCreature) entity);
+					if (ModIntegration.TEKTOPIA_LOADED){
+						TektopiaIntegration.addTargetTask((EntityCreature) entity);
+						TektopiaIntegration.addMoveVillageTask((EntityCreature) entity);
+					}
 				}
 			}
 			if (nbt.hasKey("PatrolTarget")) setPatrolTarget(NBTUtil.getPosFromTag(nbt.getCompoundTag("PatrolTarget")));
