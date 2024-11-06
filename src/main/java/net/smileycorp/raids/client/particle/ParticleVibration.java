@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.smileycorp.atlas.api.util.DirectionUtils;
 
 public class ParticleVibration extends Particle {
     
@@ -44,20 +45,11 @@ public class ParticleVibration extends Particle {
         Vec3d pos = entity.getPositionEyes(partialTicks);
         float yaw = entity.rotationYaw + (entity.prevRotationYaw - entity.rotationYaw) * partialTicks;
         float pitch = entity.rotationPitch + (entity.prevRotationPitch - entity.rotationPitch) * partialTicks;
-        Vec2f start = getProjectedPos(this.start, pos, yaw, pitch, mc.displayWidth, mc.displayHeight, fov);
-        Vec2f end = getProjectedPos(this.end, pos, yaw, pitch, mc.displayWidth, mc.displayHeight, fov);
+        Vec2f start = DirectionUtils.getProjectedPos(this.start, pos, yaw, pitch, mc.displayWidth, mc.displayHeight, fov);
+        Vec2f end = DirectionUtils.getProjectedPos(this.end, pos, yaw, pitch, mc.displayWidth, mc.displayHeight, fov);
         particleAngle = (float) Math.atan2(end.y - start.y, end.x - start.x) + 1.570796f;
         prevParticleAngle = particleAngle;
         super.renderParticle(buffer, entity, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
-    }
-    
-    public static Vec2f getProjectedPos(Vec3d pos, Vec3d cameraPos, float yaw, float pitch, int screenWidth, int screenHeight, float fov) {
-        double scaledFov = Math.tan(Math.toRadians(fov) / 2f);
-        double aspectRatio = (double) screenWidth / (double) screenHeight;
-        pos = pos.subtract(cameraPos);
-        pos.rotateYaw(-yaw);
-        pos.rotatePitch(-pitch);
-        return new Vec2f((float) (pos.x / (-pos.z * scaledFov)) * screenWidth, (float) ((pos.y * aspectRatio) / (-pos.z * scaledFov)) * screenHeight);
     }
     
 }

@@ -3,7 +3,7 @@ package net.smileycorp.raids.config.raidevent.conditions;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import net.minecraftforge.fml.common.Loader;
-import net.smileycorp.raids.common.data.LogicalOperation;
+import net.smileycorp.atlas.api.data.LogicalOperation;
 import net.smileycorp.raids.common.util.RaidsLogger;
 
 import java.util.Map;

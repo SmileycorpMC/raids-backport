@@ -1,6 +1,6 @@
 package net.smileycorp.raids.config.raidevent.values;
 
-import net.smileycorp.raids.common.data.DataType;
+import net.smileycorp.atlas.api.data.DataType;
 import net.smileycorp.raids.common.raid.RaidContext;
 
 public class EmptyValue<T extends Comparable<T>> implements Value<T> {

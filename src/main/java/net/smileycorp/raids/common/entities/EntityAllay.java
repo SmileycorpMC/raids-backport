@@ -23,11 +23,17 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.smileycorp.atlas.api.entity.ai.EntityAIMoveRandomFlying;
+import net.smileycorp.atlas.api.entity.ai.FlyingMoveControl;
+import net.smileycorp.atlas.api.util.DirectionUtils;
+import net.smileycorp.atlas.api.util.MathUtils;
 import net.smileycorp.raids.common.RaidsSoundEvents;
-import net.smileycorp.raids.common.entities.ai.*;
-import net.smileycorp.raids.common.util.MathUtils;
+import net.smileycorp.raids.common.entities.ai.EntityAIAllayDeliverItem;
+import net.smileycorp.raids.common.entities.ai.EntityAIAllayPickupItem;
+import net.smileycorp.raids.common.entities.ai.EntityAIAllayStayNearTarget;
 import net.smileycorp.raids.config.EntityConfig;
 
 import javax.annotation.Nullable;
@@ -89,7 +95,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         super.onEntityUpdate();
         if (!world.isRemote |! isEntityAlive()) return;
         holdingItemAnimationTicks0 = holdingItemAnimationTicks;
-        holdingItemAnimationTicks = MathUtils.clamp(holdingItemAnimationTicks + (hasItemInSlot(EntityEquipmentSlot.MAINHAND) ? 1 : -1), 0, 5);
+        holdingItemAnimationTicks = MathHelper.clamp(holdingItemAnimationTicks + (hasItemInSlot(EntityEquipmentSlot.MAINHAND) ? 1 : -1), 0, 5);
     }
     
     @Override
@@ -195,7 +201,7 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     
     public Vec3d getWantedPos() {
         if (noteBlock != null) {
-            if (world.getBlockState(noteBlock).getBlock() == Blocks.NOTEBLOCK) return MathUtils.centerOf(noteBlock);
+            if (world.getBlockState(noteBlock).getBlock() == Blocks.NOTEBLOCK) return DirectionUtils.centerOf(noteBlock);
             noteBlock = null;
             noteBlockCooldown = 0;
         }

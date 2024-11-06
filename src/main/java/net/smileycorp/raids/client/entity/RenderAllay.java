@@ -27,7 +27,7 @@ public class RenderAllay extends RenderLiving<EntityAllay> {
     
     @Override
     public void doRender(EntityAllay allay, double x, double y, double z, float yaw, float pt) {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1, 1, 1, 1);
         GlStateManager.enableNormalize();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

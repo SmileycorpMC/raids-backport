@@ -3,7 +3,7 @@ package net.smileycorp.raids.config.raidevent.values;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.smileycorp.raids.common.data.DataType;
+import net.smileycorp.atlas.api.data.DataType;
 import net.smileycorp.raids.common.raid.RaidContext;
 
 public abstract class NBTValue<T extends Comparable<T>> implements Value<T> {

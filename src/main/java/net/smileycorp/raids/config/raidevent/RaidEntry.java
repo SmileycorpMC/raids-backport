@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.registries.GameData;
-import net.smileycorp.raids.common.data.DataType;
+import net.smileycorp.atlas.api.data.DataType;
 import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.RaidContext;
 import net.smileycorp.raids.common.raid.RaidHandler;

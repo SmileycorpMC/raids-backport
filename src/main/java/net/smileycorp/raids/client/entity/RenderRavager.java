@@ -12,7 +12,7 @@ public class RenderRavager extends RenderLiving<EntityRavager> {
 	private static final ResourceLocation texture = Constants.loc("textures/entity/illager/ravager.png");
 
     public RenderRavager(RenderManager rm) {
-        super(rm, new ModelRavager(), 1.1F);
+        super(rm, new ModelRavager(), 1.1f);
     }
     
     @Override

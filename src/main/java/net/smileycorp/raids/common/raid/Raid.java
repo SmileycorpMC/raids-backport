@@ -22,6 +22,7 @@ import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -32,7 +33,6 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
-import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.config.raidevent.RaidSpawnTable;
@@ -182,7 +182,7 @@ public class Raid {
 		if ((player.isPotionActive(RaidsContent.BAD_OMEN) &! RaidConfig.ominousBottles) || (player.isPotionActive(RaidsContent.RAID_OMEN) && RaidConfig.ominousBottles)) {
 			int level = player.getActivePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN).getAmplifier() + 1;
 			if (level > 5) badOmenLevel = level;
-			else badOmenLevel += MathUtils.clamp(level,
+			else badOmenLevel += MathHelper.clamp(level,
 					0, Math.max(0, getMaxBadOmenLevel() - badOmenLevel));
 		}
 		player.removePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN);
@@ -422,7 +422,7 @@ public class Raid {
 
 	public void updateBossbar() {
 		if (getTotalEntityLivingsAlive() <= 0 && hasMoreWaves() && raidCooldownTicks > 0) {
-			raidEvent.setPercent(MathUtils.clamp((float)(300 - raidCooldownTicks) / 300f, 0, 1));
+			raidEvent.setPercent(MathHelper.clamp((float)(300 - raidCooldownTicks) / 300f, 0, 1));
 			return;
 		}
 		Set toRemove = Sets.newHashSet();
@@ -433,7 +433,7 @@ public class Raid {
 			}
 			set.removeAll(toRemove);
 		}
-		raidEvent.setPercent(MathUtils.clamp(getHealthOfEntities() / totalHealth, 0, 1));
+		raidEvent.setPercent(MathHelper.clamp(getHealthOfEntities() / totalHealth, 0, 1));
 	}
 
 	public float getHealthOfEntities() {

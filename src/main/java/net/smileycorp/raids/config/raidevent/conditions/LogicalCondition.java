@@ -3,7 +3,7 @@ package net.smileycorp.raids.config.raidevent.conditions;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.smileycorp.raids.common.data.LogicalOperation;
+import net.smileycorp.atlas.api.data.LogicalOperation;
 import net.smileycorp.raids.common.raid.RaidContext;
 import net.smileycorp.raids.common.util.RaidsLogger;
 

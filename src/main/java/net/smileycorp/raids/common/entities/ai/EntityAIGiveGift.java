@@ -5,8 +5,8 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
+import net.smileycorp.atlas.api.util.DirectionUtils;
 import net.smileycorp.raids.common.RaidsContent;
-import net.smileycorp.raids.common.util.MathUtils;
 import net.smileycorp.raids.config.VillagerGiftsConfig;
 
 public class EntityAIGiveGift  extends EntityAIBase {
@@ -29,7 +29,7 @@ public class EntityAIGiveGift  extends EntityAIBase {
     @Override
     public void startExecuting() {
         ItemStack stack = VillagerGiftsConfig.INSTANCE.getGift(villager);
-        if (!stack.isEmpty()) MathUtils.throwItem(villager, stack, new Vec3d(hero.posX, hero.posY, hero.posZ));
+        if (!stack.isEmpty()) DirectionUtils.throwItem(villager, stack, new Vec3d(hero.posX, hero.posY, hero.posZ));
         cooldown = 600 + villager.getRNG().nextInt(6001);
         hero = null;
     }
