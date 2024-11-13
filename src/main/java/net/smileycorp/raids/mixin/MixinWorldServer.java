@@ -30,7 +30,7 @@ public abstract class MixinWorldServer extends World {
     @Inject(at = @At("HEAD"), method = "fireBlockEvent")
     public void raids$fireBlockEvent(BlockEventData event, CallbackInfoReturnable<Boolean> callback) {
         if (event.getBlock() != Blocks.NOTEBLOCK) return;
-        Vec3d pos = DirectionUtils.centerOf(event.getPosition());
+        Vec3d pos = new Vec3d(event.getPosition()).addVector(0.5f, 0.5f, 0.5f);
         for (EntityAllay allay : getEntities(EntityAllay.class, e -> !e.getHeldItemMainhand().isEmpty() && e.canHearBlock(pos))) {
             allay.setNoteBlockPos(event.getPosition());
             PacketHandler.NETWORK_INSTANCE.sendToAllTracking(new RaidsParticleMessage(EnumRaidsParticle.VIBRATION, pos.x, pos.y, pos.z,

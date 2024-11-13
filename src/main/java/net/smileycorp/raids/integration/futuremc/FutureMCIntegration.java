@@ -15,6 +15,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.smileycorp.raids.common.Constants;
 import thedarkcolour.futuremc.tile.BellTileEntity;
 
+import java.util.Iterator;
+
 public class FutureMCIntegration {
 	
 	@CapabilityInject(BellTimer.class)
@@ -46,7 +48,8 @@ public class FutureMCIntegration {
 	
 	@SubscribeEvent
 	public void tick(TickEvent.ServerTickEvent event) {
-		BellTimer.ACTIVE_BELLS.forEach(BellTimer::updateTimer);
+		Iterator<BellTimer> iterator = BellTimer.ACTIVE_BELLS.iterator();
+		while (iterator.hasNext()) iterator.next().updateTimer();
 	}
 	
 }
