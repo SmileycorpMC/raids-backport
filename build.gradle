@@ -81,7 +81,7 @@ configurations {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 	implementation "org.spongepowered:mixin:0.8"
-    implementation "curse.maven:atlas-463826:5877784"
+    //implementation "curse.maven:atlas-463826:5877784"
 	implementation "curse.maven:crossbows-973881:5108261"
 	implementation "curse.maven:futuremc-310059:5013081"
 	implementation "curse.maven:tconstruct-74072:2902483"
@@ -91,6 +91,7 @@ dependencies {
     implementation "curse.maven:gamestages-268655:2951840"
     implementation "curse.maven:deeperdepths-1101129:5753202"
     implementation "maven.modrinth:crossbow:1.1.0"
+    implementation files("libs/Atlas-Lib-1.12.2-1.1.7.jar")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

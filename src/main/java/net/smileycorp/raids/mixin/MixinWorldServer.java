@@ -10,7 +10,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.smileycorp.atlas.api.util.DirectionUtils;
 import net.smileycorp.raids.common.entities.EntityAllay;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.network.RaidsParticleMessage;
