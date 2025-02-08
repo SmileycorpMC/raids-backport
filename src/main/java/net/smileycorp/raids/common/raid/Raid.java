@@ -38,12 +38,13 @@ import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.config.raidevent.RaidSpawnTable;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.tektopia.TektopiaIntegration;
+import net.tangotek.tektopia.VillageManager;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
 public class Raid {
-	
+
 	private static final ITextComponent RAID_NAME_COMPONENT = new TextComponentTranslation("event.raids.raid");
 	private static final ITextComponent VICTORY = new TextComponentTranslation("event.raids.raid.victory");
 	private static final ITextComponent DEFEAT = new TextComponentTranslation("event.raids.raid.defeat");
@@ -59,7 +60,7 @@ public class Raid {
 	private WorldServer world;
 	private boolean started;
 	private final int id;
-	
+
 	private final RaidSpawnTable table;
 	private float totalHealth;
 	private int badOmenLevel;
@@ -73,7 +74,7 @@ public class Raid {
 	private Status status;
 	private int celebrationTicks;
 	private Optional<BlockPos> waveSpawnPos = Optional.empty();
-	
+
 	public Raid(int id, WorldServer world, BlockPos center, RaidSpawnTable table) {
 		this.id = id;
 		this.world = world;
@@ -86,7 +87,7 @@ public class Raid {
 		status = Status.ONGOING;
 		RaidsLogger.logInfo("Starting raid id " + id + "  with table " + table.getName() + " at " + center + " and " + numGroups + " waves ");
 	}
-	
+
 	public Raid(WorldServer world, NBTTagCompound nbt) {
 		this.world = world;
 		id = nbt.getInteger("Id");
@@ -108,75 +109,75 @@ public class Raid {
 			for(NBTBase nbtBase : list) heroesOfTheVillage.add(NBTUtil.getUUIDFromTag((NBTTagCompound) nbtBase));
 		}
 	}
-	
+
 	public boolean isOver() {
 		return isVictory() || isLoss();
 	}
-	
+
 	public boolean hasFirstWaveSpawned() {
 		return groupsSpawned > 0;
 	}
-	
+
 	public boolean isStopped() {
 		return status == Status.STOPPED;
 	}
-	
+
 	public boolean isVictory() {
 		return status == Status.VICTORY;
 	}
-	
+
 	public boolean isLoss() {
 		return status == Status.LOSS;
 	}
-	
+
 	public Set<EntityLiving> getAllEntityLivings() {
 		Set<EntityLiving> set = Sets.newHashSet();
 		for(Set<EntityLiving> set1 : groupEntityLivingMap.values()) set.addAll(set1);
 		return set;
 	}
-	
+
 	public WorldServer getWorld() {
 		return world;
 	}
-	
+
 	public boolean isStarted() {
 		return started;
 	}
-	
+
 	public int getGroupsSpawned() {
 		return groupsSpawned;
 	}
-	
+
 	public int getNumGroups() {
 		return numGroups;
 	}
-	
+
 	private Predicate<EntityPlayerMP> validPlayer() {
 		return (player) -> {
 			BlockPos blockpos = player.getPosition();
 			return player.isEntityAlive() && WorldDataRaids.getData(world).getRaidAt(blockpos) == this;
 		};
 	}
-	
+
 	private void updatePlayers() {
 		Set<EntityPlayerMP> set = Sets.newHashSet(raidEvent.getPlayers());
 		List<EntityPlayerMP> list = world.getPlayers(EntityPlayerMP.class, validPlayer());
 		for(EntityPlayerMP EntityPlayerMP : list) if (!set.contains(EntityPlayerMP)) raidEvent.addPlayer(EntityPlayerMP);
 		for(EntityPlayerMP EntityPlayerMP1 : set) if (!list.contains(EntityPlayerMP1)) raidEvent.removePlayer(EntityPlayerMP1);
 	}
-	
+
 	public int getMaxBadOmenLevel() {
 		return 8;
 	}
-	
+
 	public int getBadOmenLevel() {
 		return badOmenLevel;
 	}
-	
+
 	public void setBadOmenLevel(int level) {
 		badOmenLevel = level;
 	}
-	
+
 	public void absorbBadOmen(EntityPlayerMP player) {
 		if ((player.isPotionActive(RaidsContent.BAD_OMEN) &! RaidConfig.ominousBottles) || (player.isPotionActive(RaidsContent.RAID_OMEN) && RaidConfig.ominousBottles)) {
 			int level = player.getActivePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN).getAmplifier() + 1;
@@ -186,7 +187,7 @@ public class Raid {
 		}
 		player.removePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN);
 	}
-	
+
 	public void stop() {
 		active = false;
 		Set<EntityPlayerMP> players = Sets.newHashSet();
@@ -194,7 +195,7 @@ public class Raid {
 		players.stream().forEach(raidEvent::removePlayer);
 		status = Status.STOPPED;
 	}
-	
+
 	public void tick() {
 		if (table == null) stop();
 		if (!isStopped()) {
@@ -292,7 +293,7 @@ public class Raid {
 			}
 		}
 	}
-	
+
 	public void raidVictory() {
 		status = Status.VICTORY;
 		for(UUID uuid : heroesOfTheVillage) {
@@ -304,11 +305,11 @@ public class Raid {
 			if (entity instanceof EntityPlayerMP) RaidsContent.RAID_VICTORY.trigger((EntityPlayerMP) entity);
 		}
 	}
-	
+
 	public static boolean isVillage(World world, BlockPos center) {
 		return isVillage(world, center, 0);
 	}
-	
+
 	public static boolean isVillage(World world, BlockPos center, double distance) {
 		if (ModIntegration.TEKTOPIA_LOADED) return TektopiaIntegration.isVillage(world, center);
 		for (Village village : world.getVillageCollection().getVillageList()){
@@ -317,7 +318,7 @@ public class Raid {
 		}
 		return false;
 	}
-	
+
 	private void moveRaidCenterToNearbyVillageSection() {
 		if (ModIntegration.TEKTOPIA_LOADED) {
 			BlockPos pos = TektopiaIntegration.getNewCenter(world, center);
@@ -332,7 +333,7 @@ public class Raid {
 				setCenter(village.getCenter());
 		}
 	}
-	
+
 	private Optional<BlockPos> getValidSpawnPos(int p_37764_) {
 		for(int i = 0; i < 3; i++) {
 			BlockPos blockpos = findRandomSpawnPos(p_37764_, 1);
@@ -340,27 +341,27 @@ public class Raid {
 		}
 		return Optional.empty();
 	}
-	
+
 	private boolean hasMoreWaves() {
 		return !(hasBonusWave() ? hasSpawnedBonusWave() : isFinalWave());
 	}
-	
+
 	private boolean isFinalWave() {
 		return getGroupsSpawned() == numGroups;
 	}
-	
+
 	private boolean hasBonusWave() {
 		return badOmenLevel > 1;
 	}
-	
+
 	private boolean hasSpawnedBonusWave() {
 		return getGroupsSpawned() > numGroups;
 	}
-	
+
 	private boolean shouldSpawnBonusGroup() {
 		return isFinalWave() && getTotalEntityLivingsAlive() == 0 && hasBonusWave();
 	}
-	
+
 	private void updateEntityLivings() {
 		Iterator<Set<EntityLiving>> iterator = groupEntityLivingMap.values().iterator();
 		Set<EntityLiving> set = Sets.newHashSet();
@@ -381,7 +382,7 @@ public class Raid {
 		}
 		for (EntityLiving EntityLiving1 : set) removeFromRaid(EntityLiving1, true);
 	}
-	
+
 	private void playSound(BlockPos pos) {
 		Collection<EntityPlayerMP> collection = raidEvent.getPlayers();
 		for(EntityPlayer player : world.playerEntities) {
@@ -395,8 +396,8 @@ public class Raid {
 				((EntityPlayerMP)player).connection.sendPacket(new SPacketSoundEffect(table.getSound(), SoundCategory.NEUTRAL, x, player.posY, y, 64, 1));
 		}
 	}
-	
-	
+
+
 	public void joinRaid(int wave, EntityLiving entity, boolean recruited) {
 		if (addWaveMob(wave, entity)) {
 			Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
@@ -408,12 +409,17 @@ public class Raid {
 				entity.tasks.addTask(4, new EntityAIMoveThroughVillage((EntityCreature) entity, 1, false));
 				entity.targetTasks.addTask(3, new EntityAINearestAttackableTarget((EntityCreature) entity, EntityVillager.class, true));
 				entity.targetTasks.addTask(3, new EntityAINearestAttackableTarget((EntityCreature) entity, EntityIronGolem.class, true));
-				if (ModIntegration.TEKTOPIA_LOADED) TektopiaIntegration.addTargetTask((EntityCreature) entity);
+				if (ModIntegration.TEKTOPIA_LOADED) {
+
+					TektopiaIntegration.addTargetTask((EntityCreature) entity);
+					TektopiaIntegration.addMoveVillageTask((EntityCreature) entity);
+					TektopiaIntegration.addVillageEnemy(VillageManager.get(entity.world).getVillageAt(entity.getPosition()), entity);
+				}
 			}
 			if (!recruited) RaidHandler.applyRaidBuffs(entity, this, wave, random);
 		}
 	}
-	
+
 	public void updateBossbar() {
 		if (getTotalEntityLivingsAlive() <= 0 && hasMoreWaves() && raidCooldownTicks > 0) {
 			raidEvent.setPercent(MathHelper.clamp((float)(300 - raidCooldownTicks) / 300f, 0, 1));
@@ -429,21 +435,21 @@ public class Raid {
 		}
 		raidEvent.setPercent(MathHelper.clamp(getHealthOfEntities() / totalHealth, 0, 1));
 	}
-	
+
 	public float getHealthOfEntities() {
 		float health = 0;
 		for (Set<EntityLiving> set : groupEntityLivingMap.values()) for (EntityLiving entity : set) health += entity.getHealth();
 		return health;
 	}
-	
+
 	private boolean shouldSpawnGroup() {
 		return raidCooldownTicks == 0 && (groupsSpawned < numGroups || shouldSpawnBonusGroup()) && getTotalEntityLivingsAlive() == 0;
 	}
-	
+
 	public int getTotalEntityLivingsAlive() {
 		return getAllEntityLivings().size();
 	}
-	
+
 	public void removeFromRaid(EntityLiving entity, boolean update) {
 		if (!entity.hasCapability(RaidsContent.RAIDER, null)) return;
 		Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
@@ -458,11 +464,11 @@ public class Raid {
 			}
 		}
 	}
-	
+
 	private void setDirty() {
 		WorldDataRaids.getData(world).setDirty(true);
 	}
-	
+
 	@Nullable
 	private BlockPos findRandomSpawnPos(int attempt, int tries) {
 		int i = attempt == 0 ? 2 : 2 - attempt;
@@ -474,16 +480,16 @@ public class Raid {
 			int y = world.getHeight(x, z);
 			pos.setPos(x, y, z);
 			if ((isVillage(world, pos) || attempt >= 2) && world.isAreaLoaded(new StructureBoundingBox(pos.getX() - 10, pos.getZ() - 10,
-						pos.getX() + 10, pos.getZ() + 10))
-						&& world.isAirBlock(pos)) return pos;
+					pos.getX() + 10, pos.getZ() + 10))
+					&& world.isAirBlock(pos)) return pos;
 		}
 		return null;
 	}
-	
+
 	private boolean addWaveMob(int index, EntityLiving entity) {
 		return addWaveMob(index, entity, true);
 	}
-	
+
 	public boolean addWaveMob(int index, EntityLiving entity, boolean addHealth) {
 		RaidsLogger.logInfo("Adding entity " + entity + ", " + entity.hasCapability(RaidsContent.RAIDER, null) + ", " + entity.isAddedToWorld()+ ", " + entity.isEntityAlive() + ", " + addHealth);
 		if (!entity.hasCapability(RaidsContent.RAIDER, null)) return false;
@@ -504,33 +510,33 @@ public class Raid {
 		setDirty();
 		return true;
 	}
-	
+
 	public void setLeader(int index, EntityLiving entity) {
 		groupToLeaderMap.put(index, entity);
 		entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner());
 		entity.setDropChance(EntityEquipmentSlot.HEAD, 2.0F);
 	}
-	
+
 	public void removeLeader(int index) {
 		groupToLeaderMap.remove(index);
 	}
-	
+
 	public BlockPos getCenter() {
 		return center;
 	}
-	
+
 	public void setCenter(BlockPos center) {
 		this.center = center;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
-	
+
 	public NBTTagCompound save(NBTTagCompound nbt) {
 		nbt.setInteger("Id", id);
 		nbt.setBoolean("Started", started);
@@ -552,7 +558,7 @@ public class Raid {
 		nbt.setTag("HeroesOfTheVillage", listtag);
 		return nbt;
 	}
-	
+
 	public int getNumGroups(EnumDifficulty difficulty) {
 		switch(difficulty) {
 			case EASY:
@@ -565,7 +571,7 @@ public class Raid {
 				return 0;
 		}
 	}
-	
+
 	public float getEnchantOdds() {
 		switch (getBadOmenLevel()) {
 			case 2:
@@ -580,11 +586,11 @@ public class Raid {
 				return 0;
 		}
 	}
-	
+
 	public void addHeroOfTheVillage(Entity entity) {
 		heroesOfTheVillage.add(entity.getUniqueID());
 	}
-	
+
 	public List<String> getEntityStrings() {
 		List<String> result = new ArrayList<>();
 		result.add("totalHealth=" + totalHealth + ", currentHealth="+ getHealthOfEntities());
@@ -606,35 +612,35 @@ public class Raid {
 		}
 		return result;
 	}
-	
+
 	public void setWorld(WorldServer world) {
 		this.world = world;
 	}
-	
+
 	public RaidSpawnTable getTable() {
 		return table;
 	}
-	
+
 	public Random getRandom() {
 		return random;
 	}
-	
+
 	enum Status {
 		ONGOING,
 		VICTORY,
 		LOSS,
 		STOPPED;
-		
+
 		private static final Status[] VALUES = values();
-		
+
 		static Status getByName(String name) {
 			for(Status status : VALUES) if (name.equalsIgnoreCase(status.name())) return status;
 			return ONGOING;
 		}
-		
+
 		public String getName() {
 			return name().toLowerCase(Locale.ROOT);
 		}
 	}
-	
+
 }
