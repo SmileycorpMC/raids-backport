@@ -1,6 +1,5 @@
 package net.smileycorp.raids.common.raid;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.Entity;
@@ -151,16 +150,10 @@ public class Raid {
 		return numGroups;
 	}
 	
-	private Predicate<EntityPlayerMP> validPlayer() {
-		return (player) -> {
-			BlockPos blockpos = player.getPosition();
-			return player.isEntityAlive() && WorldDataRaids.getData(world).getRaidAt(blockpos) == this;
-		};
-	}
-	
 	private void updatePlayers() {
 		Set<EntityPlayerMP> set = Sets.newHashSet(raidEvent.getPlayers());
-		List<EntityPlayerMP> list = world.getPlayers(EntityPlayerMP.class, validPlayer());
+		List<EntityPlayerMP> list = world.getPlayers(EntityPlayerMP.class, player ->
+				player.isEntityAlive() && WorldDataRaids.getData(world).getRaidAt(player.getPosition()) == this);
 		for(EntityPlayerMP EntityPlayerMP : list) if (!set.contains(EntityPlayerMP)) raidEvent.addPlayer(EntityPlayerMP);
 		for(EntityPlayerMP EntityPlayerMP1 : set) if (!list.contains(EntityPlayerMP1)) raidEvent.removePlayer(EntityPlayerMP1);
 	}

@@ -75,11 +75,10 @@ public class RaidsEventHandler {
 	@SubscribeEvent
 	public void onAddedToWorld(EntityJoinWorldEvent event) {
 		Entity entity = event.getEntity();
-		if (entity instanceof EntityVillager) {
-			EntityVillager villager = (EntityVillager) entity;
-			villager.tasks.addTask(1, new EntityAIAvoidEntity<>(villager, EntityLivingBase.class, RaidHandler::isRaider, 16.0F, 0.8D, 0.8D));
-			villager.tasks.addTask(3, new EntityAIGiveGift(villager));
-		}
+		if (!(entity instanceof EntityVillager)) return;
+		EntityVillager villager = (EntityVillager) entity;
+		villager.tasks.addTask(1, new EntityAIAvoidEntity<>(villager, EntityLivingBase.class, RaidHandler::isRaider, 16.0F, 0.8D, 0.8D));
+		villager.tasks.addTask(3, new EntityAIGiveGift(villager));
 	}
 
 	@SubscribeEvent
@@ -92,9 +91,8 @@ public class RaidsEventHandler {
 		EntityLivingBase entity = event.getEntityLiving();
 		if (entity == null) return;
 		if (entity.world.isRemote) return;
-		if (entity.ticksExisted % 100 == 0 && entity.getRNG().nextInt(2) == 0 && RaidConfig.isTickableVillager(entity)) {
+		if (entity.ticksExisted % 100 == 0 && entity.getRNG().nextInt(2) == 0 && RaidConfig.isTickableVillager(entity))
 			entity.world.getVillageCollection().addToVillagerPositionList(entity.getPosition());
-		}
 	}
 
 	@SubscribeEvent
@@ -115,36 +113,34 @@ public class RaidsEventHandler {
 		World world = entity.world;
 		if (world.isRemote |!entity.hasCapability(RaidsContent.RAIDER, null)) return;
 		Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
-		if (world instanceof WorldServer) {
-			Entity attacker = event.getSource().getTrueSource();
-			Raid raid = raider.getCurrentRaid();
-			if (raid != null) {
-				if (raider.isPatrolLeader()) raid.removeLeader(raider.getWave());
-				if (attacker instanceof EntityPlayer) raid.addHeroOfTheVillage(attacker);
-				raid.removeFromRaid(entity, true);
-			}
-			if (raider.isPatrolLeader() && raid == null && WorldDataRaids.getData((WorldServer) world).getRaidAt(entity.getPosition()) == null) {
-				ItemStack itemstack = event.getEntityLiving().getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-				EntityPlayer player = null;
-				if (attacker instanceof EntityPlayer) player = (EntityPlayer) attacker;
-				else if (attacker instanceof EntityTameable) {
-					EntityLivingBase owner = ((EntityTameable) attacker).getOwner();
-					if (owner instanceof EntityPlayer) player = (EntityPlayer) owner;
-				}
-				if (!itemstack.isEmpty() && ItemStack.areItemStacksEqual(itemstack, Constants.ominousBanner()) && player != null) {
-					if (RaidConfig.ominousBottles) entity.entityDropItem(ItemOminousBottle.createStack(entity.getRNG().nextInt(5)),0);
-					else {
-						PotionEffect effect = player.getActivePotionEffect(RaidsContent.BAD_OMEN);
-						int i = 1;
-						if (effect != null) i += effect.getAmplifier();
-						else i--;
-						i = MathHelper.clamp(i, 0, 4);
-						player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000, i, false, true));
-					}
-					if (player instanceof EntityPlayerMP) RaidsContent.VOLUNTARY_EXILE.trigger((EntityPlayerMP) player);
-				}
-			}
+		if (!(world instanceof WorldServer)) return;
+		Entity attacker = event.getSource().getTrueSource();
+		Raid raid = raider.getCurrentRaid();
+		if (raid != null) {
+			if (raider.isPatrolLeader()) raid.removeLeader(raider.getWave());
+			if (attacker instanceof EntityPlayer) raid.addHeroOfTheVillage(attacker);
+			raid.removeFromRaid(entity, true);
 		}
+		if (!raider.isPatrolLeader() || raid != null || WorldDataRaids.getData((WorldServer) world).getRaidAt(entity.getPosition()) != null) return;
+		ItemStack itemstack = event.getEntityLiving().getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		EntityPlayer player = null;
+		if (attacker instanceof EntityPlayer) player = (EntityPlayer) attacker;
+		else if (attacker instanceof EntityTameable) {
+			EntityLivingBase owner = ((EntityTameable) attacker).getOwner();
+			if (owner instanceof EntityPlayer) player = (EntityPlayer) owner;
+		}
+		if (itemstack.isEmpty() |! ItemStack.areItemStacksEqual(itemstack, Constants.ominousBanner()) || player == null) return;
+		if (player instanceof EntityPlayerMP) RaidsContent.VOLUNTARY_EXILE.trigger((EntityPlayerMP) player);
+		if (!RaidConfig.ominousBottles) {
+			PotionEffect effect = player.getActivePotionEffect(RaidsContent.BAD_OMEN);
+			int i = 1;
+			if (effect != null) i += effect.getAmplifier();
+			else i--;
+			i = MathHelper.clamp(i, 0, 4);
+			player.addPotionEffect(new PotionEffect(RaidsContent.BAD_OMEN, 120000, i, false, true));
+			return;
+		}
+		entity.entityDropItem(ItemOminousBottle.createStack(entity.getRNG().nextInt(5)),0);
 	}
 	
 	@SubscribeEvent
@@ -163,57 +159,54 @@ public class RaidsEventHandler {
 		if (!RaidConfig.ominousBottles) return;
 		if (event.getPotionEffect().getPotion() != RaidsContent.RAID_OMEN) return;
 		EntityLivingBase entity = event.getEntityLiving();
-		if (entity instanceof EntityPlayerMP && !((EntityPlayerMP)entity).isSpectator()) {
-			EntityPlayerMP player = (EntityPlayerMP)entity;
-			World world = player.world;
-			if (world.getDifficulty() == EnumDifficulty.PEACEFUL) return;
-			if (Raid.isVillage(world, RaidConfig.raidCenteredOnPlayer ? RaidOmenTracker.getRaidStart(player) : player.getPosition()))
-				WorldDataRaids.getData((WorldServer) world).createOrExtendRaid(player);
-		}
+		if (!(entity instanceof EntityPlayerMP)) return;
+		EntityPlayerMP player = (EntityPlayerMP)entity;
+		if (player.isSpectator()) return;
+		World world = player.world;
+		if (world.getDifficulty() == EnumDifficulty.PEACEFUL) return;
+		if (Raid.isVillage(world, RaidConfig.raidCenteredOnPlayer ? RaidOmenTracker.getRaidStart(player) : player.getPosition()))
+			WorldDataRaids.getData((WorldServer) world).createOrExtendRaid(player);
 	}
 	
 	@SubscribeEvent
 	public void checkSpawn(LivingSpawnEvent.CheckSpawn event) {
 		EntityLivingBase entity = event.getEntityLiving();
-		if (entity.isCreatureType(EnumCreatureType.MONSTER, true) &! event.isSpawner() && OutpostConfig.isSpawnEntity(entity)) {
-			World world = event.getWorld();
-			IChunkProvider provider = world.getChunkProvider();
-			if (provider instanceof ChunkProviderServer) {
-				BlockPos pos = entity.getPosition();
-				if (Raid.isVillage(world, pos)) return;
-				MapGenOutpost.OutpostStart structure = MapGenOutpost.getInstance(((ChunkProviderServer) provider).chunkGenerator).getStructureAt(pos);
-				if (structure == null) return;
-				AxisAlignedBB aabb = structure.getSpawnBox();
-				if (aabb == null) return;
-				List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, aabb, OutpostConfig::isSpawnEntity);
-				if (entities.size() < OutpostConfig.maxEntities && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 8
-						&& world.getBlockState(pos.down()).isOpaqueCube()) event.setResult(Result.ALLOW);
-				else event.setResult(Result.DENY);
-			}
-		}
+		if (!entity.isCreatureType(EnumCreatureType.MONSTER, true) || event.isSpawner()) return;
+		if (!OutpostConfig.isSpawnEntity(entity)) return;
+		World world = event.getWorld();
+		IChunkProvider provider = world.getChunkProvider();
+		if (!(provider instanceof ChunkProviderServer)) return;
+		BlockPos pos = entity.getPosition();
+		if (Raid.isVillage(world, pos)) return;
+		MapGenOutpost.OutpostStart structure = MapGenOutpost.getInstance(((ChunkProviderServer) provider).chunkGenerator).getStructureAt(pos);
+		if (structure == null) return;
+		AxisAlignedBB aabb = structure.getSpawnBox();
+		if (aabb == null) return;
+		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, aabb, OutpostConfig::isSpawnEntity);
+		event.setResult(entities.size() < OutpostConfig.maxEntities && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 8
+				&& world.getBlockState(pos.down()).isOpaqueCube() ? Result.ALLOW : Result.DENY);
 	}
 	
 	@SubscribeEvent
 	public void spawn(LivingSpawnEvent.SpecialSpawn event) {
 		EntityLivingBase entity = event.getEntityLiving();
-		if (entity.hasCapability(RaidsContent.RAIDER, null) && RaidHandler.isRaider(entity)) {
-			Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
-			if (raider.hasActiveRaid() || raider.isPatrolling()) return;
-			float chance = raider.getCaptainChance();
-			if (chance > 0 && entity.getRNG().nextFloat() <= chance) {
-				raider.setPatrolLeader(true);
-				entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner());
-			}
-		}
+		if (!entity.hasCapability(RaidsContent.RAIDER, null)) return;
+		if (!RaidHandler.isRaider(entity)) return;
+		Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
+		if (raider.hasActiveRaid() || raider.isPatrolling()) return;
+		float chance = raider.getCaptainChance();
+		if (chance <= 0) return;
+		if (entity.getRNG().nextFloat() > chance) return;
+		raider.setPatrolLeader(true);
+		entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner());
 	}
 
 	@SubscribeEvent
 	public void allowDespawn(LivingSpawnEvent.AllowDespawn event) {
 		EntityLivingBase entity = event.getEntityLiving();
-		if (entity.hasCapability(RaidsContent.RAIDER, null)) {
-			Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
-			if (raider.hasActiveRaid() || raider.isPatrolling()) event.setResult(Result.DENY);
-		}
+		if (!entity.hasCapability(RaidsContent.RAIDER, null)) return;
+		Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
+		if (raider.hasActiveRaid() || raider.isPatrolling()) event.setResult(Result.DENY);
 	}
 	
 	@SubscribeEvent

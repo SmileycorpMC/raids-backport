@@ -92,4 +92,5 @@ public class RaidsContent {
 		registry.register(RaidsSoundEvents.RAID_OMEN);
 		registry.register(RaidsSoundEvents.OMINOUS_BOTTLE_USE);
 	}
+	
 }
