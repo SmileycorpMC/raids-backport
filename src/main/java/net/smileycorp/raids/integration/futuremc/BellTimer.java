@@ -19,7 +19,7 @@ public interface BellTimer {
 	
 	boolean isRinging();
 	
-	void updateTimer();
+	boolean updateTimer();
 	
 	void setRinging();
 	
@@ -39,17 +39,17 @@ public interface BellTimer {
 		}
 		
 		@Override
-		public void updateTimer() {
-			if (timer-- > 0) return;
+		public boolean updateTimer() {
+			if (timer-- > 0) return false;
 			if (timer == 40) {
 				if (tile != null &! tile.getWorld().getEntitiesWithinAABB(EntityLiving.class,
 						new AxisAlignedBB(tile.getPos()).grow(48.0D), RaidHandler::hasActiveRaid).isEmpty()) {
 					timer = 0;
-					ACTIVE_BELLS.remove(this);
+					return true;
 				}
 			}
 			if (tile != null) RaidHandler.findRaiders(tile.getWorld(), tile.getPos());
-			ACTIVE_BELLS.remove(this);
+			return true;
 		}
 		
 		@Override

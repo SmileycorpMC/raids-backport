@@ -49,7 +49,7 @@ public class FutureMCIntegration {
 	@SubscribeEvent
 	public void tick(TickEvent.ServerTickEvent event) {
 		Iterator<BellTimer> iterator = BellTimer.ACTIVE_BELLS.iterator();
-		while (iterator.hasNext()) iterator.next().updateTimer();
+		while (iterator.hasNext()) if(iterator.next().updateTimer()) iterator.remove();
 	}
 	
 }
