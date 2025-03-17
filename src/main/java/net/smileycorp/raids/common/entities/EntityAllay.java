@@ -1,6 +1,8 @@
 package net.smileycorp.raids.common.entities;
 
+import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockJukebox;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityOwnable;
@@ -9,7 +11,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.InventoryBasic;
@@ -19,6 +20,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
@@ -37,9 +39,12 @@ import net.smileycorp.raids.common.entities.ai.EntityAIAllayStayNearTarget;
 import net.smileycorp.raids.config.EntityConfig;
 
 import javax.annotation.Nullable;
+import java.util.Set;
 import java.util.UUID;
 
 public class EntityAllay extends EntityMob implements IEntityOwnable {
+    
+    public static final Set<BlockJukebox.TileEntityJukebox> JUKEBOXES = Sets.newHashSet();
     
     private static final DataParameter<Boolean> IS_DANCING = EntityDataManager.createKey(EntityAllay.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> CAN_DUPLICATE = EntityDataManager.createKey(EntityAllay.class, DataSerializers.BOOLEAN);
@@ -53,6 +58,9 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     private int duplicationCooldown;
     private float holdingItemAnimationTicks;
     private float holdingItemAnimationTicks0;
+    private float dancingAnimationTicks;
+    private float spinningAnimationTicks;
+    private float spinningAnimationTicks0;
     private int noteBlockCooldown = 0;
     
     public EntityAllay(World world) {
@@ -96,12 +104,24 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         if (!world.isRemote |! isEntityAlive()) return;
         holdingItemAnimationTicks0 = holdingItemAnimationTicks;
         holdingItemAnimationTicks = MathHelper.clamp(holdingItemAnimationTicks + (hasItemInSlot(EntityEquipmentSlot.MAINHAND) ? 1 : -1), 0, 5);
+        if (isDancing()) {
+            dancingAnimationTicks++;
+            spinningAnimationTicks0 = spinningAnimationTicks;
+            if (isSpinning()) spinningAnimationTicks++;
+            else spinningAnimationTicks--;
+            spinningAnimationTicks = MathHelper.clamp(spinningAnimationTicks, 0, 15);
+            return;
+        }
+        dancingAnimationTicks = 0;
+        spinningAnimationTicks = 0;
+        spinningAnimationTicks0 = 0;
     }
     
     @Override
     public void updateAITasks() {
         super.updateAITasks();
         if (!isEntityAlive()) return;
+        if (ticksExisted % 5 == 2 && !canDance()) findJukebox();
         if (noteBlockCooldown > 0) if (noteBlockCooldown-- <=0) noteBlock = null;
         if (ticksExisted % 10 == 0) heal(1);
         if (duplicationCooldown > 0) duplicationCooldown--;
@@ -115,16 +135,17 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     
     @Override
     protected boolean processInteract(EntityPlayer player, EnumHand hand) {
+        if (world.isRemote) return false;
         ItemStack stack = player.getHeldItem(hand);
         ItemStack stack1 = getHeldItemMainhand();
-        if (isDancing() && isDuplicationItem(stack) && canDuplicate()) {
+        if (isDancing() && EntityConfig.isDuplicationItem(stack) && canDuplicate()) {
             stack.shrink(1);
             duplicate();
             player.setActiveHand(hand);
             player.swingArm(hand);
             return true;
         }
-        if (!stack.isEmpty() &!(ItemStack.areItemStacksEqual(stack, stack1))) {
+        if (!stack.isEmpty() &!(itemIsEqual(stack, stack1))) {
             if (!stack1.isEmpty() &! world.isRemote) entityDropItem(stack1, 0);
             owner = player;
             ownerUUID = player.getUniqueID();
@@ -145,6 +166,20 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         return false;
     }
     
+    private boolean itemIsEqual(ItemStack stack, ItemStack stack1) {
+        return ItemStack.areItemStacksEqual(stack, stack1) && potionMatches(stack, stack1);
+    }
+    
+    private boolean potionMatches(ItemStack stack, ItemStack stack1) {
+        if (!stack1.hasTagCompound()) return true;
+        NBTTagCompound nbt1 = stack1.getTagCompound();
+        if (!nbt1.hasKey("Potion")) return true;
+        if (!stack.hasTagCompound()) return false;
+        NBTTagCompound nbt = stack1.getTagCompound();
+        if (!nbt1.hasKey("Potion")) return false;
+        return nbt.getCompoundTag("Potion").equals(nbt1.getCompoundTag("Potion"));
+    }
+    
     public float getHoldingItemAnimationProgress(float pt) {
         return MathUtils.lerp(pt, holdingItemAnimationTicks0, holdingItemAnimationTicks) / 5f;
     }
@@ -155,15 +190,12 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         allay.enablePersistence();
         allay.resetDuplicationCooldown();
         resetDuplicationCooldown();
+        world.spawnEntity(allay);
     }
     
     private void resetDuplicationCooldown() {
         dataManager.set(CAN_DUPLICATE, false);
         duplicationCooldown = 6000;
-    }
-    
-    private boolean isDuplicationItem(ItemStack stack) {
-        return stack.getItem() == Items.EMERALD;
     }
     
     private boolean canDuplicate() {
@@ -174,8 +206,25 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         return dataManager.get(IS_DANCING);
     }
     
+    public void setDancing(boolean dancing) {
+        dataManager.set(IS_DANCING, dancing);
+    }
+    
     public boolean canDance() {
-        return jukebox != null && jukebox.distanceSq(posX, posY, posZ) <= 100 && world.getBlockState(jukebox).getBlock() == Blocks.JUKEBOX;
+        if (jukebox == null) return false;
+        if (jukebox.distanceSq(posX, posY, posZ) > 100 || world.getBlockState(jukebox).getBlock() != Blocks.JUKEBOX) return false;
+        TileEntity te = world.getTileEntity(jukebox);
+        if (!(te instanceof BlockJukebox.TileEntityJukebox)) return false;
+        return !((BlockJukebox.TileEntityJukebox)te).getRecord().isEmpty();
+    }
+    
+    private void findJukebox() {
+        for (BlockJukebox.TileEntityJukebox tile : JUKEBOXES) if (tile.getDistanceSq(posX, posY, posZ) <= 100 &! tile.getRecord().isEmpty()) {
+            jukebox = tile.getPos();
+            setDancing(true);
+            return;
+        }
+        setDancing(false);
     }
     
     @Nullable
@@ -213,12 +262,16 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     public void readEntityFromNBT(NBTTagCompound nbt) {
         super.readEntityFromNBT(nbt);
         if (nbt.hasKey("owner")) ownerUUID = NBTUtil.getUUIDFromTag(nbt.getCompoundTag("owner"));
+        if (nbt.hasKey("DuplicationCooldown")) duplicationCooldown = nbt.getInteger("DuplicationCooldown");
+        if (nbt.hasKey("CanDuplicate")) dataManager.set(CAN_DUPLICATE, nbt.getBoolean("CanDuplicate"));
     }
     
     @Override
     public void writeEntityToNBT(NBTTagCompound nbt) {
         super.writeEntityToNBT(nbt);
         if (ownerUUID != null) nbt.setTag("owner", NBTUtil.createUUIDTag(ownerUUID));
+        nbt.setInteger("DuplicationCooldown", duplicationCooldown);
+        nbt.setBoolean("CanDuplicate", dataManager.get(CAN_DUPLICATE));
     }
     
     public boolean canPickupItem(Entity entity) {
@@ -231,12 +284,13 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
             && (items.isEmpty() || ItemStack.areItemStackTagsEqual(stack, stack1)) && items.getCount() < stack1.getMaxStackSize();
     }
     
-    public float getSpinningProcess(float f2) {
-        return f2;
+    public boolean isSpinning() {
+        float f = this.dancingAnimationTicks % 55.0F;
+        return f < 15.0F;
     }
     
-    public boolean isSpinning() {
-        return false;
+    public float getSpinningProgress(float spin) {
+        return MathUtils.lerp(spin, spinningAnimationTicks0, spinningAnimationTicks) / 15f;
     }
     
     @Override

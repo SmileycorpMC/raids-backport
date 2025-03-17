@@ -16,6 +16,7 @@
     "MixinMerchantRecipeList",
     "MixinPotionEffect",
     "MixinSlotMerchantResult",
+    "MixinTileEntity",
     "MixinVillagerProfession",
     "MixinVillagerRegistry",
     "MixinWorldServer"

@@ -67,7 +67,7 @@ public class ModelAllay extends ModelBase {
         if (((EntityAllay)entity).isDancing()) {
             f12 = ageInTicks * 8f * 0.017453292f + limbSwingAmount;
             f13 = MathHelper.cos(f12) * 16f * 0.017453292f;
-            f14 = ((EntityAllay)entity).getSpinningProcess(f2);
+            f14 = ((EntityAllay)entity).getSpinningProgress(f2);
             float f10 = MathHelper.cos(f12) * 14f * 0.017453292f;
             float f11 = MathHelper.cos(f12) * 30f * 0.017453292f;
             root.rotateAngleY = ((EntityAllay)entity).isSpinning() ? 12.566371f * f14 : root.rotateAngleY;
