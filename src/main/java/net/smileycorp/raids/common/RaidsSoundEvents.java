@@ -1,8 +1,13 @@
 package net.smileycorp.raids.common;
 
+import com.google.common.collect.Sets;
 import net.minecraft.util.SoundEvent;
 
+import java.util.Set;
+
 public class RaidsSoundEvents {
+    
+    public static final Set<SoundEvent> SOUNDS = Sets.newHashSet();
     
     public static final SoundEvent RAID_HORN = register("event.raid.horn");
     public static final SoundEvent PILLAGER_AMBIENT = register("entity.pillager.ambient");
@@ -29,9 +34,10 @@ public class RaidsSoundEvents {
     public static final SoundEvent ALLAY_THROW = register("entity.allay.item_thrown");
 
     public static SoundEvent register(String name) {
-        SoundEvent newSound = new SoundEvent(Constants.loc(name));
-        newSound.setRegistryName(name);
-        return newSound;
+        SoundEvent sound = new SoundEvent(Constants.loc(name));
+        sound.setRegistryName(name);
+        SOUNDS.add(sound);
+        return sound;
     }
 
 }

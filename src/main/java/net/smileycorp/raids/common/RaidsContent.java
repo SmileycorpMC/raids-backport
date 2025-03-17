@@ -75,22 +75,7 @@ public class RaidsContent {
 	@SubscribeEvent
 	public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
 		IForgeRegistry<SoundEvent> registry = event.getRegistry();
-		registry.register(RaidsSoundEvents.RAID_HORN);
-		registry.register(RaidsSoundEvents.PILLAGER_AMBIENT);
-		registry.register(RaidsSoundEvents.PILLAGER_HURT);
-		registry.register(RaidsSoundEvents.PILLAGER_DEATH);
-		registry.register(RaidsSoundEvents.PILLAGER_CELEBRATE);
-		registry.register(RaidsSoundEvents.RAVAGER_AMBIENT);
-		registry.register(RaidsSoundEvents.RAVAGER_ATTACK);
-		registry.register(RaidsSoundEvents.RAVAGER_CELEBRATE);
-		registry.register(RaidsSoundEvents.RAVAGER_DEATH);
-		registry.register(RaidsSoundEvents.RAVAGER_HURT);
-		registry.register(RaidsSoundEvents.RAVAGER_STEP);
-		registry.register(RaidsSoundEvents.RAVAGER_STUNNED);
-		registry.register(RaidsSoundEvents.RAVAGER_ROAR);
-		registry.register(RaidsSoundEvents.BAD_OMEN);
-		registry.register(RaidsSoundEvents.RAID_OMEN);
-		registry.register(RaidsSoundEvents.OMINOUS_BOTTLE_USE);
+		RaidsSoundEvents.SOUNDS.forEach(registry::register);
 	}
 	
 }
