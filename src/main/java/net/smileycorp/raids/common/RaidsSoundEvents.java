@@ -32,6 +32,7 @@ public class RaidsSoundEvents {
     public static final SoundEvent ALLAY_ITEM_GIVEN = register("entity.allay.item_given");
     public static final SoundEvent ALLAY_ITEM_TAKEN = register("entity.allay.item_taken");
     public static final SoundEvent ALLAY_THROW = register("entity.allay.item_thrown");
+    public static final SoundEvent ALLAY_DUPLICATE = register("entity.allay.duplicate");
 
     public static SoundEvent register(String name) {
         SoundEvent sound = new SoundEvent(Constants.loc(name));

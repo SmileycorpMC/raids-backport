@@ -23,11 +23,14 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.smileycorp.atlas.api.entity.ai.EntityAIMoveRandomFlying;
 import net.smileycorp.atlas.api.entity.ai.FlyingMoveControl;
 import net.smileycorp.atlas.api.util.DirectionUtils;
@@ -140,7 +143,9 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         ItemStack stack1 = getHeldItemMainhand();
         if (isDancing() && EntityConfig.isDuplicationItem(stack) && canDuplicate()) {
             stack.shrink(1);
+            playSound(RaidsSoundEvents.ALLAY_DUPLICATE, 2, 1);
             duplicate();
+            world.setEntityState(this, (byte)18);
             player.setActiveHand(hand);
             player.swingArm(hand);
             return true;
@@ -364,6 +369,15 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
     public void setNoteBlockPos(BlockPos pos) {
         noteBlock = pos;
         noteBlockCooldown = 6000;
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public void handleStatusUpdate(byte id) {
+        if (id == 18) for(int i = 0; i < 7; ++i) world.spawnParticle(EnumParticleTypes.HEART,
+                posX + (double)(rand.nextFloat() * width * 2f) - (double)width, posY + 0.5 + (double)(rand.nextFloat() * height),
+                posZ + (double)(rand.nextFloat() * width * 2f) - (double)width,
+                rand.nextGaussian() * 0.02, rand.nextGaussian() * 0.02, rand.nextGaussian() * 0.02);
+        else super.handleStatusUpdate(id);
     }
     
 }

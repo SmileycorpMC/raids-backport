@@ -28,6 +28,7 @@ subtitles.raids.entity.allay.hurt=Allay hurts
 subtitles.raids.entity.allay.item_given=Allay chortles
 subtitles.raids.entity.allay.item_taken=Allay allays
 subtitles.raids.entity.allay.item_thrown=Allay tosses
+subtitles.raids.entity.allay.duplicate=Allay duplicates
 
 effect.raids.bad_omen=Bad Omen
 effect.raids.hero_of_the_village=Hero of the Village

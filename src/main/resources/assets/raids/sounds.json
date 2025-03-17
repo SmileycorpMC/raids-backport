@@ -207,5 +207,14 @@
       }
     ],
     "subtitle": "subtitles.raids.entity.allay.item_thrown"
+  },
+  "entity.allay.duplicate": {
+    "sounds": [
+      {
+        "name": "raids:block/amethyst/shimmer",
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.raids.entity.allay.duplicate"
   }
 }
