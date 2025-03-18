@@ -14,10 +14,10 @@ Ominous Bottles ✓
 ### First Release ✓
 Mod Support (Tinkers Construct, Spartan Weapons, Crossbow) ✓
 ### Second Release ✓
-More Config Options
-Raid Customizability
+More Config Options ✓
+Raid Customizability ✓
 ### Third Release
-Tektopia Support?
-Add Bell / FutureMC Support
-Add Allays
+Tektopia Support? ✓
+Add Bell / FutureMC Support ✓
+Add Allays ✓
 Other Outpost Structures
