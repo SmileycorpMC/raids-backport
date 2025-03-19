@@ -22,12 +22,12 @@ Ominous Bottles
 
 Mod support with Crossbow, Spartan's Weaponry and Tinker's Constructs crossbows
 
-### Future Plans
-
 Bells (and/or FutureMC bell support)
 
 Allays
 
 Tektopia support
+
+### Future Plans
 
 Fully Implememented Outposts With all Structures and Customizable cages
