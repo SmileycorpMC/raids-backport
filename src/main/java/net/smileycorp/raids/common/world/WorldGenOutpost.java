@@ -6,40 +6,34 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkGeneratorFlat;
 import net.minecraft.world.gen.ChunkGeneratorOverworld;
+import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.IChunkGenerator;
-import net.minecraft.world.gen.structure.MapGenStructure;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureStart;
+import net.minecraftforge.fml.common.IWorldGenerator;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.OutpostConfig;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
-public class MapGenOutpost extends MapGenStructure {
-    
-    private static MapGenOutpost INSTANCE;
-    private final IChunkGenerator generator;
-    
-    public MapGenOutpost(IChunkGenerator generator) {
-        this.generator = generator;
-    }
+public class WorldGenOutpost implements IWorldGenerator {
     
     @Override
-    public String getStructureName() {
-        return "PillagerOutposts";
+    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
+        if (!canSpawnStructureAtCoords(world, chunkX, chunkZ)) return;
+        OutpostStart outpost = new OutpostStart(world, world.rand, chunkX, chunkZ, ((ChunkProviderServer)world.getChunkProvider()).chunkGenerator);
+        AxisAlignedBB box = outpost.getSpawnBox();
+        outpost.generateStructure(world, world.rand, new StructureBoundingBox((int) box.minX, (int) box.minZ, (int) box.maxX, (int) box.maxZ));
+        WorldDataOutposts.getData((WorldServer) world).addOutpost(outpost);
     }
     
-    @Nullable
-    @Override
-    public BlockPos getNearestStructurePos(World worldIn, BlockPos pos, boolean findUnexplored) {
-        return null;
-    }
-    
-    @Override
-    protected boolean canSpawnStructureAtCoords(int chunkX, int chunkZ) {
+    protected boolean canSpawnStructureAtCoords(World world, int chunkX, int chunkZ) {
+        if (world.provider.getDimension() != 0) return false;
         int x = chunkX;
         int z = chunkZ;
         if (x < 0) x -= OutpostConfig.maxDistance - 1;
@@ -51,34 +45,19 @@ public class MapGenOutpost extends MapGenStructure {
         dz = dz * OutpostConfig.maxDistance + random.nextInt(OutpostConfig.maxDistance - OutpostConfig.maxDistance / 4);
         if (chunkX != dx || chunkZ != dz) return false;
         BlockPos pos = new BlockPos((chunkX << 4) + 8, 0, (chunkZ << 4) + 8);
-        if (!world.getBiomeProvider().areBiomesViable(pos.getX(), pos.getZ(), 0, OutpostConfig.getSpawnBiomes())) return false;
+        if (!world.getBiomeProvider().areBiomesViable(pos.getX(), pos.getZ(), 1, OutpostConfig.getSpawnBiomes())) return false;
         BlockPos village = world.findNearestStructure("Village", pos, true);
         if (village == null) return true;
         return village.distanceSq(pos) > (OutpostConfig.distanceFromVillage * OutpostConfig.distanceFromVillage);
-    }
-    
-    @Override
-    public OutpostStart getStructureAt(BlockPos pos) {
-        for (StructureStart structure : structureMap.values()) if (((OutpostStart)structure).isInStructure(pos)) return (OutpostStart) structure;
-        return null;
-    }
-    
-    @Override
-    protected StructureStart getStructureStart(int chunkX, int chunkZ) {
-        return new OutpostStart(world, rand, chunkX, chunkZ, generator);
-    }
-    
-    public static MapGenOutpost getInstance(IChunkGenerator generator) {
-        if (INSTANCE == null) INSTANCE = new MapGenOutpost(generator);
-        if (INSTANCE.generator != generator) INSTANCE = new MapGenOutpost(generator);
-        return INSTANCE;
     }
     
     public static class OutpostStart extends StructureStart {
     
         private BlockPos center;
         
-        public OutpostStart() {};
+        public OutpostStart(NBTTagCompound nbt) {
+            readFromNBT(nbt);
+        }
         
         public OutpostStart(World world, Random rand, int chunkX, int chunkZ, IChunkGenerator generator) {
             int x = chunkX << 4;
@@ -94,7 +73,11 @@ public class MapGenOutpost extends MapGenStructure {
             updateBoundingBox();
         }
         
-        private boolean isInStructure(BlockPos pos) {
+        public BlockPos getCenter() {
+            return center;
+        }
+        
+        public boolean isInStructure(BlockPos pos) {
             if (center == null) return false;
             return Math.abs(pos.getX() - center.getX()) < 36 && Math.abs(pos.getY() - center.getY()) < 26 && Math.abs(pos.getZ() - center.getZ()) < 36;
         }
@@ -114,12 +97,16 @@ public class MapGenOutpost extends MapGenStructure {
     
         @Override
         public void writeToNBT(NBTTagCompound nbt) {
-            if (center != null) nbt.setTag("center", NBTUtil.createPosTag(center));
+            if (center == null) return;
+            nbt.setInteger("X", center.getX());
+            nbt.setInteger("Y", center.getY());
+            nbt.setInteger("Z", center.getZ());
         }
     
         @Override
         public void readFromNBT(NBTTagCompound nbt) {
-            if (nbt.hasKey("center")) center = NBTUtil.getPosFromTag(nbt.getCompoundTag("center"));
+            if (!nbt.hasKey("X")) return;
+            center = NBTUtil.getPosFromTag(nbt);
         }
         
     }

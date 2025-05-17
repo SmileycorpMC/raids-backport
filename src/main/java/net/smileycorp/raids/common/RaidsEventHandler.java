@@ -26,8 +26,7 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkProviderServer;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.storage.loot.*;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.conditions.RandomChance;
@@ -39,6 +38,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.village.MerchantTradeOffersEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -47,7 +47,8 @@ import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.raid.*;
 import net.smileycorp.raids.common.util.accessors.ILootPool;
-import net.smileycorp.raids.common.world.MapGenOutpost;
+import net.smileycorp.raids.common.world.WorldDataOutposts;
+import net.smileycorp.raids.common.world.WorldGenOutpost;
 import net.smileycorp.raids.config.MansionConfig;
 import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.RaidConfig;
@@ -174,11 +175,10 @@ public class RaidsEventHandler {
 		if (!entity.isCreatureType(EnumCreatureType.MONSTER, true) || event.isSpawner()) return;
 		if (!OutpostConfig.isSpawnEntity(entity)) return;
 		World world = event.getWorld();
-		IChunkProvider provider = world.getChunkProvider();
-		if (!(provider instanceof ChunkProviderServer)) return;
+		if (world.isRemote) return;
 		BlockPos pos = entity.getPosition();
 		if (Raid.isVillage(world, pos)) return;
-		MapGenOutpost.OutpostStart structure = MapGenOutpost.getInstance(((ChunkProviderServer) provider).chunkGenerator).getStructureAt(pos);
+		WorldGenOutpost.OutpostStart structure = WorldDataOutposts.getData((WorldServer) world).getStructureAt(pos);
 		if (structure == null) return;
 		AxisAlignedBB aabb = structure.getSpawnBox();
 		if (aabb == null) return;
@@ -207,6 +207,17 @@ public class RaidsEventHandler {
 		if (!entity.hasCapability(RaidsContent.RAIDER, null)) return;
 		Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
 		if (raider.hasActiveRaid() || raider.isPatrolling()) event.setResult(Result.DENY);
+	}
+	
+	@SubscribeEvent
+	public void getSpawns(WorldEvent.PotentialSpawns event) {
+		World world = event.getWorld();
+		if (world.isRemote) return;
+		if (WorldDataOutposts.getData((WorldServer) world).isInOutpost(event.getPos())
+				|| event.getType() != EnumCreatureType.MONSTER) return;
+		List<Biome.SpawnListEntry> spawns = event.getList();
+		spawns.clear();
+		spawns.addAll(OutpostConfig.getSpawnEntities());
 	}
 	
 	@SubscribeEvent

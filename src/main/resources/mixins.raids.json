@@ -3,8 +3,6 @@
   "package": "net.smileycorp.raids.mixin",
   "refmap": "mixins.raids.refmap.json",
   "mixins": [
-    "MixinChunkGeneratorFlat",
-    "MixinChunkGeneratorOverworld",
     "MixinEntityAIMoveIndoors",
     "MixinEntityVillager",
     "MixinItem",
