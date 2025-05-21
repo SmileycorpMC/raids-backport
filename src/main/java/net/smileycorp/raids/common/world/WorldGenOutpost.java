@@ -7,10 +7,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkGeneratorFlat;
-import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
@@ -45,7 +42,7 @@ public class WorldGenOutpost implements IWorldGenerator {
         dz = dz * OutpostConfig.maxDistance + random.nextInt(OutpostConfig.maxDistance - OutpostConfig.maxDistance / 4);
         if (chunkX != dx || chunkZ != dz) return false;
         BlockPos pos = new BlockPos((chunkX << 4) + 8, 0, (chunkZ << 4) + 8);
-        if (!world.getBiomeProvider().areBiomesViable(pos.getX(), pos.getZ(), 1, OutpostConfig.getSpawnBiomes())) return false;
+        if (!world.getBiomeProvider().areBiomesViable(pos.getX(), pos.getZ(), 1, OutpostConfig.getGenerationBiomes())) return false;
         BlockPos village = world.findNearestStructure("Village", pos, true);
         if (village == null) return true;
         return village.distanceSq(pos) > (OutpostConfig.distanceFromVillage * OutpostConfig.distanceFromVillage);
@@ -62,13 +59,10 @@ public class WorldGenOutpost implements IWorldGenerator {
         public OutpostStart(World world, Random rand, int chunkX, int chunkZ, IChunkGenerator generator) {
             int x = chunkX << 4;
             int z = chunkZ << 4;
-            ChunkPrimer chunkprimer = new ChunkPrimer();
-            if (generator instanceof ChunkGeneratorOverworld) ((ChunkGeneratorOverworld)generator).setBlocksInChunk(chunkX, chunkZ, chunkprimer);
-            int y = generator instanceof ChunkGeneratorFlat ? ((ChunkGeneratorFlat)generator).flatWorldGenInfo.getFlatLayers().size() : getY(1, 1, 13, 13, chunkprimer);
-            center = new BlockPos(x + 8, y + 16, z + 8);
-            BlockPos pos = new BlockPos(x, y, z);
-            RaidsLogger.logInfo("Generated outpost at " + pos);
-            components.addAll(StructureOutpostPieces.watchtower(world.getSaveHandler().getStructureTemplateManager(), pos,
+            int y =  world.getHeight(x + 8, z + 8);
+            center = new BlockPos(x + 8, y, z + 8);
+            RaidsLogger.logInfo("Generated outpost at " + center);
+            components.addAll(StructureOutpostPieces.watchtower(world.getSaveHandler().getStructureTemplateManager(), center,
                     Rotation.values()[rand.nextInt(Rotation.values().length)]));
             updateBoundingBox();
         }
@@ -80,14 +74,6 @@ public class WorldGenOutpost implements IWorldGenerator {
         public boolean isInStructure(BlockPos pos) {
             if (center == null) return false;
             return Math.abs(pos.getX() - center.getX()) < 36 && Math.abs(pos.getY() - center.getY()) < 26 && Math.abs(pos.getZ() - center.getZ()) < 36;
-        }
-    
-        public int getY(int x, int z, int i, int k, ChunkPrimer primer) {
-            int y0 = primer.findGroundBlockIdx(x, z);
-            int yj = primer.findGroundBlockIdx(x, z + k);
-            int jy = primer.findGroundBlockIdx(x + i, z);
-            int j = primer.findGroundBlockIdx(x + i, z + k);
-            return Math.min(Math.min(y0, yj), Math.min(jy, j));
         }
     
         public AxisAlignedBB getSpawnBox() {

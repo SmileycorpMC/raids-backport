@@ -5,12 +5,18 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.registries.GameData;
 import net.smileycorp.raids.common.util.RaidsLogger;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
 
 public class OutpostConfig {
@@ -18,8 +24,8 @@ public class OutpostConfig {
     //generation
     public static int maxDistance;
     public static int distanceFromVillage;
-    private static String[] spawnBiomesStr;
-    private static List<Biome> spawnBiomes;
+    private static String[] generationBiomesStr;
+    private static List<Biome> generationBiomes;
     
     //spawns
     public static int maxEntities;
@@ -39,7 +45,7 @@ public class OutpostConfig {
             config.load();
             maxDistance = config.get("generation", "maxDistance", 32, "Maximum chunk distance between two watchtowers, the lower the number the more likely the generation.").getInt();
             distanceFromVillage = config.get("generation", "distanceFromVillage", 160, "How close can outposts be to villages.").getInt();
-            spawnBiomesStr = config.get("generation", "spawnBiomes", new String[] {"minecraft:plains", "minecraft:desert", "minecraft:savanna", "minecraft:taiga", "minecraft:ice_flats", "minecraft:taiga_cold"}, "Which biomes can outposts spawn in?").getStringList();
+            generationBiomesStr = config.get("generation", "generationBiomes", new String[] {"PLAINS", "FOREST", "SANDY", "WASTELAND"}, "Which biomes can outposts spawn in (Can specify either biomes names or Biome Dictionaries)?").getStringList();
             maxEntities = config.get("spawns", "maxEntities", 8, "How many entities can be spawned at an outpost at once?").getInt();
             spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-1"}, "Which entities should spawn in outposts? (format is registry name-spawn weight, weight is any positive integer)").getStringList();
             ominousBottles = config.get("chest loot", "ominousBottles", true, "Can ominous bottles generate in outpost chests? (Requires Ominous Bottles to be enabled in the raids config)").getBoolean();
@@ -51,22 +57,61 @@ public class OutpostConfig {
         } finally {
             if (config.hasChanged()) config.save();
         }
+        File structure = new File(event.getModConfigurationDirectory().getPath() + "/raids/pillager_outpost");
+        if (!structure.exists()) copyStructureFiles(structure);
+        else if (!structure.toPath().resolve("watchtower.nbt").toFile().exists()) copyStructureFiles(structure);
+        else if (!structure.toPath().resolve("watchtower_overgrown.nbt").toFile().exists()) copyStructureFiles(structure);
     }
-    
-    public static List<Biome> getSpawnBiomes() {
-        if (spawnBiomes == null) {
-            spawnBiomes = Lists.newArrayList();
-            for (String str : spawnBiomesStr) {
-                try {
-                    Biome biome = Biome.REGISTRY.getObject(new ResourceLocation(str));
-                    if (biome != null) spawnBiomes.add(biome);
-                    else RaidsLogger.logError("Biome " + str + " is not registered", new NullPointerException());
-                } catch (Exception e) {
-                    RaidsLogger.logError(str + " is not a valid registry name", e);
+
+    private static void copyStructureFiles(File directory) {
+        File file = new File(directory, "features");
+        file.mkdirs();
+        file.mkdir();
+        try (FileSystem mod = FileSystems.newFileSystem(OutpostConfig.class.getProtectionDomain().getCodeSource().getLocation().toURI(),
+                Collections.emptyMap())) {
+            Files.find(mod.getPath("config-defaults/pillager_outpost"), Integer.MAX_VALUE, (matcher, options) -> options.isRegularFile())
+                    .forEach(path -> copyFileFromMod(path.toString(), directory));
+            RaidsLogger.logInfo("Generated structure files.");
+        } catch (Exception e) {
+            RaidsLogger.logError("Failed to generate structure files.", e);
+        }
+    }
+
+    private static void copyFileFromMod(String path, File directory) {
+        try {
+            FileUtils.copyInputStreamToFile(OutpostConfig.class.getResourceAsStream(path),
+                    new File(directory, path.replace( "config-defaults/pillager_outpost", "")));
+            RaidsLogger.logInfo("Copied file " + path);
+        } catch (Exception e) {
+            RaidsLogger.logError("Failed to copy file " + path, e);
+        }
+    }
+
+    public static List<Biome> getGenerationBiomes() {
+        if (generationBiomes == null) {
+            generationBiomes = Lists.newArrayList();
+            for (String str : generationBiomesStr) {
+                if (str.contains(":")) {
+                    try {
+                        Biome biome = Biome.REGISTRY.getObject(new ResourceLocation(str));
+                        if (biome != null) generationBiomes.add(biome);
+                        else RaidsLogger.logError("Biome " + str + " is not registered", new NullPointerException());
+                    } catch (Exception e) {
+                        RaidsLogger.logError(str + " is not a valid registry name", e);
+                    }
+                }
+                else {
+                    try {
+                        BiomeDictionary.Type type = BiomeDictionary.Type.getType(str);
+                        for (Biome biome : BiomeDictionary.getBiomes(type)) generationBiomes.add(biome);
+                    } catch (Exception e) {
+                        RaidsLogger.logError(str + " is not a valid registry name", e);
+                    }
                 }
             }
+            RaidsLogger.logInfo("Registered outpost biomes " + generationBiomes);
         }
-       return spawnBiomes;
+       return generationBiomes;
     }
     
     public static List<Biome.SpawnListEntry> getSpawnEntities() {

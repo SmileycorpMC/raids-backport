@@ -40,9 +40,9 @@ public class RaidTableLoader {
         if (!directory.exists()) {
             RaidsLogger.logInfo("Raid table folder does not exist, generating default data");
             directory.mkdirs();
-            File file = new File(directory, "default.json");
             try {
-                FileUtils.copyInputStreamToFile(RaidTableLoader.class.getResourceAsStream("/config-defaults/raid_tables/default.json"), file);
+                FileUtils.copyInputStreamToFile(RaidTableLoader.class.getResourceAsStream("/config-defaults/raid_tables/default.json"),
+                        new File(directory, "default.json"));
                 FileUtils.copyInputStreamToFile(RaidTableLoader.class.getResourceAsStream("/config-defaults/raid_tables/advanced.json"),
                         new File(directory, "advanced.json"));
             } catch (Exception e) {

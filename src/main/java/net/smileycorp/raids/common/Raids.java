@@ -11,6 +11,8 @@ import net.smileycorp.raids.common.util.RaidsLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+
 
 @Mod(modid = Constants.MODID, name = Constants.NAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
 public class Raids {
@@ -19,6 +21,8 @@ public class Raids {
 	
 	@SidedProxy(clientSide = Constants.CLIENT, serverSide = Constants.SERVER)
 	public static CommonProxy proxy;
+
+	public static File CONFIG_FOLDER;
 	
 	public Raids() {
 		RaidsLogger.clearLog();
@@ -26,6 +30,7 @@ public class Raids {
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
+		CONFIG_FOLDER = event.getModConfigurationDirectory().toPath().resolve(Constants.MODID).toFile();
 		proxy.preInit(event);
 	}
 	
