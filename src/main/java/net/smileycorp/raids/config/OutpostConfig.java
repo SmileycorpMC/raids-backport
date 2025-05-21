@@ -19,8 +19,6 @@ import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 
-import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
-
 public class OutpostConfig {
 
     //generation
@@ -126,7 +124,7 @@ public class OutpostConfig {
                 else {
                     try {
                         BiomeDictionary.Type type = BiomeDictionary.Type.getType(str);
-                        for (Biome biome : BiomeDictionary.getBiomes(type)) generationBiomes.add(biome);
+                        for (Biome biome : BiomeDictionary.getBiomes(type)) generationBiomes.remove(biome);
                     } catch (Exception e) {
                         RaidsLogger.logError(str + " is not a valid registry name", e);
                     }

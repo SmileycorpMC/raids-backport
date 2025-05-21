@@ -13,6 +13,7 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureStart;
 import net.minecraftforge.fml.common.IWorldGenerator;
+import net.smileycorp.atlas.api.util.DirectionUtils;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.OutpostConfig;
 
@@ -64,6 +65,12 @@ public class WorldGenOutpost implements IWorldGenerator {
             RaidsLogger.logInfo("Generated outpost at " + center);
             components.addAll(StructureOutpostPieces.watchtower(world.getSaveHandler().getStructureTemplateManager(), center,
                     Rotation.values()[rand.nextInt(Rotation.values().length)]));
+            for (int i = 0; i < 4; i++) {
+                if (rand.nextBoolean()) continue;
+                BlockPos pos = center.add(new BlockPos(DirectionUtils.getRandomDirectionVecXZ(rand).scale(rand.nextInt(16) + 16)));
+                components.addAll(StructureOutpostPieces.feature(rand, world.getSaveHandler().getStructureTemplateManager(), world.getHeight(pos),
+                        Rotation.values()[rand.nextInt(Rotation.values().length)]));
+            }
             updateBoundingBox();
         }
         
