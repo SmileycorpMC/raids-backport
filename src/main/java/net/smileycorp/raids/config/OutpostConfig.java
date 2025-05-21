@@ -19,6 +19,8 @@ import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 
+import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
+
 public class OutpostConfig {
 
     //generation
@@ -26,6 +28,7 @@ public class OutpostConfig {
     public static int distanceFromVillage;
     private static String[] generationBiomesStr;
     private static List<Biome> generationBiomes;
+    private static String[] generationBiomesBlacklistStr;
     
     //spawns
     public static int maxEntities;
@@ -45,7 +48,8 @@ public class OutpostConfig {
             config.load();
             maxDistance = config.get("generation", "maxDistance", 32, "Maximum chunk distance between two watchtowers, the lower the number the more likely the generation.").getInt();
             distanceFromVillage = config.get("generation", "distanceFromVillage", 160, "How close can outposts be to villages.").getInt();
-            generationBiomesStr = config.get("generation", "generationBiomes", new String[] {"PLAINS", "FOREST", "SANDY", "WASTELAND"}, "Which biomes can outposts spawn in (Can specify either biomes names or Biome Dictionaries)?").getStringList();
+            generationBiomesStr = config.get("generation", "generationBiomes", new String[] {"PLAINS", "SANDY", "WASTELAND", "SNOWY", "MOUNTAIN"}, "Which biomes can outposts spawn in (Can specify either biomes names or Biome Dictionaries)?").getStringList();
+            generationBiomesBlacklistStr = config.get("generation", "generationBiomesBlacklist", new String[] {"FOREST"}, "Biomes outposts can never spawn in (Overrides generationBiomes, Can specify either biomes names or Biome Dictionaries)?").getStringList();
             maxEntities = config.get("spawns", "maxEntities", 8, "How many entities can be spawned at an outpost at once?").getInt();
             spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-1"}, "Which entities should spawn in outposts? (format is registry name-spawn weight, weight is any positive integer)").getStringList();
             ominousBottles = config.get("chest loot", "ominousBottles", true, "Can ominous bottles generate in outpost chests? (Requires Ominous Bottles to be enabled in the raids config)").getBoolean();
@@ -95,6 +99,25 @@ public class OutpostConfig {
                     try {
                         Biome biome = Biome.REGISTRY.getObject(new ResourceLocation(str));
                         if (biome != null) generationBiomes.add(biome);
+                        else RaidsLogger.logError("Biome " + str + " is not registered", new NullPointerException());
+                    } catch (Exception e) {
+                        RaidsLogger.logError(str + " is not a valid registry name", e);
+                    }
+                }
+                else {
+                    try {
+                        BiomeDictionary.Type type = BiomeDictionary.Type.getType(str);
+                        for (Biome biome : BiomeDictionary.getBiomes(type)) generationBiomes.add(biome);
+                    } catch (Exception e) {
+                        RaidsLogger.logError(str + " is not a valid registry name", e);
+                    }
+                }
+            }
+            for (String str : generationBiomesBlacklistStr) {
+                if (str.contains(":")) {
+                    try {
+                        Biome biome = Biome.REGISTRY.getObject(new ResourceLocation(str));
+                        if (biome != null) generationBiomes.remove(biome);
                         else RaidsLogger.logError("Biome " + str + " is not registered", new NullPointerException());
                     } catch (Exception e) {
                         RaidsLogger.logError(str + " is not a valid registry name", e);
