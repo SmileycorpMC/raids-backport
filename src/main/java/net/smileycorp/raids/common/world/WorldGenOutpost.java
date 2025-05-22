@@ -31,7 +31,7 @@ public class WorldGenOutpost implements IWorldGenerator {
     }
     
     protected boolean canSpawnStructureAtCoords(World world, int chunkX, int chunkZ) {
-        if (world.provider.getDimension() != 0) return false;
+        if (!OutpostConfig.canGenerateInDimension(world.provider.getDimension())) return false;
         int x = chunkX;
         int z = chunkZ;
         if (x < 0) x -= OutpostConfig.maxDistance - 1;
@@ -62,12 +62,15 @@ public class WorldGenOutpost implements IWorldGenerator {
             int z = chunkZ << 4;
             int y =  world.getHeight(x + 8, z + 8);
             center = new BlockPos(x + 8, y, z + 8);
-            RaidsLogger.logInfo("Generated outpost at " + center);
+            RaidsLogger.logInfo("Generated outpost at " + center + " in dimension " + world.provider.getDimension());
             components.addAll(StructureOutpostPieces.watchtower(world.getSaveHandler().getStructureTemplateManager(), center,
                     Rotation.values()[rand.nextInt(Rotation.values().length)]));
-            for (int i = 0; i < 4; i++) {
-                if (rand.nextBoolean()) continue;
-                BlockPos pos = center.add(new BlockPos(DirectionUtils.getRandomDirectionVecXZ(rand).scale(rand.nextInt(16) + 16)));
+            int distance = OutpostConfig.maxDistance - OutpostConfig.featureMinDistance;
+            for (int i = 0; i < OutpostConfig.featureCount; i++) {
+                if (OutpostConfig.featureChance <= 0) break;
+                if (rand.nextFloat() > OutpostConfig.featureChance) continue;
+                BlockPos pos = center.add(new BlockPos(DirectionUtils.getRandomDirectionVecXZ(rand)
+                        .scale((distance  > 0 ? rand.nextInt(distance) : 0) + OutpostConfig.featureMinDistance)));
                 components.addAll(StructureOutpostPieces.feature(rand, world.getSaveHandler().getStructureTemplateManager(), world.getHeight(pos),
                         Rotation.values()[rand.nextInt(Rotation.values().length)]));
             }

@@ -27,6 +27,11 @@ public class OutpostConfig {
     private static String[] generationBiomesStr;
     private static List<Biome> generationBiomes;
     private static String[] generationBiomesBlacklistStr;
+    private static int[] generationDimensions;
+    public static int featureCount;
+    public static double featureChance;
+    public static int featureMinDistance;
+    public static int featureMaxDistance;
     
     //spawns
     public static int maxEntities;
@@ -44,12 +49,20 @@ public class OutpostConfig {
         Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/outposts.cfg"));
         try{
             config.load();
+            //generation
             maxDistance = config.get("generation", "maxDistance", 32, "Maximum chunk distance between two watchtowers, the lower the number the more likely the generation.").getInt();
             distanceFromVillage = config.get("generation", "distanceFromVillage", 160, "How close can outposts be to villages.").getInt();
             generationBiomesStr = config.get("generation", "generationBiomes", new String[] {"PLAINS", "SANDY", "WASTELAND", "SNOWY", "MOUNTAIN"}, "Which biomes can outposts spawn in (Can specify either biomes names or Biome Dictionaries)?").getStringList();
             generationBiomesBlacklistStr = config.get("generation", "generationBiomesBlacklist", new String[] {"FOREST"}, "Biomes outposts can never spawn in (Overrides generationBiomes, Can specify either biomes names or Biome Dictionaries)?").getStringList();
+            generationDimensions = config.get("generation", "generationDimensions", new int[] {0}, "Which dimensions can outposts spawn in?").getIntList();
+            featureCount = config.get("generation", "featureCount", 4, "How many features should outposts try to spawn?").getInt();
+            featureMinDistance = config.get("generation", "featureMinDistance", 16, "Minimum distance from an outpost features can spawn.").getInt();
+            featureMaxDistance = config.get("generation", "featureMaxDistance", 32, "Maximum distance from an outpost features can spawn.").getInt();
+            if (featureMaxDistance < featureMinDistance) featureMaxDistance = featureMinDistance;
+            //spawns
             maxEntities = config.get("spawns", "maxEntities", 8, "How many entities can be spawned at an outpost at once?").getInt();
             spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-1"}, "Which entities should spawn in outposts? (format is registry name-spawn weight, weight is any positive integer)").getStringList();
+            //chest loot
             ominousBottles = config.get("chest loot", "ominousBottles", true, "Can ominous bottles generate in outpost chests? (Requires Ominous Bottles to be enabled in the raids config)").getBoolean();
             crossbowsBackportCrossbows = config.get("chest loot", "crossbowsBackportCrossbows", true, "Can crossbows backport crossbows generate in outpost chests? (Requires Crossbows Backport to be installed)").getBoolean();
             crossbowCrossbows = config.get("chest loot", "crossbowCrossbows", true, "Can crossbow crossbows generate in outpost chests? (Requires Crossbow to be installed)").getBoolean();
@@ -133,6 +146,11 @@ public class OutpostConfig {
             RaidsLogger.logInfo("Registered outpost biomes " + generationBiomes);
         }
        return generationBiomes;
+    }
+
+    public static boolean canGenerateInDimension(int id) {
+        for (int i : generationDimensions) if (i == id) return true;
+        return false;
     }
     
     public static List<Biome.SpawnListEntry> getSpawnEntities() {
