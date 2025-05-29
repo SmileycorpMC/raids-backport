@@ -16,7 +16,7 @@ import net.smileycorp.raids.config.RaidConfig;
 
 public class BadOmenPotion extends RaidsPotion {
     
-    private static final ResourceLocation OMINOUS_TEXTURE = Constants.loc("textures/mob_effect/bad_omen_121.png");
+    private static final ResourceLocation RAID_OMEN_TEXTURE = Constants.loc("textures/mob_effect/raid_omen.png");
     
     public BadOmenPotion() {
         super(true, 0x0B6138, "bad_omen");
@@ -47,7 +47,7 @@ public class BadOmenPotion extends RaidsPotion {
     }
     
     protected ResourceLocation getTexture(PotionEffect effect) {
-        return RaidConfig.ominousBottles ? OMINOUS_TEXTURE : super.getTexture(effect);
+        return RaidConfig.ominousBottles ? super.getTexture(effect) : RAID_OMEN_TEXTURE;
     }
     
 }
