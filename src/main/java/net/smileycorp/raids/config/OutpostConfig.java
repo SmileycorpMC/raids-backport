@@ -56,7 +56,8 @@ public class OutpostConfig {
             generationBiomesBlacklistStr = config.get("generation", "generationBiomesBlacklist", new String[] {"FOREST"}, "Biomes outposts can never spawn in (Overrides generationBiomes, Can specify either biomes names or Biome Dictionaries)?").getStringList();
             generationDimensions = config.get("generation", "generationDimensions", new int[] {0}, "Which dimensions can outposts spawn in?").getIntList();
             featureCount = config.get("generation", "featureCount", 4, "How many features should outposts try to spawn?").getInt();
-            featureMinDistance = config.get("generation", "featureMinDistance", 16, "Minimum distance from an outpost features can spawn.").getInt();
+            featureChance = config.get("generation", "featureChance", 0.5, "Whats the chance a feature should generate around an outpost?", 0 , 1).getDouble();
+            featureMinDistance = config.get("generation", "featureMinDistance", 25, "Minimum distance from an outpost features can spawn.").getInt();
             featureMaxDistance = config.get("generation", "featureMaxDistance", 32, "Maximum distance from an outpost features can spawn.").getInt();
             if (featureMaxDistance < featureMinDistance) featureMaxDistance = featureMinDistance;
             //spawns

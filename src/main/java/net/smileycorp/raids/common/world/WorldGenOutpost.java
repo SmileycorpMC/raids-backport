@@ -5,29 +5,42 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureStart;
-import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.smileycorp.atlas.api.util.DirectionUtils;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.OutpostConfig;
 
 import java.util.Random;
 
-public class WorldGenOutpost implements IWorldGenerator {
-    
-    @Override
-    public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
-        if (!canSpawnStructureAtCoords(world, chunkX, chunkZ)) return;
-        OutpostStart outpost = new OutpostStart(world, world.rand, chunkX, chunkZ, ((ChunkProviderServer)world.getChunkProvider()).chunkGenerator);
+public class WorldGenOutpost {
+
+    public static final WorldGenOutpost INSTANCE = new WorldGenOutpost();
+
+    @SubscribeEvent
+    public void generate(DecorateBiomeEvent.Pre event) {
+        World world = event.getWorld();
+        ChunkPos pos = event.getChunkPos();
+        if (!canSpawnStructureAtCoords(world, pos.x, pos.z)) return;
+        OutpostStart outpost = new OutpostStart(world, world.rand, pos.x, pos.z, ((ChunkProviderServer)world.getChunkProvider()).chunkGenerator);
+        WorldDataOutposts.getData((WorldServer) world).addOutpost(outpost);
         AxisAlignedBB box = outpost.getSpawnBox();
         outpost.generateStructure(world, world.rand, new StructureBoundingBox((int) box.minX, (int) box.minZ, (int) box.maxX, (int) box.maxZ));
-        WorldDataOutposts.getData((WorldServer) world).addOutpost(outpost);
+    }
+
+    @SubscribeEvent
+    public void generate(DecorateBiomeEvent.Decorate event) {
+        World world = event.getWorld();
+        if (WorldDataOutposts.getData((WorldServer) world).isInOutpost(event.getPlacementPos()))
+            event.setResult(Event.Result.DENY);
     }
     
     protected boolean canSpawnStructureAtCoords(World world, int chunkX, int chunkZ) {
@@ -87,8 +100,8 @@ public class WorldGenOutpost implements IWorldGenerator {
         }
     
         public AxisAlignedBB getSpawnBox() {
-            if (center == null) return null;
-            return new AxisAlignedBB(center).grow(36, 26, 36);
+            return new AxisAlignedBB(boundingBox.minX, boundingBox.minY, boundingBox.minZ,
+                    boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
         }
     
         @Override

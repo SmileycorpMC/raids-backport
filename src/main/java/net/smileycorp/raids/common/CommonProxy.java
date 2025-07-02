@@ -22,7 +22,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.smileycorp.raids.common.command.CommandDebugRaid;
 import net.smileycorp.raids.common.command.CommandFindRaiders;
 import net.smileycorp.raids.common.command.CommandSpawnPatrol;
@@ -58,7 +57,8 @@ public class CommonProxy {
 		VillagerGiftsConfig.init(event);
 		PacketHandler.initPackets();
 		MinecraftForge.EVENT_BUS.register(new RaidsEventHandler());
-		GameRegistry.registerWorldGenerator(new WorldGenOutpost(), 1);
+		MinecraftForge.EVENT_BUS.register(WorldGenOutpost.INSTANCE);
+		MinecraftForge.ORE_GEN_BUS.register(WorldGenOutpost.INSTANCE);
 		StructureOutpostPieces.registerStructurePieces();
 		CapabilityManager.INSTANCE.register(Raider.class, new Raider.Storage(), Raider.Impl::new);
 		if (RaidConfig.raidCenteredOnPlayer) CapabilityManager.INSTANCE.register(RaidOmenTracker.class, new RaidOmenTracker.Storage(), RaidOmenTracker.Impl::new);

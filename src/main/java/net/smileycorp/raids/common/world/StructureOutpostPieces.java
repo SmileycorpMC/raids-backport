@@ -13,6 +13,7 @@ import net.minecraft.world.gen.structure.MapGenStructureIO;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponentTemplate;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
+import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.gen.structure.template.TemplateManager;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -89,7 +90,21 @@ public class StructureOutpostPieces {
     
         private void loadTemplate(TemplateManager manager) {
             PlacementSettings settings = new PlacementSettings().setRotation(rot).setReplacedBlock(Blocks.STRUCTURE_VOID).setIntegrity(integrity);
-            setup(manager.getTemplate(null, Constants.loc("pillager_outpost/" + name)), templatePosition, settings);
+            Template template = manager.getTemplate(null, Constants.loc("pillager_outpost/" + name));
+            BlockPos size = template.getSize();
+            setup(template, templatePosition.add(-size.getX() / 2, 0, - size.getZ() / 2), settings);
+        }
+
+        @Override
+        public boolean addComponentParts(World world, Random random, StructureBoundingBox box) {
+            BlockPos pos = templatePosition;
+            BlockPos size = template.getSize();
+            int maxX = pos.getX() + size.getX();
+            int maxZ = pos.getZ() + size.getZ();
+            int y = Math.min(Math.min(world.getHeight(pos.getX(), pos.getZ()), world.getHeight(maxX, maxZ)),
+                    Math.min(world.getHeight(maxX, pos.getZ()), world.getHeight(pos.getX(), maxZ)));
+            templatePosition = new BlockPos(templatePosition.getX(), y, templatePosition.getZ());
+            return super.addComponentParts(world, random, box);
         }
     
         @Override
