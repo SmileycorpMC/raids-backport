@@ -30,6 +30,7 @@ import net.minecraft.village.Village;
 import net.minecraft.world.*;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.smileycorp.raids.common.Constants;
+import net.smileycorp.raids.common.RaidsAdvancements;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
 import net.smileycorp.raids.common.util.RaidsLogger;
@@ -173,7 +174,10 @@ public class Raid {
 	public void absorbBadOmen(EntityPlayerMP player) {
 		if ((player.isPotionActive(RaidsContent.BAD_OMEN) &! RaidConfig.ominousBottles) || (player.isPotionActive(RaidsContent.RAID_OMEN) && RaidConfig.ominousBottles)) {
 			int level = player.getActivePotionEffect(RaidConfig.ominousBottles ? RaidsContent.RAID_OMEN : RaidsContent.BAD_OMEN).getAmplifier() + 1;
-			if (level > 5) badOmenLevel = level;
+			if (level > 5) {
+				badOmenLevel = level;
+				RaidsAdvancements.OVERLEVELED.trigger(player);
+			}
 			else badOmenLevel += MathHelper.clamp(level,
 					0, Math.max(0, getMaxBadOmenLevel() - badOmenLevel));
 		}
@@ -294,7 +298,7 @@ public class Raid {
 				EntityLivingBase living = (EntityLivingBase)entity;
 				living.addPotionEffect(new PotionEffect(RaidsContent.HERO_OF_THE_VILLAGE, 48000, badOmenLevel - 1, false, true));
 			}
-			if (entity instanceof EntityPlayerMP) RaidsContent.RAID_VICTORY.trigger((EntityPlayerMP) entity);
+			if (entity instanceof EntityPlayerMP) RaidsAdvancements.RAID_VICTORY.trigger((EntityPlayerMP) entity);
 		}
 	}
 	

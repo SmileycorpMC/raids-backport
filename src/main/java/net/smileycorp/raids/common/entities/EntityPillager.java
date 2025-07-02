@@ -31,7 +31,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import net.smileycorp.raids.common.Constants;
-import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.RaidsAdvancements;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.EntityAIPillagerCrossbowAttack;
 import net.smileycorp.raids.common.raid.RaidHandler;
@@ -172,7 +172,7 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
         super.onDeath(source);
         if (!ModIntegration.CROSSBOWS_BACKPORT_LOADED) return;
         if (CrossbowsBackportIntegration.isCrossbowProjectile(source.getImmediateSource()) && source.getTrueSource() instanceof EntityPlayerMP)
-            RaidsContent.WHOS_THE_PILLAGER.trigger((EntityPlayerMP) source.getTrueSource());
+            RaidsAdvancements.WHOS_THE_PILLAGER.trigger((EntityPlayerMP) source.getTrueSource());
     }
     
     @Optional.Method(modid = "crossbow")

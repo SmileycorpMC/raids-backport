@@ -163,7 +163,13 @@
             "spawn_counts": [0, 0, 1, 0, 1, 0, 2],
             "bonus_spawns": {},
             "rider": {}
-        }
+        },
+		{
+			"entity": "minecraft:illusion_illager",
+			"spawn_counts": [0, 1, 0, 1, 0, 2, 1],
+			"bonus_spawns": {},
+			"rider": {}
+		}
     ],
     "conditions": [
 		{

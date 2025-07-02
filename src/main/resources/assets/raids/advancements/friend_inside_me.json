@@ -1,0 +1,29 @@
+{
+  "parent": "raids:allay_delivers_item",
+  "display": {
+    "icon": {
+      "item": "minecraft:record_11"
+    },
+    "title": {
+      "translate": "advancements.husbandry.friend_inside_me.title"
+    },
+    "description": {
+      "translate": "advancements.husbandry.friend_inside_me.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "friend_inside_me": {
+      "trigger": "raids:friend_inside_me",
+      "conditions": {}
+	}
+  },
+  "requirements": [
+    [
+      "friend_inside_me"
+    ]
+  ]
+}

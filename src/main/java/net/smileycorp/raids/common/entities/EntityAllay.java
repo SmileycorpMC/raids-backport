@@ -10,7 +10,9 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.InventoryBasic;
@@ -35,6 +37,7 @@ import net.smileycorp.atlas.api.entity.ai.EntityAIMoveRandomFlying;
 import net.smileycorp.atlas.api.entity.ai.FlyingMoveControl;
 import net.smileycorp.atlas.api.util.DirectionUtils;
 import net.smileycorp.atlas.api.util.MathUtils;
+import net.smileycorp.raids.common.RaidsAdvancements;
 import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.EntityAIAllayDeliverItem;
 import net.smileycorp.raids.common.entities.ai.EntityAIAllayPickupItem;
@@ -196,6 +199,8 @@ public class EntityAllay extends EntityMob implements IEntityOwnable {
         allay.resetDuplicationCooldown();
         resetDuplicationCooldown();
         world.spawnEntity(allay);
+        if (!(owner instanceof EntityPlayerMP) || getHeldItemMainhand().getItem() != Items.LEAD) return;
+        RaidsAdvancements.FRIEND_INSIDE_ME.trigger((EntityPlayerMP) owner);
     }
     
     private void resetDuplicationCooldown() {

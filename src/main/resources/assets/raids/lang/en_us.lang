@@ -47,10 +47,20 @@ potion.potency.7=VIII
 potion.potency.8=IX
 potion.potency.9=X
 
-advancements.adventure.hero_of_the_village.title=Hero of the Village
-advancements.adventure.hero_of_the_village.description=Successfully defend a village from a raid
-advancements.adventure.voluntary_exile.title=Voluntary Exile
-advancements.adventure.voluntary_exile.description=Kill a raid captain. Maybe consider staying away from villages for the time being... 
 advancements.adventure.whos_the_pillager_now.title=Who's the Pillager Now?
 advancements.adventure.whos_the_pillager_now.description=Give a Pillager a taste of their own medicine
+advancements.adventure.voluntary_exile.title=Voluntary Exile
+advancements.adventure.voluntary_exile.description=Kill a raid captain. Maybe consider staying away from villages for the time being...
+advancements.adventure.hero_of_the_village.title=Hero of the Village
+advancements.adventure.hero_of_the_village.description=Successfully defend a village from a raid
+advancements.adventure.overleveled.title=Overleveled
+advancements.adventure.overleveled.description=Unleash a raid with a level higher than the max
+
+advancements.husbandry.birthday_song.title=Birthday Song
+advancements.husbandry.birthday_song.description=Have an Allay drop a Cake at a Note Block
+advancements.husbandry.allay_delivers_item.title=You've Got a Friend in Me
+advancements.husbandry.allay_delivers_item.description=Have an Allay deliver items to you
+advancements.husbandry.friend_inside_me.title=Friend Inside Me
+advancements.husbandry.friend_inside_me.description=Duplicate an Allay holding a lead
+
 commands.raids.spawnPatrol.success=Successfully spawned patrol of %1$s members at (%2$s, %3$s, %4$s)

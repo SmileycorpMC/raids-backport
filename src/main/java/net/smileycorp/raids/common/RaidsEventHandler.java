@@ -131,7 +131,7 @@ public class RaidsEventHandler {
 			if (owner instanceof EntityPlayer) player = (EntityPlayer) owner;
 		}
 		if (itemstack.isEmpty() |! ItemStack.areItemStacksEqual(itemstack, Constants.ominousBanner()) || player == null) return;
-		if (player instanceof EntityPlayerMP) RaidsContent.VOLUNTARY_EXILE.trigger((EntityPlayerMP) player);
+		if (player instanceof EntityPlayerMP) RaidsAdvancements.VOLUNTARY_EXILE.trigger((EntityPlayerMP) player);
 		if (!RaidConfig.ominousBottles) {
 			PotionEffect effect = player.getActivePotionEffect(RaidsContent.BAD_OMEN);
 			int i = 1;
@@ -213,8 +213,8 @@ public class RaidsEventHandler {
 	public void getSpawns(WorldEvent.PotentialSpawns event) {
 		World world = event.getWorld();
 		if (world.isRemote) return;
-		if (WorldDataOutposts.getData((WorldServer) world).isInOutpost(event.getPos())
-				|| event.getType() != EnumCreatureType.MONSTER) return;
+		if (event.getType() != EnumCreatureType.MONSTER) return;
+		if (!WorldDataOutposts.getData((WorldServer) world).isInOutpost(event.getPos())) return;
 		List<Biome.SpawnListEntry> spawns = event.getList();
 		spawns.clear();
 		spawns.addAll(OutpostConfig.getSpawnEntities());

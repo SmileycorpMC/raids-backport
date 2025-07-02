@@ -21,6 +21,8 @@
     "MixinWorldServer"
   ],
   "client": [
+    "MixinAdvancementToast",
+    "MixinGuiAdvancement",
     "MixinGuiMerchant",
     "MixinInventoryEffectRenderer",
     "MixinMerchantRecipeListClient",

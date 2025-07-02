@@ -1,12 +1,5 @@
 package net.smileycorp.raids.common.potion;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumParticleTypes;
@@ -14,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.smileycorp.raids.client.ClientHandler;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.network.PacketHandler;
 import net.smileycorp.raids.common.network.RaidsParticleMessage;
@@ -57,22 +51,7 @@ public class RaidOmenPotion extends RaidsPotion {
     @SideOnly(Side.CLIENT)
     @Override
     protected void renderEffect(PotionEffect effect, int x, int y, float alpha) {
-        if (effect.getAmplifier() > 4) {
-            GlStateManager.pushMatrix();
-            GlStateManager.color(1, 1, 1, alpha);
-            Minecraft mc = Minecraft.getMinecraft();
-            TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite("minecraft:blocks/fire_layer_1");
-            mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder buffer = tessellator.getBuffer();
-            buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-            buffer.pos(x + 1, y + 12, 0).tex(sprite.getMinU(), sprite.getMaxV()).endVertex();
-            buffer.pos(x + 17, y + 12, 0).tex(sprite.getMaxU(), sprite.getMaxV()).endVertex();
-            buffer.pos(x + 17, y - 4, 0).tex(sprite.getMaxU(), sprite.getMinV()).endVertex();
-            buffer.pos(x + 1, y - 4, 0).tex(sprite.getMinU(), sprite.getMinV()).endVertex();
-            tessellator.draw();
-            GlStateManager.popMatrix();
-        }
+        if (effect.getAmplifier() > 4) ClientHandler.renderFire(x + 1, y - 4, alpha);
         super.renderEffect(effect, x, y, alpha);
     }
     

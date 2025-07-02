@@ -1,0 +1,32 @@
+{
+  "parent": "raids:voluntary_exile",
+  "display": {
+    "icon": {
+      "item": "minecraft:diamond_axe"
+    },
+    "title": {
+      "translate": "advancements.adventure.overleveled.title"
+    },
+    "description": {
+      "translate": "advancements.adventure.overleveled.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "rewards": {
+    "experience": 50
+  },
+  "criteria": {
+    "overleveled": {
+      "trigger": "raids:overleveled",
+      "conditions": {}
+    }
+  },
+  "requirements": [
+    [
+      "overleveled"
+    ]
+  ]
+}

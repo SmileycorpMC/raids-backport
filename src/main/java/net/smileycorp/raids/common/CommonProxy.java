@@ -1,7 +1,6 @@
 package net.smileycorp.raids.common;
 
 import com.google.common.collect.Maps;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
@@ -69,9 +68,7 @@ public class CommonProxy {
 		LootTableList.register(Constants.PILLAGER_DROPS);
 		LootTableList.register(Constants.RAVAGER_DROPS);
 		LootTableList.register(Constants.OUTPOST_CHESTS);
-		CriteriaTriggers.register(RaidsContent.WHOS_THE_PILLAGER);
-		CriteriaTriggers.register(RaidsContent.VOLUNTARY_EXILE);
-		CriteriaTriggers.register(RaidsContent.RAID_VICTORY);
+		RaidsAdvancements.register();
 		addDefaultRaiders();
 		registerRaidBuffs();
 		ModIntegration.init();

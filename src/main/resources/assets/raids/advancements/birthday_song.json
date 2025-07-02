@@ -1,0 +1,29 @@
+{
+  "parent": "raids:allay_delivers_item",
+  "display": {
+    "icon": {
+      "item": "minecraft:cake"
+    },
+    "title": {
+      "translate": "advancements.husbandry.birthday_song.title"
+    },
+    "description": {
+      "translate": "advancements.husbandry.birthday_song.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "birthday_song": {
+      "trigger": "raids:birthday_song",
+      "conditions": {}
+	}
+  },
+  "requirements": [
+    [
+      "birthday_song"
+    ]
+  ]
+}

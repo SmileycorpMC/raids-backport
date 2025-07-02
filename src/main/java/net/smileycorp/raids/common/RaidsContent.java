@@ -20,17 +20,12 @@ import net.smileycorp.raids.common.potion.RaidOmenPotion;
 import net.smileycorp.raids.common.potion.RaidsPotion;
 import net.smileycorp.raids.common.raid.RaidOmenTracker;
 import net.smileycorp.raids.common.raid.Raider;
-import net.smileycorp.raids.common.util.RaidsCriterionTrigger;
 import net.smileycorp.raids.config.RaidConfig;
 
 @EventBusSubscriber(modid = Constants.MODID)
 public class RaidsContent {
-	
-	public static final RaidsCriterionTrigger WHOS_THE_PILLAGER = new RaidsCriterionTrigger("whos_the_pillager");
-	public static final RaidsCriterionTrigger VOLUNTARY_EXILE = new RaidsCriterionTrigger("voluntary_exile");
-	public static final RaidsCriterionTrigger RAID_VICTORY = new RaidsCriterionTrigger("raid_victory");
-    
-    @CapabilityInject(Raider.class)
+
+	@CapabilityInject(Raider.class)
 	public static Capability<Raider> RAIDER = null;
 	
 	@CapabilityInject(RaidOmenTracker.class)
