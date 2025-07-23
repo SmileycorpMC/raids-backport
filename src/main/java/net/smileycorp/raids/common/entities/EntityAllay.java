@@ -354,6 +354,18 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
         item.getItem().shrink(count);
         if (item.getItem().getCount() <= 0) item.setDead();
     }
+
+    public void throwItem() {
+        playSound(RaidsSoundEvents.ALLAY_THROW, 1, rand.nextFloat() * 3.5f + 0.5f);
+        ItemStack stack = items.splitStack(1);
+        if (items.isEmpty()) items = ItemStack.EMPTY;
+        DirectionUtils.throwItem(this, stack, getWantedPos());
+        if (!(owner instanceof EntityPlayerMP)) return;
+        EntityPlayerMP player = (EntityPlayerMP) owner;
+        RaidsAdvancements.ALLAY_DELIVERS_ITEM.trigger(player);
+        if (stack.getItem() != Items.CAKE || noteBlock == null) return;
+        RaidsAdvancements.BIRTHDAY_SONG.trigger(player);
+    }
     
     public boolean canHearBlock(Vec3d pos) {
          if (getDistanceSq(pos.x, pos.y, pos.z) > 256) return false;
@@ -385,5 +397,5 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
                 rand.nextGaussian() * 0.02, rand.nextGaussian() * 0.02, rand.nextGaussian() * 0.02);
         else super.handleStatusUpdate(id);
     }
-    
+
 }

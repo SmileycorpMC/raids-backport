@@ -46,14 +46,7 @@ public class EntityAIAllayDeliverItem extends EntityAIBase {
     public void updateTask() {
         Vec3d wantedPos = allay.getWantedPos();
         if (allay.getDistanceSq(wantedPos.x, wantedPos.y, wantedPos.z) >= 4) return;
-        allay.playSound(RaidsSoundEvents.ALLAY_THROW, 1, allay.getRNG().nextFloat() * 3.5f + 0.5f);
-        ItemStack stack = allay.getItems().splitStack(1);
-        DirectionUtils.throwItem(allay, stack, wantedPos);
-        if (!(allay.getOwner() instanceof EntityPlayerMP)) return;
-        EntityPlayerMP player = (EntityPlayerMP) allay.getOwner();
-        RaidsAdvancements.ALLAY_DELIVERS_ITEM.trigger(player);
-        if (stack.getItem() != Items.CAKE || allay.getNoteBlockPos() == null) return;
-        RaidsAdvancements.BIRTHDAY_SONG.trigger(player);
+        allay.throwItem();
     }
     
 }
