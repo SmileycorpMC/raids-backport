@@ -357,7 +357,9 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
 
     public void throwItem() {
         playSound(RaidsSoundEvents.ALLAY_THROW, 1, rand.nextFloat() * 3.5f + 0.5f);
-        ItemStack stack = items.splitStack(1);
+        ItemStack stack = items.copy();
+        stack.setCount(1);
+        items.shrink(1);
         if (items.isEmpty()) items = ItemStack.EMPTY;
         DirectionUtils.throwItem(this, stack, getWantedPos());
         if (!(owner instanceof EntityPlayerMP)) return;
