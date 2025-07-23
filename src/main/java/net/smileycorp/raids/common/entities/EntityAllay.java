@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockJukebox;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.item.EntityItem;
@@ -48,7 +49,7 @@ import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.UUID;
 
-public class EntityAllay extends EntityMob implements IEntityOwnable {
+public class EntityAllay extends EntityCreature implements IEntityOwnable {
     
     public static final Set<BlockJukebox.TileEntityJukebox> JUKEBOXES = Sets.newHashSet();
     

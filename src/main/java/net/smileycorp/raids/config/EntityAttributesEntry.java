@@ -19,7 +19,7 @@ public class EntityAttributesEntry {
     public EntityAttributesEntry(Configuration config, String name, double movementSpeed, double followRange, double attackDamage, double maxHealth, double armor, double armorToughness, double knockbackResistance, double flyingSpeed) {
         this.movementSpeed = config.get(name, "movementSpeed", movementSpeed, "Movement Speed").getDouble();
         this.followRange = config.get(name, "followRange", followRange, "Follow Range").getDouble();
-        this.attackDamage = config.get(name, "attackDamage", attackDamage, "Attack Damage").getDouble();
+        this.attackDamage = attackDamage == 0 ? 0 : config.get(name, "attackDamage", attackDamage, "Attack Damage").getDouble();
         this.maxHealth = config.get(name, "maxHealth", maxHealth, "Max Health").getDouble();
         this.armor = config.get(name, "armor", armor, "Armor").getDouble();
         this.armorToughness = config.get(name, "armorToughness", armorToughness, "Armor Toughness").getDouble();
@@ -31,7 +31,10 @@ public class EntityAttributesEntry {
         AbstractAttributeMap map = entity.getAttributeMap();
         map.getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(movementSpeed);
         map.getAttributeInstance(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(followRange);
-        map.getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
+        if (flyingSpeed != 0) {
+            map.registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+            map.getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
+        }
         map.getAttributeInstance(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(maxHealth);
         map.getAttributeInstance(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
         map.getAttributeInstance(SharedMonsterAttributes.ARMOR_TOUGHNESS).setBaseValue(armorToughness);
