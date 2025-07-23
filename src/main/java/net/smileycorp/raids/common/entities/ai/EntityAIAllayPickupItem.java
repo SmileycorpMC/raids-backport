@@ -32,7 +32,7 @@ public class EntityAIAllayPickupItem extends EntityAIBase {
     
     @Override
     public void updateTask() {
-        for (Entity entity : allay.world.getEntitiesInAABBexcluding(allay, allay.getEntityBoundingBox().grow(3, 3, 3),
+        for (Entity entity : allay.world.getEntitiesInAABBexcluding(allay, allay.getEntityBoundingBox().grow(2, 2, 2),
                 allay::canPickupItem)) allay.pickupItem((EntityItem)entity);
     }
 }
