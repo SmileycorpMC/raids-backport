@@ -18,6 +18,7 @@ public abstract class MixinTileEntity {
     
     @Inject(at = @At("TAIL"), method = "setWorld")
     public void raids$init(World world, CallbackInfo callback) {
+        if (world == null) return;
         if (world.isRemote) return;
         if (!((Object)this instanceof BlockJukebox.TileEntityJukebox)) return;
         EntityAllay.JUKEBOXES.add((BlockJukebox.TileEntityJukebox)(Object)this);
@@ -25,6 +26,7 @@ public abstract class MixinTileEntity {
     
     @Inject(at = @At("HEAD"), method = "invalidate")
     public void raids$invalidate(CallbackInfo callback) {
+        if (world == null) return;
         if (world.isRemote) return;
         if (!((Object)this instanceof BlockJukebox.TileEntityJukebox)) return;
         EntityAllay.JUKEBOXES.remove(this);
