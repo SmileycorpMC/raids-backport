@@ -25,7 +25,7 @@ public class RaidSpawnTable {
         this.name = name;
         this.entries.addAll(entries);
         this.conditions.addAll(conditions);
-        this.sound = sound == null ? sound : RaidsSoundEvents.RAID_HORN;
+        this.sound = sound != null ? sound : RaidsSoundEvents.RAID_HORN;
     }
     
     public boolean shouldApply(RaidContext ctx) {
