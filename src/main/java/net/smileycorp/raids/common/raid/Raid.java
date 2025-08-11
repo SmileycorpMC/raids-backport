@@ -307,7 +307,7 @@ public class Raid {
 	}
 	
 	public static boolean isVillage(World world, BlockPos center, double distance) {
-		if (ModIntegration.TEKTOPIA_LOADED) return TektopiaIntegration.isVillage(world, center);
+		if (ModIntegration.TEKTOPIA_LOADED) if (TektopiaIntegration.isVillage(world, center)) return true;
 		for (Village village : world.getVillageCollection().getVillageList()){
 			BlockPos vilCenter = village.getCenter();
 			if (vilCenter.getDistance(center.getX(), center.getY(), center.getZ()) < (village.getVillageRadius() + distance * distance)) return true;

@@ -1,9 +1,6 @@
 package net.smileycorp.raids.common.entities.ai;
 
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.smileycorp.atlas.api.util.DirectionUtils;
 import net.smileycorp.raids.common.entities.EntityAllay;

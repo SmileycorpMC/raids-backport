@@ -42,7 +42,6 @@ import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.EntityAIAllayDeliverItem;
 import net.smileycorp.raids.common.entities.ai.EntityAIAllayPickupItem;
 import net.smileycorp.raids.common.entities.ai.EntityAIAllayStayNearTarget;
-import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.EntityConfig;
 
 import javax.annotation.Nullable;
