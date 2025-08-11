@@ -33,15 +33,13 @@ public class ModelPillager extends ModelIllager {
     public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entity) {
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
         if (entity instanceof EntityPillager && ModIntegration.HAS_CROSSBOW_MOD) {
-            if (((EntityPillager) entity).isChargingCrossbow()) {
-                animateCharge((EntityLivingBase) entity, rightArm, leftArm);
-                return;
+            if (((EntityPillager) entity).isChargingCrossbow()) animateCharge((EntityLivingBase) entity, rightArm, leftArm);
+            else {
+                if (ModIntegration.isCrossbow(((EntityPillager) entity).getHeldItemOffhand()))
+                    animateCrossbowHold(rightArm, leftArm, head, ((EntityLivingBase) entity).getPrimaryHand() == EnumHandSide.LEFT);
+                if (ModIntegration.CROSSBOWS_BACKPORT_LOADED && CrossbowsBackportIntegration.isCrossbow(((EntityLivingBase) entity).getHeldItemMainhand()))
+                    animateCrossbowHold(rightArm, leftArm, head, ((EntityLivingBase) entity).getPrimaryHand() == EnumHandSide.RIGHT);
             }
-            if (ModIntegration.isCrossbow(((EntityPillager) entity).getHeldItemOffhand()))
-                animateCrossbowHold(rightArm, leftArm, head, ((EntityLivingBase) entity).getPrimaryHand() == EnumHandSide.LEFT);
-            if (ModIntegration.CROSSBOWS_BACKPORT_LOADED && CrossbowsBackportIntegration.isCrossbow(((EntityLivingBase) entity).getHeldItemMainhand()))
-                animateCrossbowHold(rightArm, leftArm, head, ((EntityLivingBase) entity).getPrimaryHand() == EnumHandSide.RIGHT);
-            
         }
         copyModelAngles(head, hat);
     }
