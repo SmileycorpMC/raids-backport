@@ -366,13 +366,13 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
         stack.setCount(1);
         if (items.getCount() == 1) items = ItemStack.EMPTY;
         else items.shrink(1);
-        EntityItem item = new EntityItem(world, posX, posY + getEyeHeight() - 0.3, posZ, stack);
+        EntityItem item = new EntityItem(world, posX, posY + getEyeHeight() - 0.2, posZ, stack);
         item.setThrower(entityUniqueID.toString());
         Vec3d vel = getWantedPos().subtract(item.posX, item.posY, item.posZ)
-                .normalize().scale(0.3);
-        item.motionX = vel.x;
-        item.motionY = vel.y;
-        item.motionZ = vel.z;
+                .normalize();
+        item.motionX = vel.x * 0.2f;
+        item.motionY = vel.y * 0.3f;
+        item.motionZ = vel.z * 0.2f;
         item.setDefaultPickupDelay();
         world.spawnEntity(item);
 
