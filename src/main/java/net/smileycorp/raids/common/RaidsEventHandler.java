@@ -230,9 +230,10 @@ public class RaidsEventHandler {
 		for (MerchantRecipe recipe : event.getList()) {
 			MerchantRecipe newRecipe = new MerchantRecipe(recipe.getItemToBuy(), recipe.getSecondItemToBuy(), recipe.getItemToSell(), recipe.getToolUses(), recipe.getMaxTradeUses());
 			ITradeDiscount trade = (ITradeDiscount) newRecipe;
-			double d0 = 0.3D + 0.0625D * (double)amplifier;
-			int j = (int)Math.floor(d0 * (double)newRecipe.getItemToBuy().getCount());
-			trade.setDiscountedPrice(Math.max(j, 1));
+			int count = newRecipe.getItemToBuy().getCount();
+			double d0 = 0.3 + 0.0625 * (double)amplifier;
+			int j = (int)Math.floor(d0 * (double)count);
+			trade.setDiscountedPrice(Math.max(count - j, 1));
 			newList.add(newRecipe);
 		}
 		event.setList(newList);

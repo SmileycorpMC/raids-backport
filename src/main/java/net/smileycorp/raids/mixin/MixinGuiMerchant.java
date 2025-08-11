@@ -42,6 +42,7 @@ public abstract class MixinGuiMerchant extends GuiContainer {
             int x = ((width - xSize) / 2) + 36;
             int y = ((height - ySize) / 2) + 24;
             GlStateManager.pushMatrix();
+            GlStateManager.color(1, 1, 1, 1);
             mc.renderEngine.bindTexture(ClientHandler.STRIKETHROUGH_TEXTURE);
             GlStateManager.color(1, 1, 1, 1);
             drawTexturedModalRect(x + 7, y + 12, 0, 0 , 9, 2);
