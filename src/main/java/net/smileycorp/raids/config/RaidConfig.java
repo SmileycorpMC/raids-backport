@@ -94,7 +94,6 @@ public class RaidConfig {
             for (String str : villagerEntitiesStr) {
                 try {
                     Class<?> clazz = null;
-                    int priority = 0;
                     //check if it matches the syntax for a registry name
                     if (str.contains(":")) {
                         ResourceLocation loc = new ResourceLocation(str);
@@ -103,7 +102,7 @@ public class RaidConfig {
                         } else continue;
                     }
                     if (clazz == null) throw new Exception("Entry " + str + " is not in the correct format");
-                    if (EntityLiving.class.isAssignableFrom(clazz) && priority > 0) {
+                    if (EntityLiving.class.isAssignableFrom(clazz)) {
                        villagerEntities.add((Class<? extends EntityLiving>) clazz);
                         RaidsLogger.logInfo("Loaded villager " + clazz + " as " + clazz.getName());
                     } else {
