@@ -13,14 +13,15 @@ public class EntityAIAllayPickupItem extends EntityAIBase {
     
     public EntityAIAllayPickupItem(EntityAllay allay) {
         this.allay = allay;
+        setMutexBits(3);
     }
     
     @Override
     public boolean shouldExecute() {
-        return !allay.getMoveHelper().isUpdating() &! allay.isFull() && allay.getWantedPos() != null &! allay.world.getEntitiesInAABBexcluding(allay, allay.getEntityBoundingBox().grow(16, 16, 16),
+        return allay.canPickupItems() &! allay.world.getEntitiesInAABBexcluding(allay, allay.getEntityBoundingBox().grow(16, 16, 16),
                 allay::canPickupItem).isEmpty();
     }
-    
+
     @Override
     public void startExecuting() {
         for (Entity entity : allay.world.getEntitiesInAABBexcluding(allay, allay.getEntityBoundingBox().grow(16, 16, 16),

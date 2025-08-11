@@ -42,6 +42,7 @@ import net.smileycorp.raids.common.RaidsSoundEvents;
 import net.smileycorp.raids.common.entities.ai.EntityAIAllayDeliverItem;
 import net.smileycorp.raids.common.entities.ai.EntityAIAllayPickupItem;
 import net.smileycorp.raids.common.entities.ai.EntityAIAllayStayNearTarget;
+import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.EntityConfig;
 
 import javax.annotation.Nullable;
@@ -68,6 +69,7 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
     private float spinningAnimationTicks;
     private float spinningAnimationTicks0;
     private int noteBlockCooldown = 0;
+    private int itemPickupCooldown = 0;
     
     public EntityAllay(World world) {
         super(world);
@@ -127,6 +129,7 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
     public void updateAITasks() {
         super.updateAITasks();
         if (!isEntityAlive()) return;
+        if (itemPickupCooldown > 0) itemPickupCooldown--;
         if (ticksExisted % 5 == 2 && !canDance()) findJukebox();
         if (noteBlockCooldown > 0) if (noteBlockCooldown-- <=0) noteBlock = null;
         if (ticksExisted % 10 == 0) heal(1);
@@ -287,7 +290,7 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
     public boolean canPickupItem(Entity entity) {
         if (!(entity instanceof EntityItem)) return false;
         EntityItem item = (EntityItem) entity;
-        if (item.cannotPickup()) return false;
+        if (entityUniqueID.toString().equals(item.getThrower()) && item.cannotPickup()) return false;
         ItemStack stack = items.isEmpty() ? getHeldItemMainhand() : items;
         ItemStack stack1 = item.getItem();
         return stack.getItem() == stack1.getItem() && stack.getMetadata() == stack1.getMetadata()
@@ -295,8 +298,8 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
     }
     
     public boolean isSpinning() {
-        float f = this.dancingAnimationTicks % 55.0F;
-        return f < 15.0F;
+        float f = this.dancingAnimationTicks % 55;
+        return f < 15;
     }
     
     public float getSpinningProgress(float spin) {
@@ -330,7 +333,7 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
     
     @Override
     protected float getSoundVolume() {
-        return 0.4F;
+        return 0.4f;
     }
     
     public boolean isFull() {
@@ -355,12 +358,25 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
     }
 
     public void throwItem() {
+        if (items.isEmpty()) {
+            items = ItemStack.EMPTY;
+            return;
+        }
         playSound(RaidsSoundEvents.ALLAY_THROW, 1, rand.nextFloat() * 3.5f + 0.5f);
         ItemStack stack = items.copy();
         stack.setCount(1);
-        items.shrink(1);
-        if (items.isEmpty()) items = ItemStack.EMPTY;
-        DirectionUtils.throwItem(this, stack, getWantedPos());
+        if (items.getCount() == 1) items = ItemStack.EMPTY;
+        else items.shrink(1);
+        EntityItem item = new EntityItem(world, posX, posY + getEyeHeight() - 0.3, posZ, stack);
+        item.setThrower(entityUniqueID.toString());
+        Vec3d vel = getWantedPos().subtract(item.posX, item.posY, item.posZ)
+                .normalize().scale(0.3);
+        item.motionX = vel.x;
+        item.motionY = vel.y;
+        item.motionZ = vel.z;
+        item.setDefaultPickupDelay();
+        world.spawnEntity(item);
+
         if (!(owner instanceof EntityPlayerMP)) return;
         EntityPlayerMP player = (EntityPlayerMP) owner;
         RaidsAdvancements.ALLAY_DELIVERS_ITEM.trigger(player);
@@ -397,6 +413,10 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
                 posZ + (double)(rand.nextFloat() * width * 2f) - (double)width,
                 rand.nextGaussian() * 0.02, rand.nextGaussian() * 0.02, rand.nextGaussian() * 0.02);
         else super.handleStatusUpdate(id);
+    }
+
+    public boolean canPickupItems() {
+        return !moveHelper.isUpdating() &! isFull() && getWantedPos() != null && itemPickupCooldown <= 0;
     }
 
 }
