@@ -26,7 +26,7 @@ public class EntityAIAllayStayNearTarget extends EntityAIBase {
     public void startExecuting() {
         Vec3d wantedPos = allay.getWantedPos();
         Vec3d dir = DirectionUtils.getDirectionVec(wantedPos, new Vec3d(allay.posX, allay.posY, allay.posZ));
-        allay.getMoveHelper().setMoveTo(wantedPos.x + dir.x * 3, wantedPos.y + dir.x * 3, wantedPos.z + dir.x * 3, 2);
+        allay.getMoveHelper().setMoveTo(wantedPos.x + dir.x * 3, wantedPos.y + dir.y * 3, wantedPos.z + dir.z * 3, 2);
         super.startExecuting();
     }
 }
