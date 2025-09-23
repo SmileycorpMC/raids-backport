@@ -21,6 +21,7 @@ import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.util.RaidsLogger;
+import slimeknights.tconstruct.common.config.Config;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.library.events.ProjectileEvent;
 import slimeknights.tconstruct.library.materials.Material;
@@ -80,6 +81,7 @@ public class TinkersConstructIntegration {
     }
     
     public static void addLoot(LootTable table) {
+        if (!crossbowsEnabled()) return;
         table.getPool("raids:outpost_crossbow").addEntry(new LootEntryItem(TinkerRangedWeapons.crossBow, 3, 1, new LootFunction[]{new LootFunctionTConCrossbow()}, new LootCondition[0], "tconstruct:crossbow"));
     }
     
@@ -127,5 +129,9 @@ public class TinkersConstructIntegration {
     public static float getChargeAmount(ItemStack stack, EntityLivingBase entity) {
         return ((CrossBow)stack.getItem()).getDrawbackProgress(stack, entity);
     }
-    
+
+    public static boolean crossbowsEnabled() {
+        return TinkerRangedWeapons.crossBow != null;
+    }
+
 }

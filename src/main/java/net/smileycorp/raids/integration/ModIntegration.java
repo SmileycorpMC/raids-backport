@@ -54,7 +54,7 @@ public class ModIntegration {
             if (CROSSBOWS_BACKPORT_LOADED && EntityConfig.crossbowsBackportCrossbows) ITEM_SUPPLIERS.add(r -> CrossbowsBackportIntegration.getCrossbow());
             if (CROSSBOW_LOADED && EntityConfig.crossbowCrossbows) ITEM_SUPPLIERS.add(r -> CrossbowIntegration.getCrossbow());
             if (SPARTAN_LOADED && EntityConfig.spartansWeaponryCrossbows) ITEM_SUPPLIERS.add(r -> SpartanWeaponryIntegration.getCrossbow(r, false));
-            if (TINKERS_LOADED && EntityConfig.tinkersConstructCrossbows) ITEM_SUPPLIERS.add(r -> TinkersConstructIntegration.getCrossbow(r, false));
+            if (TINKERS_LOADED && EntityConfig.tinkersConstructCrossbows && TinkersConstructIntegration.crossbowsEnabled()) ITEM_SUPPLIERS.add(r -> TinkersConstructIntegration.getCrossbow(r, false));
         }
         return ITEM_SUPPLIERS.isEmpty() ? new ItemStack(Items.BOW) : ITEM_SUPPLIERS.get(rand.nextInt(ITEM_SUPPLIERS.size())).apply(rand);
     }
