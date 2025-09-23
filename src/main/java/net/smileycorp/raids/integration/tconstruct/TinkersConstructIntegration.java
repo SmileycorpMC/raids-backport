@@ -17,6 +17,7 @@ import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
+import net.minecraftforge.fluids.FluidStack;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.RaidHandler;
@@ -29,6 +30,7 @@ import slimeknights.tconstruct.library.tools.ProjectileLauncherNBT;
 import slimeknights.tconstruct.library.tools.ToolPart;
 import slimeknights.tconstruct.library.utils.ToolBuilder;
 import slimeknights.tconstruct.library.utils.ToolHelper;
+import slimeknights.tconstruct.shared.TinkerFluids;
 import slimeknights.tconstruct.tools.TinkerMaterials;
 import slimeknights.tconstruct.tools.TinkerTools;
 import slimeknights.tconstruct.tools.ranged.TinkerRangedWeapons;
@@ -41,8 +43,10 @@ public class TinkersConstructIntegration {
     
     public static void init() {
         RaidHandler.registerRaidBuffs(CrossBow.class, TinkersConstructIntegration::applyCrossbowBuffs);
+        //important gameplay
+        TinkerRegistry.registerEntityMelting(EntityPillager.class, new FluidStack(TinkerFluids.emerald, 6));
     }
-    
+
     public static boolean isCrossbow(ItemStack stack) {
         return stack.getItem() instanceof CrossBow;
     }
