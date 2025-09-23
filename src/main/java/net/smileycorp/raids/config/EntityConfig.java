@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.GameData;
+import net.smileycorp.atlas.api.config.EntityAttributesEntry;
 import net.smileycorp.raids.common.util.RaidsLogger;
 
 import java.io.File;
