@@ -4,6 +4,7 @@
   "refmap": "mixins.raids.refmap.json",
   "mixins": [
     "MixinEntityAIMoveIndoors",
+    "MixinEntityLiving",
     "MixinEntityVillager",
     "MixinItem",
     "MixinItemBanner",
