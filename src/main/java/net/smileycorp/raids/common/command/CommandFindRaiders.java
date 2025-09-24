@@ -26,9 +26,7 @@ public class CommandFindRaiders extends CommandBase {
     
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        server.addScheduledTask(() -> {
-            RaidHandler.findRaiders(sender.getEntityWorld(), sender.getPosition());
-        });
+        server.addScheduledTask(() -> RaidHandler.findRaiders(sender.getEntityWorld(), sender.getPosition()));
         //notifyCommandListener(sender, this, "commands."+Constants.modid+".HordeDebug.success", path.toAbsolutePath().toString());
     }
     

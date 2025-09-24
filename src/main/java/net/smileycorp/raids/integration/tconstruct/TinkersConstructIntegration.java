@@ -22,7 +22,6 @@ import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.common.raid.Raid;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.common.util.RaidsLogger;
-import slimeknights.tconstruct.common.config.Config;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.library.events.ProjectileEvent;
 import slimeknights.tconstruct.library.materials.Material;
