@@ -25,7 +25,7 @@ public class PatrolSpawner {
     private int nextTick = -1;
     
     public void tick(WorldServer world) {
-        if (world == null || world.getDifficulty() == EnumDifficulty.PEACEFUL) return;
+        if (world == null || world.getDifficulty() == EnumDifficulty.PEACEFUL || PatrolConfig.patrolChance <= 0) return;
         Random rand = world.rand;
         if (nextTick-- > 0) return;
         if (nextTick == 0) {

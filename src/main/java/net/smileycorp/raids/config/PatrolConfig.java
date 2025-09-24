@@ -30,7 +30,7 @@ public class PatrolConfig {
             spawnEntitiesStr = config.get("spawns", "spawnEntities", new String[] {"raids:pillager-1"}, "Which entities should spawn in patrols? (format is registry name-spawn weight, weight is a positive integer)").getStringList();
             patrolMinTime = config.get("general", "patrolMinTime", 12000, "Minimum time before the game attempts to spawn patrols per session.").getInt();
             patrolMaxDelay = config.get("general", "patrolMaxDelay", 12000, "Max delay the game can wait to attempt spawn a patrol.").getInt();
-            patrolChance = config.get("general", "patrolChance", 5, "Chance for a patrol to spawn").getInt();
+            patrolChance = config.get("general", "patrolChance", 5, "Chance for a patrol to spawn (Set to 0 to disable).").getInt();
             dayLength = config.get("general", "dayLength", 24000, "How many ticks are days? (Change if you have a mod that changes this)").getInt();
         } catch(Exception e) {
         } finally {
