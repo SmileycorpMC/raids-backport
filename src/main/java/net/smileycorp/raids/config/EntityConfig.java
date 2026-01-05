@@ -48,7 +48,7 @@ public class EntityConfig {
             spartansWeaponryCrossbows = config.get("pillager", "spartansWeaponryCrossbows", true, "Can pillagers spawn with spartans weaponry crossbows? (Requires Spartan's Weaponry to be installed)").getBoolean();
             tinkersConstructCrossbows = config.get("pillager", "tinkersConstructCrossbows", true, "Can pillagers spawn with tinkers construct crossbows? (Requires Tinker's Construct to be installed)").getBoolean();
             ravager = new EntityAttributesEntry(config, "ravager", 0.3, 32, 12, 100, 0, 0, 0.75, 0);
-            allay = new EntityAttributesEntry(config, "allay", 0.1, 48, 2, 20, 0, 0, 0, 0.1);
+            allay = new EntityAttributesEntry(config, "allay", 0.1, 48, 0, 20, 0, 0, 0, 0.1);
             duplicationItemsStr = config.get("allay", "duplicationItems", new String[] {"minecraft:emerald"},
                     "Items that can be used to duplicate allays use '*' or leave blank to specify any metadata, can accept nbt tags. eg.minecraft:emerald, deeperdepths:material:1").getStringList();
             captainChanceStr = config.get("general", "captainChance", new String[] {"raids:pillager-0.06",
