@@ -4,10 +4,7 @@ import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.AbstractIllager;
@@ -172,7 +169,8 @@ public class EntityRavager extends EntityMob {
 	private void roar() {
 		if (!isEntityAlive()) return;
 		for(EntityLiving livingentity : world.getEntitiesWithinAABB(EntityLiving.class, getEntityBoundingBox().grow(4), NO_RAVAGER_AND_ALIVE)) {
-			if (!(livingentity instanceof AbstractIllager)) livingentity.attackEntityFrom(DamageSource.causeMobDamage(this), 6);
+			if (livingentity.getCreatureAttribute() != EnumCreatureAttribute.ILLAGER)
+				livingentity.attackEntityFrom(DamageSource.causeMobDamage(this), 6);
 			strongKnockback(livingentity);
 		}
 		Vec3d vec3 = getEntityBoundingBox().getCenter();
