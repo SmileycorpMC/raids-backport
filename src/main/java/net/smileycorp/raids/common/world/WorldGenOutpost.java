@@ -100,8 +100,7 @@ public class WorldGenOutpost {
         }
     
         public AxisAlignedBB getSpawnBox() {
-            return new AxisAlignedBB(boundingBox.minX, boundingBox.minY, boundingBox.minZ,
-                    boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
+            return new AxisAlignedBB(center).grow(36, 26, 36);
         }
     
         @Override

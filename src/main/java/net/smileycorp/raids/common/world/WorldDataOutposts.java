@@ -20,16 +20,12 @@ public class WorldDataOutposts extends WorldSavedData {
         super(data);
     }
     
-    public WorldDataOutposts() {
-        this(DATA);
-    }
-    
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         //check if the nbt is in the MapGenStructureData format
         //if so read with backwards compatibility
         if (nbt.hasKey("Features")) {
-            nbt.getKeySet().forEach(key -> addOutpost(new WorldGenOutpost.OutpostStart(nbt.getCompoundTag(key).getCompoundTag("center"))));
+            nbt.getCompoundTag("Features").getKeySet().forEach(key -> addOutpost(new WorldGenOutpost.OutpostStart(nbt.getCompoundTag(key).getCompoundTag("center"))));
             return;
         }
         //normal loading
@@ -49,6 +45,7 @@ public class WorldDataOutposts extends WorldSavedData {
     public void addOutpost(WorldGenOutpost.OutpostStart outpost) {
         ChunkPos chunkPos = new ChunkPos(outpost.getCenter());
         outposts.put(ChunkPos.asLong(chunkPos.x, chunkPos.z), outpost);
+        markDirty();
     }
     
     @Override
@@ -56,17 +53,20 @@ public class WorldDataOutposts extends WorldSavedData {
         for (WorldGenOutpost.OutpostStart outpost : outposts.values()) {
             BlockPos pos = outpost.getCenter();
             NBTTagCompound nbt = new NBTTagCompound();
-            outpost.writeToNBT(new NBTTagCompound());
+            outpost.writeToNBT(nbt);
             compound.setTag(MapGenStructureData.formatChunkCoords(pos.getX() >> 4, pos.getZ() >> 4), nbt);
         }
         return compound;
     }
     
     public static WorldDataOutposts getData(WorldServer world) {
-        WorldDataOutposts data = (WorldDataOutposts) world.getMapStorage().getOrLoadData(WorldDataOutposts.class, DATA);
+        String name = DATA;
+        int dim = world.provider.getDimension();
+        if (dim != 0) name += "_" + dim;
+        WorldDataOutposts data = (WorldDataOutposts) world.getMapStorage().getOrLoadData(WorldDataOutposts.class, name);
         if (data == null) {
-            data = new WorldDataOutposts();
-            world.getMapStorage().setData(DATA, data);
+            data = new WorldDataOutposts(name);
+            world.getMapStorage().setData(name, data);
         }
         return data;
     }

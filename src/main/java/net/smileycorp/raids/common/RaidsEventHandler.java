@@ -17,7 +17,6 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.village.MerchantRecipe;
@@ -168,6 +167,17 @@ public class RaidsEventHandler {
 		if (Raid.isVillage(world, RaidConfig.raidCenteredOnPlayer ? RaidOmenTracker.getRaidStart(player) : player.getPosition()))
 			WorldDataRaids.getData((WorldServer) world).createOrExtendRaid(player);
 	}
+
+	@SubscribeEvent
+	public void getSpawns(WorldEvent.PotentialSpawns event) {
+		World world = event.getWorld();
+		if (world.isRemote) return;
+		if (event.getType() != EnumCreatureType.MONSTER) return;
+		if (!WorldDataOutposts.getData((WorldServer) world).isInOutpost(event.getPos())) return;
+		List<Biome.SpawnListEntry> spawns = event.getList();
+		spawns.clear();
+		spawns.addAll(OutpostConfig.getSpawnEntities());
+	}
 	
 	@SubscribeEvent
 	public void checkSpawn(LivingSpawnEvent.CheckSpawn event) {
@@ -180,10 +190,8 @@ public class RaidsEventHandler {
 		if (Raid.isVillage(world, pos)) return;
 		WorldGenOutpost.OutpostStart structure = WorldDataOutposts.getData((WorldServer) world).getStructureAt(pos);
 		if (structure == null) return;
-		AxisAlignedBB aabb = structure.getSpawnBox();
-		if (aabb == null) return;
-		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, aabb, OutpostConfig::isSpawnEntity);
-		event.setResult(entities.size() < OutpostConfig.maxEntities && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 8
+		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, structure.getSpawnBox(), OutpostConfig::isSpawnEntity);
+		event.setResult(entities.size() < OutpostConfig.maxEntities && world.getLightFor(EnumSkyBlock.BLOCK, pos) <= 8
 				&& world.getBlockState(pos.down()).isOpaqueCube() ? Result.ALLOW : Result.DENY);
 	}
 	
@@ -207,17 +215,6 @@ public class RaidsEventHandler {
 		if (!entity.hasCapability(RaidsContent.RAIDER, null)) return;
 		Raider raider = entity.getCapability(RaidsContent.RAIDER, null);
 		if (raider.hasActiveRaid() || raider.isPatrolling()) event.setResult(Result.DENY);
-	}
-	
-	@SubscribeEvent
-	public void getSpawns(WorldEvent.PotentialSpawns event) {
-		World world = event.getWorld();
-		if (world.isRemote) return;
-		if (event.getType() != EnumCreatureType.MONSTER) return;
-		if (!WorldDataOutposts.getData((WorldServer) world).isInOutpost(event.getPos())) return;
-		List<Biome.SpawnListEntry> spawns = event.getList();
-		spawns.clear();
-		spawns.addAll(OutpostConfig.getSpawnEntities());
 	}
 	
 	@SubscribeEvent
