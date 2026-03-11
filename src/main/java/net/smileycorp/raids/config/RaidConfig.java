@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
@@ -27,6 +28,8 @@ public class RaidConfig {
     private static Map<Class<? extends EntityLiving>, Integer> captainPriority;
     private static String[] villagerEntitiesStr;
     private static List<Class<? extends EntityLiving>> villagerEntities;
+    private static String[] heroOfTheVillageEntitiesStr;
+    private static List<Class<? extends EntityLiving>> heroOfTheVillageEntities;
     
     public static void syncConfig(FMLPreInitializationEvent event) {
         Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/raids.cfg"));
@@ -43,6 +46,7 @@ public class RaidConfig {
                     "tektopia:butcher", "tektopia:chef", "tektopia:child", "tektopia:cleric", "tektopia:druid", "tektopia:enchanter", "tektopia:farmer",
                     "tektopia:guard", "tektopia:lumberjack", "tektopia:merchant", "tektopia:miner", "tektopia:nitwit", "tektopia:nomad", "tektopia:rancher",
                     "tektopia:teacher", "tektopia:tradesman", "toroquest:toroquest_guard", "toroquest:toroquest_mage"}, "Which entities are treated by the game as villagers? (Vanilla villagers and entities that extend vanilla villagers do not need to be put here.)").getStringList();
+            heroOfTheVillageEntitiesStr = config.get("general", "heroOfTheVillageEntities", new String[] {"minecraft:villager", "traders:wandering_trader"}, "Which entities have their trades discounted by hero of the village?").getStringList();
         } catch(Exception e) {
         } finally {
             if (config.hasChanged()) config.save();
@@ -103,7 +107,7 @@ public class RaidConfig {
                     }
                     if (clazz == null) throw new Exception("Entry " + str + " is not in the correct format");
                     if (EntityLiving.class.isAssignableFrom(clazz)) {
-                       villagerEntities.add((Class<? extends EntityLiving>) clazz);
+                        villagerEntities.add((Class<? extends EntityLiving>) clazz);
                         RaidsLogger.logInfo("Loaded villager " + clazz + " as " + clazz.getName());
                     } else {
                         throw new Exception("Entity " + str + " is not an instance of EntityLiving");
@@ -115,6 +119,36 @@ public class RaidConfig {
         }
         if (!(entity instanceof EntityLiving) || entity instanceof EntityVillager) return false;
         for (Class<? extends EntityLiving> clazz : villagerEntities) if (clazz.isAssignableFrom(entity.getClass())) return true;
+        return false;
+    }
+
+    public static boolean canHeroOfTheVillageDiscount(IMerchant entity) {
+        if (heroOfTheVillageEntities == null) {
+            heroOfTheVillageEntities = Lists.newArrayList();
+            for (String str : heroOfTheVillageEntitiesStr) {
+                try {
+                    Class<?> clazz = null;
+                    //check if it matches the syntax for a registry name
+                    if (str.contains(":")) {
+                        ResourceLocation loc = new ResourceLocation(str);
+                        if (GameData.getEntityRegistry().containsKey(loc)) {
+                            clazz = GameData.getEntityRegistry().getValue(loc).getEntityClass();
+                        } else continue;
+                    }
+                    if (clazz == null) throw new Exception("Entry " + str + " is not in the correct format");
+                    if (EntityLiving.class.isAssignableFrom(clazz)) {
+                        heroOfTheVillageEntities.add((Class<? extends EntityLiving>) clazz);
+                        RaidsLogger.logInfo("Loaded hero of the village discount entity " + clazz + " as " + clazz.getName());
+                    } else {
+                        throw new Exception("Entity " + str + " is not an instance of EntityLiving");
+                    }
+                } catch (Exception e) {
+                    RaidsLogger.logError("Error adding hero of the village discount entity " + str, e);
+                }
+            }
+        }
+        if (!(entity instanceof EntityLiving)) return false;
+        for (Class<? extends EntityLiving> clazz : heroOfTheVillageEntities) if (clazz.isAssignableFrom(entity.getClass())) return true;
         return false;
     }
     

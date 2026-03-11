@@ -48,6 +48,7 @@ import net.smileycorp.raids.common.raid.*;
 import net.smileycorp.raids.common.util.accessors.ILootPool;
 import net.smileycorp.raids.common.world.WorldDataOutposts;
 import net.smileycorp.raids.common.world.WorldGenOutpost;
+import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.config.MansionConfig;
 import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.RaidConfig;
@@ -219,7 +220,7 @@ public class RaidsEventHandler {
 	
 	@SubscribeEvent
 	public void addTrades(MerchantTradeOffersEvent event) {
-		if (!(event.getMerchant() instanceof EntityVillager) || event.getList() == null || event.getPlayer() == null) return;
+		if (!(RaidConfig.canHeroOfTheVillageDiscount(event.getMerchant())) || event.getList() == null || event.getPlayer() == null) return;
 		EntityPlayer player = event.getPlayer();
 		if (!player.isPotionActive(RaidsContent.HERO_OF_THE_VILLAGE)) return;
 		int amplifier = player.getActivePotionEffect(RaidsContent.HERO_OF_THE_VILLAGE).getAmplifier();
