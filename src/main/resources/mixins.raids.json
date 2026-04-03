@@ -26,6 +26,7 @@
     "MixinGuiMerchant",
     "MixinInventoryEffectRenderer",
     "MixinMerchantRecipeListClient",
+    "MixinModelIllager",
     "MixinRenderEvoker",
     "MixinRenderIllusionIllager",
     "MixinRenderItem"
