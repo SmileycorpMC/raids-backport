@@ -45,19 +45,13 @@ import net.smileycorp.raids.common.entities.ai.EntityAIGiveGift;
 import net.smileycorp.raids.common.interfaces.ITradeDiscount;
 import net.smileycorp.raids.common.items.ItemOminousBottle;
 import net.smileycorp.raids.common.raid.*;
-import net.smileycorp.raids.common.util.accessors.ILootPool;
 import net.smileycorp.raids.common.world.WorldDataOutposts;
 import net.smileycorp.raids.common.world.WorldGenOutpost;
-import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.config.MansionConfig;
 import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.integration.ModIntegration;
-import net.smileycorp.raids.integration.crossbow.CrossbowIntegration;
-import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
 import net.smileycorp.raids.integration.deeperdepths.DeeperDepthsIntegration;
-import net.smileycorp.raids.integration.spartanweaponry.SpartanWeaponryIntegration;
-import net.smileycorp.raids.integration.tconstruct.TinkersConstructIntegration;
 
 import java.util.List;
 
@@ -246,17 +240,16 @@ public class RaidsEventHandler {
 				bottlePool.addEntry(new LootEntryItem(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getOminousBottle() :
 						RaidsContent.OMINOUS_BOTTLE, 1, 1, new LootFunction[] {new SetMetadata(new LootCondition[0], new RandomValueRange(0, 4))}, new LootCondition[0], "raids:ominous_bottle"));
 			}
-			if (ModIntegration.CROSSBOWS_BACKPORT_LOADED && OutpostConfig.crossbowsBackportCrossbows) CrossbowsBackportIntegration.addLoot(table);
-			if (ModIntegration.CROSSBOW_LOADED && OutpostConfig.crossbowCrossbows) CrossbowIntegration.addLoot(table);
-			if (ModIntegration.SPARTAN_LOADED && OutpostConfig.spartansWeaponryCrossbows) SpartanWeaponryIntegration.addLoot(table);
-			if (ModIntegration.TINKERS_LOADED && OutpostConfig.tinkersConstructCrossbows) TinkersConstructIntegration.addLoot(table);
-			LootPool crossbowPool = table.getPool("raids:outpost_crossbow");
-			if (((ILootPool)crossbowPool).isEmpty()) crossbowPool.addEntry(new LootEntryItem(Items.BOW, 1, 1, new LootFunction[0], new LootCondition[0], "raids:bow"));
+			if (!ModIntegration.addOutpostLoot(table)) {
+				LootPool crossbowPool = table.getPool("raids:outpost_crossbow");
+				crossbowPool.addEntry(new LootEntryItem(Items.BOW, 1, 1, new LootFunction[0], new LootCondition[0], "raids:bow"));
+			}
 		}
 		if (LootTableList.CHESTS_WOODLAND_MANSION.equals(event.getName())) {
 			LootTable table =  event.getTable();
 			if (RaidConfig.ominousBottles && MansionConfig.ominousBottles) {
-				if (table.pools.size() >= 3) table.pools.get(2).addEntry(new LootEntryItem(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getOminousBottle() :
+				LootPool pool = table.getPool("raids:ominous_bottle");
+				if (pool != null) pool.addEntry(new LootEntryItem(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getOminousBottle() :
 						RaidsContent.OMINOUS_BOTTLE, 6, 1, new LootFunction[] {new SetMetadata(new LootCondition[0], new RandomValueRange(2, 4))},
 						new LootCondition[0], "raids:ominous_bottle"));
 			}

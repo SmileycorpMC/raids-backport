@@ -4,10 +4,12 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.fml.common.Loader;
 import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.config.IntegrationConfig;
+import net.smileycorp.raids.config.OutpostConfig;
 import net.smileycorp.raids.integration.crossbow.CrossbowIntegration;
 import net.smileycorp.raids.integration.crossbows.CrossbowsBackportIntegration;
 import net.smileycorp.raids.integration.futuremc.FutureMCIntegration;
@@ -86,5 +88,26 @@ public class ModIntegration {
         if (TINKERS_LOADED && TinkersConstructIntegration.isCrossbow(stack)) return TinkersConstructIntegration.getChargeAmount(stack, entity);
         return (float) -entity.getItemInUseCount() / (float) stack.getMaxItemUseDuration();
     }
-    
+
+    public static boolean addOutpostLoot(LootTable table) {
+        boolean lootAdded = false;
+        if (ModIntegration.CROSSBOWS_BACKPORT_LOADED && OutpostConfig.crossbowsBackportCrossbows) {
+            CrossbowsBackportIntegration.addLoot(table);
+            lootAdded = true;
+        }
+        if (ModIntegration.CROSSBOW_LOADED && OutpostConfig.crossbowCrossbows) {
+            CrossbowIntegration.addLoot(table);
+            lootAdded = true;
+        }
+        if (ModIntegration.SPARTAN_LOADED && OutpostConfig.spartansWeaponryCrossbows) {
+            SpartanWeaponryIntegration.addLoot(table);
+            lootAdded = true;
+        }
+        if (ModIntegration.TINKERS_LOADED && OutpostConfig.tinkersConstructCrossbows) {
+            TinkersConstructIntegration.addLoot(table);
+            lootAdded = true;
+        }
+        return lootAdded;
+    }
+
 }
