@@ -15,7 +15,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -54,8 +53,7 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
     
     private static final DataParameter<Boolean> IS_DANCING = EntityDataManager.createKey(EntityAllay.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> CAN_DUPLICATE = EntityDataManager.createKey(EntityAllay.class, DataSerializers.BOOLEAN);
-    
-    private final InventoryBasic inventory = new InventoryBasic(getName(), false, 1);
+
     private BlockPos jukebox;
     private BlockPos noteBlock;
     private ItemStack items = ItemStack.EMPTY;
@@ -130,7 +128,7 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
         if (!isEntityAlive()) return;
         if (itemPickupCooldown > 0) itemPickupCooldown--;
         if (ticksExisted % 5 == 2 && !canDance()) findJukebox();
-        if (noteBlockCooldown > 0) if (noteBlockCooldown-- <=0) noteBlock = null;
+        if (noteBlockCooldown > 0) if (noteBlockCooldown-- == 0) noteBlock = null;
         if (ticksExisted % 10 == 0) heal(1);
         if (duplicationCooldown > 0) duplicationCooldown--;
         if (duplicationCooldown == 0 &! canDuplicate()) dataManager.set(CAN_DUPLICATE, true);
@@ -167,7 +165,8 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
             stack.shrink(1);
             return true;
         }
-        if (hand == EnumHand.OFF_HAND && stack.isEmpty() &! stack1.isEmpty() && player.getHeldItem(EnumHand.MAIN_HAND).isEmpty()) {
+        if (hand == EnumHand.OFF_HAND && stack.isEmpty() &! stack1.isEmpty() && player.getHeldItem(EnumHand.MAIN_HAND).isEmpty()
+            &! itemIsEqual(stack, stack1)) {
             if (!world.isRemote) entityDropItem(stack1, 0);
             owner = null;
             ownerUUID = null;
@@ -286,16 +285,6 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
         nbt.setBoolean("CanDuplicate", dataManager.get(CAN_DUPLICATE));
     }
     
-    public boolean canPickupItem(Entity entity) {
-        if (!(entity instanceof EntityItem)) return false;
-        EntityItem item = (EntityItem) entity;
-        if (entityUniqueID.toString().equals(item.getThrower()) && item.cannotPickup()) return false;
-        ItemStack stack = items.isEmpty() ? getHeldItemMainhand() : items;
-        ItemStack stack1 = item.getItem();
-        return stack.getItem() == stack1.getItem() && stack.getMetadata() == stack1.getMetadata()
-            && (items.isEmpty() || ItemStack.areItemStackTagsEqual(stack, stack1)) && items.getCount() < stack1.getMaxStackSize();
-    }
-    
     public boolean isSpinning() {
         float f = this.dancingAnimationTicks % 55;
         return f < 15;
@@ -342,8 +331,19 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
     public ItemStack getItems() {
         return items;
     }
+
+    public boolean canPickupItem(Entity entity) {
+        if (!(entity instanceof EntityItem)) return false;
+        EntityItem item = (EntityItem) entity;
+        if (item.isDead || item.cannotPickup()) return false;
+        ItemStack stack = items.isEmpty() ? getHeldItemMainhand() : items;
+        ItemStack stack1 = item.getItem();
+        return stack.getItem() == stack1.getItem() && stack.getMetadata() == stack1.getMetadata()
+                && (items.isEmpty() || ItemStack.areItemStackTagsEqual(stack, stack1)) && items.getCount() < stack1.getMaxStackSize();
+    }
     
     public void pickupItem(EntityItem item) {
+        if (item.isDead) return;
         playSound(SoundEvents.ENTITY_ITEM_PICKUP, 0.2f, ((rand.nextFloat() - rand.nextFloat()) * 0.7f + 1) * 2f);
         if (items.isEmpty()) {
             items = item.getItem();
@@ -351,6 +351,7 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
             return;
         }
         int count = Math.min(item.getItem().getCount(), items.getMaxStackSize() - items.getCount());
+        if (count < 1) return;
         items.grow(count);
         item.getItem().shrink(count);
         if (item.getItem().getCount() <= 0) item.setDead();
@@ -367,7 +368,7 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
         if (items.getCount() == 1) items = ItemStack.EMPTY;
         else items.shrink(1);
         EntityItem item = new EntityItem(world, posX, posY + getEyeHeight() - 0.2, posZ, stack);
-        item.setThrower(entityUniqueID.toString());
+        if (ownerUUID != null) item.setThrower(ownerUUID.toString());
         Vec3d vel = getWantedPos().subtract(item.posX, item.posY, item.posZ)
                 .normalize();
         item.motionX = vel.x * 0.2f;
