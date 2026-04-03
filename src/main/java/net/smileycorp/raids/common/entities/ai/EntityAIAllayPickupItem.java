@@ -26,7 +26,7 @@ public class EntityAIAllayPickupItem extends EntityAIBase {
     public void startExecuting() {
         for (Entity entity : allay.world.getEntitiesInAABBexcluding(allay, allay.getEntityBoundingBox().grow(16, 16, 16),
                                                    allay::canPickupItem)) {
-            allay.getMoveHelper().setMoveTo(entity.posX, entity.posY, entity.posZ, 2);
+            allay.getMoveHelper().setMoveTo(entity.posX, entity.posY, entity.posZ, 1);
             return;
         }
     }

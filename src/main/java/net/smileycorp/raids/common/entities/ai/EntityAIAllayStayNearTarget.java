@@ -16,6 +16,7 @@ public class EntityAIAllayStayNearTarget extends EntityAIBase {
     
     @Override
     public boolean shouldExecute() {
+        if (allay.getLeashed()) return false;
         Vec3d wantedPos = allay.getWantedPos();
         if (allay.getMoveHelper().isUpdating() || wantedPos == null) return false;
         double dis = allay.getDistanceSq(wantedPos.x, wantedPos.y, wantedPos.z);
@@ -26,7 +27,7 @@ public class EntityAIAllayStayNearTarget extends EntityAIBase {
     public void startExecuting() {
         Vec3d wantedPos = allay.getWantedPos();
         Vec3d dir = DirectionUtils.getDirectionVec(wantedPos, new Vec3d(allay.posX, allay.posY, allay.posZ));
-        allay.getMoveHelper().setMoveTo(wantedPos.x + dir.x * 3, wantedPos.y + dir.y * 3, wantedPos.z + dir.z * 3, 2);
+        allay.getMoveHelper().setMoveTo(wantedPos.x + dir.x * 3, wantedPos.y + dir.y * 3, wantedPos.z + dir.z * 3, 1);
         super.startExecuting();
     }
 }
