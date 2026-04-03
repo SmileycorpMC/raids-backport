@@ -302,6 +302,16 @@ public class EntityAllay extends EntityCreature implements IEntityOwnable {
     
     @Override
     protected void playStepSound(BlockPos pos, Block block) {}
+
+    @SideOnly(Side.CLIENT)
+    public int getBrightnessForRender() {
+        return 15728880;
+    }
+
+    @Override
+    public float getBrightness() {
+        return 1;
+    }
     
     @Override
     protected SoundEvent getAmbientSound() {

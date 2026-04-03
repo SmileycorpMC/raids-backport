@@ -29,17 +29,12 @@ public class RenderRaidsVex extends RenderLiving<EntityVex> {
     @Override
     public void doRender(EntityVex vex, double x, double y, double z, float yaw, float pt) {
         GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.enableNormalize();
         GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableCull();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         super.doRender(vex, x, y, z, yaw, pt);
+        GlStateManager.enableCull();
         GlStateManager.disableBlend();
-        GlStateManager.disableNormalize();
-    }
-    
-    @Override
-    public void setLightmap(EntityVex vex) {
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 15, 15);
     }
     
     private static class LayerHeldItemVex extends LayerHeldItem {
