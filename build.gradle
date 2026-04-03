@@ -28,7 +28,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 
-version = "1.12.2-1.1.5"
+version = "1.12.2-1.1.6"
 group = "net.smileycorp.raids"
 archivesBaseName = "Raids-Backport"
 
@@ -50,6 +50,12 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.debug.export', 'true'
+            property 'mixin.hotSwap', 'true'
+            property 'mixin.checks.interfaces', 'true'
+            // property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+            arg '-torg.spongepowered.asm.launch.MixinTweaker'
+            arg "-mixin.config=mixins.raids.json"
         }
 
         server {
@@ -63,8 +69,11 @@ minecraft {
     }
 }
 
+sourceSets { main { output.resourcesDir = output.classesDir } }
+
 mixin {
     add sourceSets.main, "mixins.raids.refmap.json"
+    config "mixins.raids.json"
 }
 
 repositories {
@@ -79,17 +88,19 @@ configurations {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 	implementation "org.spongepowered:mixin:0.8"
+    annotationProcessor "org.spongepowered:mixin:0.8:processor"
     implementation "io.github.llamalad7:mixinextras-common:0.4.1"
-    implementation "curse.maven:atlas-463826:6981034"
+    annotationProcessor 'io.github.llamalad7:mixinextras-common:0.5.0'
+    implementation "curse.maven:atlas-463826:7845224"
 	implementation "curse.maven:crossbows-973881:5108261"
-	implementation "curse.maven:futuremc-310059:5013081"
-	implementation "curse.maven:tconstruct-74072:2902483"
-	implementation "curse.maven:mantle-74924:2713386"
-	implementation "curse.maven:spartan-weaponry-278141:4467344"
-    implementation "curse.maven:tektopia-333029:2763046"
-    implementation "curse.maven:gamestages-268655:2951840"
-    implementation "curse.maven:deeperdepths-1101129:7027083"
-    implementation "maven.modrinth:crossbow:1.1.0"
+    compileOnly "curse.maven:deeperdepths-1101129:7027083"
+    compileOnly "curse.maven:futuremc-310059:5013081"
+    compileOnly "curse.maven:tconstruct-74072:2902483"
+    compileOnly "curse.maven:mantle-74924:2713386"
+    compileOnly"curse.maven:spartan-weaponry-278141:4467344"
+    compileOnly "curse.maven:tektopia-333029:2763046"
+    compileOnly "curse.maven:gamestages-268655:2951840"
+    compileOnly "maven.modrinth:crossbow:1.1.0"
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
