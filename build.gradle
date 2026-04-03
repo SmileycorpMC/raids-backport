@@ -89,10 +89,10 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 	implementation "org.spongepowered:mixin:0.8"
     annotationProcessor "org.spongepowered:mixin:0.8:processor"
-    implementation "io.github.llamalad7:mixinextras-common:0.4.1"
+    implementation "io.github.llamalad7:mixinextras-common:0.5.0"
     annotationProcessor 'io.github.llamalad7:mixinextras-common:0.5.0'
     implementation "curse.maven:atlas-463826:7845224"
-	implementation "curse.maven:crossbows-973881:5108261"
+    compileOnly "curse.maven:crossbows-973881:5108261"
     compileOnly "curse.maven:deeperdepths-1101129:7027083"
     compileOnly "curse.maven:futuremc-310059:5013081"
     compileOnly "curse.maven:tconstruct-74072:2902483"

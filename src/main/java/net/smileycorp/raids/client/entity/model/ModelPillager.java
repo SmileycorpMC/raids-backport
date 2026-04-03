@@ -47,12 +47,7 @@ public class ModelPillager extends ModelIllager {
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
-        if (! (entity instanceof EntityLivingBase)) return;
-        ItemStack chest = ((EntityLivingBase)entity).getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-        if (!(chest.getItem() instanceof ItemArmor)) return;
-        Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(
-                ((ItemArmor) chest.getItem()).damageReduceAmount > 6 ? UPGRADED_2_HAT : UPGRADED_1_HAT);
-        hat.render(scale);
+
     }
     
     public static void animateCharge(EntityLivingBase entity, ModelRenderer rightArm, ModelRenderer leftArm) {

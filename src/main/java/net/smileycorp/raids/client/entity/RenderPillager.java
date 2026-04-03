@@ -12,6 +12,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
+import net.smileycorp.raids.client.entity.layer.LayerPillagerHat;
 import net.smileycorp.raids.client.entity.model.ModelPillager;
 import net.smileycorp.raids.common.Constants;
 
@@ -29,6 +30,7 @@ public class RenderPillager extends RenderLiving<EntityMob> {
             }
         });
         addLayer(new LayerCustomHead(((ModelPillager)getMainModel()).head));
+        addLayer(new LayerPillagerHat(this));
     }
     
     @Override
