@@ -28,7 +28,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 
-version = "1.12.2-1.1.6"
+version = "1.12.2-1.1.6-DEV1"
 group = "net.smileycorp.raids"
 archivesBaseName = "Raids-Backport"
 
