@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsContent;
@@ -29,7 +30,7 @@ public class WorldDataRaids extends WorldSavedData {
     private final Map<Integer, Raid> raidMap = Maps.newHashMap();
     private final Random rand = new Random();
     private WorldServer world;
-    private int nextAvailableID;
+    private int nextAvailableID = 1;
     private int tick;
     private PatrolSpawner patrols = new PatrolSpawner();
     private NBTTagList raidNBT;
@@ -40,7 +41,6 @@ public class WorldDataRaids extends WorldSavedData {
     
     public WorldDataRaids() {
         this(DATA);
-        nextAvailableID = 1;
     }
     
     private void setWorld(WorldServer world) {
@@ -157,6 +157,33 @@ public class WorldDataRaids extends WorldSavedData {
         return raid;
     }
     
+    @Nullable
+    public Raid forceStartRaid(BlockPos pos, RaidSpawnTable table) {
+        return forceStartRaid(pos, table, false, null);
+    }
+
+    public Raid forceStartRaid(BlockPos pos, RaidSpawnTable table, boolean ignoreVillageRequirement) {
+        return forceStartRaid(pos, table, ignoreVillageRequirement, null);
+    }
+
+    public Raid forceStartRaid(BlockPos pos, RaidSpawnTable table, boolean ignoreVillageRequirement, @Nullable Integer customWaves) {
+        if (table == null) return null;
+        Raid existing = getRaidAt(pos);
+        if (existing != null) return existing;
+        Integer normalizedWaves = customWaves == null ? null : Math.max(1, customWaves);
+        Raid raid = new Raid(getUniqueId(), world, pos, table, normalizedWaves);
+        raid.setIgnoreVillageRequirement(ignoreVillageRequirement);
+        raidMap.put(raid.getId(), raid);
+        setDirty(true);
+        return raid;
+    }
+
+    public void removeRaid(Raid raid) {
+        if (raid == null) return;
+        raidMap.remove(raid.getId());
+        setDirty(true);
+    }
+    
     public PatrolSpawner getPatrolSpawner() {
         return patrols;
     }
@@ -174,16 +201,22 @@ public class WorldDataRaids extends WorldSavedData {
     }
     
     public static WorldDataRaids getData(WorldServer world) {
-        WorldDataRaids data = (WorldDataRaids) world.getMapStorage().getOrLoadData(WorldDataRaids.class, DATA);
+        String key = getStorageKey(world);
+        MapStorage storage = world.getMapStorage();
+        WorldDataRaids data = (WorldDataRaids) storage.getOrLoadData(WorldDataRaids.class, key);
         if (data == null) {
-            data = new WorldDataRaids();
-            world.getMapStorage().setData(DATA, data);
+            data = new WorldDataRaids(key);
+            storage.setData(key, data);
         }
-        if (data.world == null) {
+        if (data.world != world) {
             data.setWorld(world);
             data.setDirty(true);
         }
         return data;
+    }
+
+    private static String getStorageKey(WorldServer world) {
+        return DATA + "_" + world.provider.getDimension();
     }
     
 }

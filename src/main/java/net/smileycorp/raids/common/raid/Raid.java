@@ -1,5 +1,6 @@
 package net.smileycorp.raids.common.raid;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.Entity;
@@ -17,8 +18,10 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -32,12 +35,21 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsAdvancements;
 import net.smileycorp.raids.common.RaidsContent;
+import net.smileycorp.raids.common.event.CustomRaidEndEvent;
+import net.smileycorp.raids.common.event.CustomRaidStartEvent;
+import net.smileycorp.raids.common.event.CustomRaidTickEvent;
+import net.smileycorp.raids.common.event.CustomRaidWaveEndEvent;
+import net.smileycorp.raids.common.event.CustomRaidWaveStartEvent;
 import net.smileycorp.raids.common.entities.ai.EntityAIPathfindToRaid;
 import net.smileycorp.raids.common.util.RaidsLogger;
 import net.smileycorp.raids.config.RaidConfig;
 import net.smileycorp.raids.config.raidevent.RaidSpawnTable;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.tektopia.TektopiaIntegration;
+
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.registries.GameData;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -47,10 +59,6 @@ public class Raid {
 	private static final ITextComponent RAID_NAME_COMPONENT = new TextComponentTranslation("event.raids.raid");
 	private static final ITextComponent VICTORY = new TextComponentTranslation("event.raids.raid.victory");
 	private static final ITextComponent DEFEAT = new TextComponentTranslation("event.raids.raid.defeat");
-	private static final ITextComponent RAID_BAR_VICTORY_COMPONENT = RAID_NAME_COMPONENT.createCopy()
-			.appendSibling(new TextComponentString(" - ")).appendSibling(VICTORY);
-	private static final ITextComponent RAID_BAR_DEFEAT_COMPONENT = RAID_NAME_COMPONENT.createCopy()
-			.appendSibling(new TextComponentString(" - ")).appendSibling(DEFEAT);
 	private final Map<Integer, EntityLiving> groupToLeaderMap = Maps.newHashMap();
 	private final Map<Integer, Set<EntityLiving>> groupEntityLivingMap = Maps.newHashMap();
 	private final Set<UUID> heroesOfTheVillage = Sets.newHashSet();
@@ -66,6 +74,7 @@ public class Raid {
 	private boolean active;
 	private int groupsSpawned;
 	private final BossInfoServer raidEvent = new BossInfoServer(RAID_NAME_COMPONENT, BossInfo.Color.RED, BossInfo.Overlay.NOTCHED_10);
+	private ITextComponent customName;
 	private int postRaidTicks;
 	private int raidCooldownTicks;
 	private final Random random = new Random();
@@ -73,8 +82,22 @@ public class Raid {
 	private Status status;
 	private int celebrationTicks;
 	private Optional<BlockPos> waveSpawnPos = Optional.empty();
+	private boolean ignoreVillageRequirement;
+	private boolean customRaid;
+	private boolean grantHeroBuffs = true;
+	private boolean customRequireVillage = true;
+	private final List<Class<? extends EntityLiving>> detectionWhitelist = Lists.newArrayList();
+	private UUID customPlayer;
+	private String customRaidName;
+	private String customBossbarName;
+	private int lastCompletedWaveEvent;
+	private boolean endEventFired;
 	
 	public Raid(int id, WorldServer world, BlockPos center, RaidSpawnTable table) {
+		this(id, world, center, table, null);
+	}
+
+	public Raid(int id, WorldServer world, BlockPos center, RaidSpawnTable table, @Nullable Integer customNumGroups) {
 		this.id = id;
 		this.world = world;
 		active = true;
@@ -82,7 +105,8 @@ public class Raid {
 		this.table = table;
 		raidCooldownTicks = 300;
 		raidEvent.setPercent(0.0F);
-		numGroups = getNumGroups(world.getDifficulty());
+		int waves = customNumGroups != null ? Math.max(1, customNumGroups) : getNumGroups(world.getDifficulty());
+		numGroups = waves;
 		status = Status.ONGOING;
 		RaidsLogger.logInfo("Starting raid id " + id + "  with table " + table.getName() + " at " + center + " and " + numGroups + " waves ");
 	}
@@ -102,6 +126,16 @@ public class Raid {
 		numGroups = nbt.getInteger("NumGroups");
 		status = Status.getByName(nbt.getString("Status"));
 		table = RaidHandler.getSpawnTable(nbt.getString("Table"));
+		ignoreVillageRequirement = nbt.getBoolean("IgnoreVillage");
+		customRaid = nbt.getBoolean("CustomRaid");
+		grantHeroBuffs = nbt.hasKey("GrantHeroBuffs") ? nbt.getBoolean("GrantHeroBuffs") : !customRaid;
+		customRequireVillage = nbt.hasKey("CustomRequireVillage") ? nbt.getBoolean("CustomRequireVillage") : true;
+		if (nbt.hasUniqueId("CustomPlayer")) customPlayer = nbt.getUniqueId("CustomPlayer");
+		if (nbt.hasKey("CustomRaidName", 8)) customRaidName = nbt.getString("CustomRaidName");
+		if (nbt.hasKey("CustomBossbar", 8)) customBossbarName = nbt.getString("CustomBossbar");
+		if (nbt.hasKey("DetectionWhitelist", 9)) readDetectionWhitelist(nbt.getTagList("DetectionWhitelist", 8));
+		lastCompletedWaveEvent = nbt.getInteger("LastCompletedWaveEvent");
+		if (nbt.hasKey("CustomName", 8)) setCustomName(nbt.getString("CustomName"));
 		heroesOfTheVillage.clear();
 		if (nbt.hasKey("HeroesOfTheVillage", 9)) {
 			NBTTagList list = nbt.getTagList("HeroesOfTheVillage", 10);
@@ -128,6 +162,65 @@ public class Raid {
 	public boolean isLoss() {
 		return status == Status.LOSS;
 	}
+
+	public void setIgnoreVillageRequirement(boolean ignoreVillageRequirement) {
+		this.ignoreVillageRequirement = ignoreVillageRequirement;
+	}
+
+	private ITextComponent getBaseName() {
+		return customName != null ? customName : RAID_NAME_COMPONENT;
+	}
+
+	private ITextComponent createStatusComponent(ITextComponent component) {
+		return getBaseName().createCopy().appendSibling(new TextComponentString(" - ")).appendSibling(component);
+	}
+
+	public void setCustomName(@Nullable String name) {
+		if (name == null || name.trim().isEmpty()) customName = null;
+		else customName = new TextComponentString(name);
+		customBossbarName = name;
+		raidEvent.setName(getBaseName());
+	}
+
+	public void configureCustomRaid(@Nullable EntityPlayerMP player, boolean requireVillage, List<Class<? extends EntityLiving>> whitelist,
+			@Nullable String bossbarName, String raidName) {
+		customRaid = true;
+		grantHeroBuffs = false;
+		customRequireVillage = requireVillage;
+		detectionWhitelist.clear();
+		if (whitelist != null) detectionWhitelist.addAll(whitelist);
+		customRaidName = raidName;
+		customBossbarName = bossbarName;
+		customPlayer = player != null ? player.getUniqueID() : null;
+		if (bossbarName != null) setCustomName(bossbarName);
+	}
+
+	public boolean isCustomRaid() {
+		return customRaid;
+	}
+
+	public boolean requiresVillageCheck() {
+		return customRequireVillage;
+	}
+
+	public List<Class<? extends EntityLiving>> getDetectionWhitelist() {
+		return Collections.unmodifiableList(detectionWhitelist);
+	}
+
+	@Nullable
+	public EntityPlayer getCreator() {
+		if (customPlayer == null) return null;
+		return world.getPlayerEntityByUUID(customPlayer);
+	}
+
+	public String getRaidDisplayName() {
+		if (customRaidName != null) return customRaidName;
+		return stripExtension(table.getName());
+	}
+
+	public String getBossbarTitle() {
+		return customBossbarName != null ? customBossbarName : getBaseName().getUnformattedComponentText();
+	}
 	
 	public Set<EntityLiving> getAllEntityLivings() {
 		Set<EntityLiving> set = Sets.newHashSet();
@@ -149,6 +242,21 @@ public class Raid {
 	
 	public int getNumGroups() {
 		return numGroups;
+	}
+
+	private int fireWaveStartEvent(int proposedWave) {
+		if (!customRaid) return proposedWave;
+		CustomRaidWaveStartEvent event = new CustomRaidWaveStartEvent(this, proposedWave);
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getWave();
+	}
+
+	private void tryFireWaveEndEvent(int currentWave) {
+		if (!customRaid) return;
+		if (currentWave <= 0) return;
+		if (currentWave <= lastCompletedWaveEvent) return;
+		lastCompletedWaveEvent = currentWave;
+		MinecraftForge.EVENT_BUS.post(new CustomRaidWaveEndEvent(this, currentWave));
 	}
 	
 	private void updatePlayers() {
@@ -185,17 +293,29 @@ public class Raid {
 	}
 	
 	public void stop() {
+		boolean wasVictory = status == Status.VICTORY;
 		active = false;
 		Set<EntityPlayerMP> players = Sets.newHashSet();
 		raidEvent.getPlayers().stream().forEach(players::add);
 		players.stream().forEach(raidEvent::removePlayer);
 		status = Status.STOPPED;
+		fireCustomEndEvent(wasVictory);
 	}
 	
 	public void tick() {
 		if (table == null) stop();
 		if (!isStopped()) {
 			if (status == Status.ONGOING) {
+				if (customRaid) {
+					int currentWave = hasFirstWaveSpawned() ? groupsSpawned : 1;
+					CustomRaidTickEvent tickEvent = new CustomRaidTickEvent(this, currentWave);
+					MinecraftForge.EVENT_BUS.post(tickEvent);
+					if (tickEvent.shouldEndRaid()) {
+						if (tickEvent.endAsWin()) raidVictory();
+						else raidLoss();
+						return;
+					}
+				}
 				boolean flag = active;
 				active = world.isBlockLoaded(center);
 				if (world.getDifficulty() == EnumDifficulty.PEACEFUL) {
@@ -204,8 +324,8 @@ public class Raid {
 				}
 				if (flag != active) raidEvent.setVisible(active);
 				if (!active) return;
-				if (!isVillage(world, center) &! RaidConfig.raidCenteredOnPlayer) moveRaidCenterToNearbyVillageSection();
-				if (!isVillage(world, center)) {
+				if (!ignoreVillageRequirement && !isVillage(world, center) &! RaidConfig.raidCenteredOnPlayer) moveRaidCenterToNearbyVillageSection();
+				if (!ignoreVillageRequirement && !isVillage(world, center)) {
 					if (groupsSpawned > 0) {
 						status = Status.LOSS;
 					} else stop();
@@ -215,11 +335,12 @@ public class Raid {
 					return;
 				}
 				int i = getTotalEntityLivingsAlive();
+				if (i == 0 && groupsSpawned > 0) tryFireWaveEndEvent(groupsSpawned);
 				if (i == 0 && hasMoreWaves()) {
 					if (raidCooldownTicks <= 0) {
 						if (raidCooldownTicks == 0 && groupsSpawned > 0) {
 							raidCooldownTicks = 300;
-							raidEvent.setName(RAID_NAME_COMPONENT);
+							raidEvent.setName(getBaseName());
 							return;
 						}
 					} else {
@@ -240,10 +361,9 @@ public class Raid {
 					updatePlayers();
 					updateEntityLivings();
 					if (i > 0) {
-						if (i <= 2) raidEvent.setName(RAID_NAME_COMPONENT.createCopy().appendSibling(new TextComponentString(" - "))
-								.appendSibling(new TextComponentTranslation("event.raids.raid.raiders_remaining", i)));
-						else raidEvent.setName(RAID_NAME_COMPONENT);
-					} else raidEvent.setName(RAID_NAME_COMPONENT);
+						if (i <= 2) raidEvent.setName(createStatusComponent(new TextComponentTranslation("event.raids.raid.raiders_remaining", i)));
+						else raidEvent.setName(getBaseName());
+					} else raidEvent.setName(getBaseName());
 				}
 				boolean flag3 = false;
 				int attempt = 0;
@@ -252,7 +372,8 @@ public class Raid {
 					if (blockpos != null) {
 						started = true;
 						totalHealth = 0;
-						RaidHandler.spawnNewWave(this, blockpos, groupsSpawned + 1, shouldSpawnBonusGroup());
+						int waveToSpawn = fireWaveStartEvent(groupsSpawned + 1);
+						RaidHandler.spawnNewWave(this, blockpos, waveToSpawn, shouldSpawnBonusGroup());
 						waveSpawnPos = Optional.empty();
 						groupsSpawned++;
 						updateBossbar();
@@ -283,8 +404,8 @@ public class Raid {
 					raidEvent.setVisible(true);
 					if (isVictory()) {
 						raidEvent.setPercent(0);
-						raidEvent.setName(RAID_BAR_VICTORY_COMPONENT);
-					} else raidEvent.setName(RAID_BAR_DEFEAT_COMPONENT);
+						raidEvent.setName(createStatusComponent(VICTORY));
+					} else raidEvent.setName(createStatusComponent(DEFEAT));
 				}
 			}
 		}
@@ -292,14 +413,22 @@ public class Raid {
 	
 	public void raidVictory() {
 		status = Status.VICTORY;
-		for(UUID uuid : heroesOfTheVillage) {
-			Entity entity = world.getEntityFromUuid(uuid);
-			if (entity instanceof EntityLivingBase) {
-				EntityLivingBase living = (EntityLivingBase)entity;
-				living.addPotionEffect(new PotionEffect(RaidsContent.HERO_OF_THE_VILLAGE, 48000, badOmenLevel - 1, false, true));
+		if (grantHeroBuffs) {
+			for(UUID uuid : heroesOfTheVillage) {
+				Entity entity = world.getEntityFromUuid(uuid);
+				if (entity instanceof EntityLivingBase) {
+					EntityLivingBase living = (EntityLivingBase)entity;
+					living.addPotionEffect(new PotionEffect(RaidsContent.HERO_OF_THE_VILLAGE, 48000, badOmenLevel - 1, false, true));
+				}
+				if (entity instanceof EntityPlayerMP) RaidsAdvancements.RAID_VICTORY.trigger((EntityPlayerMP) entity);
 			}
-			if (entity instanceof EntityPlayerMP) RaidsAdvancements.RAID_VICTORY.trigger((EntityPlayerMP) entity);
 		}
+		fireCustomEndEvent(true);
+	}
+
+	private void raidLoss() {
+		status = Status.LOSS;
+		fireCustomEndEvent(false);
 	}
 	
 	public static boolean isVillage(World world, BlockPos center) {
@@ -470,7 +599,7 @@ public class Raid {
 			int z = center.getZ() + (int)Math.floor(Math.sin(f) * 32 * (float)i) + random.nextInt(5);
 			int y = world.getHeight(x, z);
 			pos.setPos(x, y, z);
-			if ((isVillage(world, pos) || attempt >= 2) && world.isAreaLoaded(new StructureBoundingBox(pos.getX() - 10, pos.getZ() - 10,
+			if ((ignoreVillageRequirement || isVillage(world, pos) || attempt >= 2) && world.isAreaLoaded(new StructureBoundingBox(pos.getX() - 10, pos.getZ() - 10,
 						pos.getX() + 10, pos.getZ() + 10))
 						&& world.isAirBlock(pos)) return pos;
 		}
@@ -541,6 +670,16 @@ public class Raid {
 		nbt.setInteger("NumGroups", numGroups);
 		nbt.setString("Status", status.getName());
 		nbt.setString("Table", table.getName());
+		nbt.setBoolean("IgnoreVillage", ignoreVillageRequirement);
+		nbt.setBoolean("CustomRaid", customRaid);
+		nbt.setBoolean("GrantHeroBuffs", grantHeroBuffs);
+		nbt.setBoolean("CustomRequireVillage", customRequireVillage);
+		nbt.setInteger("LastCompletedWaveEvent", lastCompletedWaveEvent);
+		if (customPlayer != null) nbt.setUniqueId("CustomPlayer", customPlayer);
+		if (customRaidName != null) nbt.setString("CustomRaidName", customRaidName);
+		if (customBossbarName != null) nbt.setString("CustomBossbar", customBossbarName);
+		writeDetectionWhitelist(nbt);
+		if (customName != null) nbt.setString("CustomName", customName.getUnformattedComponentText());
 		nbt.setInteger("CX", center.getX());
 		nbt.setInteger("CY", center.getY());
 		nbt.setInteger("CZ", center.getZ());
@@ -614,6 +753,48 @@ public class Raid {
 	
 	public Random getRandom() {
 		return random;
+	}
+
+	private void fireCustomEndEvent(boolean win) {
+		if (!customRaid || endEventFired) return;
+		endEventFired = true;
+		MinecraftForge.EVENT_BUS.post(new CustomRaidEndEvent(this, win));
+	}
+
+	private String stripExtension(String name) {
+		if (name == null) return "";
+		int index = name.lastIndexOf('.');
+		return index == -1 ? name : name.substring(0, index);
+	}
+
+	private void writeDetectionWhitelist(NBTTagCompound nbt) {
+		if (detectionWhitelist.isEmpty()) return;
+		NBTTagList list = new NBTTagList();
+		for (Class<? extends EntityLiving> clazz : detectionWhitelist) {
+			ResourceLocation id = getEntityId(clazz);
+			if (id != null) list.appendTag(new NBTTagString(id.toString()));
+		}
+		if (list.tagCount() > 0) nbt.setTag("DetectionWhitelist", list);
+	}
+
+	private void readDetectionWhitelist(NBTTagList list) {
+		detectionWhitelist.clear();
+		for (int i = 0; i < list.tagCount(); i++) {
+			String id = list.getStringTagAt(i);
+			try {
+				ResourceLocation loc = new ResourceLocation(id);
+				EntityEntry entry = GameData.getEntityRegistry().getValue(loc);
+				if (entry != null && EntityLiving.class.isAssignableFrom(entry.getEntityClass()))
+					detectionWhitelist.add((Class<? extends EntityLiving>) entry.getEntityClass());
+			} catch (Exception ignored) {}
+		}
+	}
+
+	private ResourceLocation getEntityId(Class<? extends EntityLiving> clazz) {
+		for (EntityEntry entry : GameData.getEntityRegistry()) {
+			if (entry != null && entry.getEntityClass() == clazz) return entry.getRegistryName();
+		}
+		return null;
 	}
 	
 	enum Status {
