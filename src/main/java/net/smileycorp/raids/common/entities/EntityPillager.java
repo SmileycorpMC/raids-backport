@@ -16,6 +16,7 @@ import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -132,12 +133,15 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
     protected SoundEvent getHurtSound(DamageSource source) {
         return RaidsSoundEvents.PILLAGER_HURT;
     }
+
+    @Override
+    public void setRotationYawHead(float rotation) {}
     
     @Override
     public void attackEntityWithRangedAttack(EntityLivingBase target, float distance) {
         EntityArrow entityarrow = getArrow(distance);
-        if (getHeldItemMainhand().getItem() instanceof net.minecraft.item.ItemBow)
-            entityarrow = ((net.minecraft.item.ItemBow) this.getHeldItemMainhand().getItem()).customizeArrow(entityarrow);
+        if (getHeldItemMainhand().getItem() instanceof ItemBow)
+            entityarrow = ((ItemBow) this.getHeldItemMainhand().getItem()).customizeArrow(entityarrow);
         double d0 = target.posX - posX;
         double d1 = target.getEntityBoundingBox().minY + (double)(target.height / 3f) - entityarrow.posY;
         double d2 = target.posZ - posZ;
