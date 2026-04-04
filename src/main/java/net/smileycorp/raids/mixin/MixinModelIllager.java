@@ -22,18 +22,7 @@ public class MixinModelIllager {
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/monster/AbstractIllager;getArmPose()Lnet/minecraft/entity/monster/AbstractIllager$IllagerArmPose;"), method = "setRotationAngles")
     public void raids$setRotationAngles$getArmPose(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scalefactor, Entity entity, CallbackInfo callback) {
-        if (!entity.isRiding()) {
-            //reset rotations if entity is not mounted
-            rightArm.rotateAngleX = 0;
-            rightArm.rotateAngleY = 0;
-            rightArm.rotateAngleZ = 0;
-            leftArm.rotateAngleX = 0;
-            leftArm.rotateAngleY = 0;
-            leftArm.rotateAngleZ = 0;
-            leg0.rotateAngleZ = 0;
-            leg1.rotateAngleZ = 0;
-            return;
-        }
+        if (!entity.isRiding()) return;
         rightArm.rotateAngleX = (-(float)Math.PI / 5f);
         rightArm.rotateAngleY = 0;
         rightArm.rotateAngleZ = 0;
@@ -46,6 +35,23 @@ public class MixinModelIllager {
         leg1.rotateAngleX = -1.4137167f;
         leg1.rotateAngleY = (-(float)Math.PI / 10f);
         leg1.rotateAngleZ = -0.07853982f;
+    }
+
+    @Inject(at = @At(value = "RETURN"), method = "setRotationAngles")
+    public void raids$setRotationAngles$TAIL(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scalefactor, Entity entity, CallbackInfo callback) {
+        if (!entity.isRiding()) return;
+        rightArm.rotateAngleX = 0;
+        rightArm.rotateAngleY = 0;
+        rightArm.rotateAngleZ = 0;
+        leftArm.rotateAngleX = 0;
+        leftArm.rotateAngleY = 0;
+        leftArm.rotateAngleZ = 0;
+        leg0.rotateAngleX = 0;
+        leg0.rotateAngleY = 0;
+        leg0.rotateAngleZ = 0;
+        leg1.rotateAngleX = 0;
+        leg1.rotateAngleY = 0;
+        leg1.rotateAngleZ = 0;
     }
 
 
