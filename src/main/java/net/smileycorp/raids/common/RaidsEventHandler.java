@@ -216,19 +216,18 @@ public class RaidsEventHandler {
 	public void addTrades(MerchantTradeOffersEvent event) {
 		if (!(RaidConfig.canHeroOfTheVillageDiscount(event.getMerchant())) || event.getList() == null || event.getPlayer() == null) return;
 		EntityPlayer player = event.getPlayer();
-		if (!player.isPotionActive(RaidsContent.HERO_OF_THE_VILLAGE)) return;
-		int amplifier = player.getActivePotionEffect(RaidsContent.HERO_OF_THE_VILLAGE).getAmplifier();
-		MerchantRecipeList newList = new MerchantRecipeList();
+		int amplifier = player.isPotionActive(RaidsContent.HERO_OF_THE_VILLAGE) ?
+				player.getActivePotionEffect(RaidsContent.HERO_OF_THE_VILLAGE).getAmplifier() : -1;
 		for (MerchantRecipe recipe : event.getList()) {
-			MerchantRecipe newRecipe = new MerchantRecipe(recipe.getItemToBuy(), recipe.getSecondItemToBuy(), recipe.getItemToSell(), recipe.getToolUses(), recipe.getMaxTradeUses());
-			ITradeDiscount trade = (ITradeDiscount) newRecipe;
-			int count = newRecipe.getItemToBuy().getCount();
-			double d0 = 0.3 + 0.0625 * (double)amplifier;
-			int j = (int)Math.floor(d0 * (double)count);
-			trade.setDiscountedPrice(Math.max(count - j, 1));
-			newList.add(newRecipe);
-		}
-		event.setList(newList);
+			ITradeDiscount trade = (ITradeDiscount) recipe;
+			if (amplifier == -1) {
+				trade.setDiscountedPrice(0);
+				continue;
+			}
+			int count = recipe.getItemToBuy().getCount();
+			int discount = (int)Math.floor((0.3 + 0.0625 * (double)amplifier) * (double)count);
+			trade.setDiscountedPrice(Math.max(count - discount, 1));
+		};
 	}
 	
 	@SubscribeEvent
