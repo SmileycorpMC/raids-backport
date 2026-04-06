@@ -38,7 +38,7 @@ public class EntityAIAllayDeliverItem extends EntityAIBase {
     public void updateTask() {
         Vec3d wantedPos = allay.getWantedPos();
         if (allay.getDistanceSq(wantedPos.x, wantedPos.y, wantedPos.z) >= 9) moveToTarget();
-        allay.throwItem();
+        else allay.throwItem();
     }
 
     private void moveToTarget() {
