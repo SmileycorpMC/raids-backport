@@ -34,7 +34,7 @@ public class PatrolSpawner {
             if ((day < PatrolsConfig.firstDay | !world.isDaytime()) || rand.nextInt(PatrolsConfig.patrolChance) != 0 || world.playerEntities.isEmpty())
                 return;
             EntityPlayer player = world.playerEntities.get(rand.nextInt(world.playerEntities.size()));
-            if (player.func_175149_v() || Raid.isVillage(world, player.getPosition())) return;
+            if (player.isSpectator() || Raid.isVillage(world, player.getPosition())) return;
             spawnPatrol(world, player, rand, false);
             nextTick = PatrolsConfig.patrolMinTime + rand.nextInt(PatrolsConfig.patrolMaxDelay);
             return;
