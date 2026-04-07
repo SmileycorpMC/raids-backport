@@ -11,10 +11,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.BiomeDictionary;
 import net.smileycorp.raids.common.RaidsContent;
 import net.smileycorp.raids.common.util.RaidsLogger;
-import net.smileycorp.raids.config.PatrolConfig;
+import net.smileycorp.raids.config.PatrolsConfig;
 
 import java.util.List;
 import java.util.Map;
@@ -25,16 +24,21 @@ public class PatrolSpawner {
     private int nextTick = -1;
     
     public void tick(WorldServer world) {
-        if (world == null || world.getDifficulty() == EnumDifficulty.PEACEFUL || PatrolConfig.patrolChance <= 0) return;
-        Random rand = world.rand;
-        if (nextTick == -1) nextTick = PatrolConfig.patrolMinTime + rand.nextInt(PatrolConfig.patrolMaxDelay);
-        if (nextTick-- > 0) return;
-        long day = world.getWorldTime() / PatrolConfig.dayLength;
-        if ((day < 5 |! world.isDaytime()) || rand.nextInt(PatrolConfig.patrolChance) != 0 || world.playerEntities.isEmpty()) return;
-        EntityPlayer player = world.playerEntities.get(rand.nextInt(world.playerEntities.size()));
-        if (player.func_175149_v() || Raid.isVillage(world, player.getPosition())) return;
-        spawnPatrol(world, player, rand, false);
-        nextTick = PatrolConfig.patrolMinTime + rand.nextInt(PatrolConfig.patrolMaxDelay);
+        if (world == null || world.getDifficulty() == EnumDifficulty.PEACEFUL || PatrolsConfig.patrolChance <= 0) return;
+        int dim = world.provider.getDimension();
+        for (int id : PatrolsConfig.spawnDimensions) if (dim == id) {
+            Random rand = world.rand;
+            if (nextTick == -1) nextTick = PatrolsConfig.patrolMinTime + rand.nextInt(PatrolsConfig.patrolMaxDelay);
+            if (nextTick-- > 0) return;
+            long day = world.getWorldTime() / PatrolsConfig.dayLength;
+            if ((day < PatrolsConfig.firstDay | !world.isDaytime()) || rand.nextInt(PatrolsConfig.patrolChance) != 0 || world.playerEntities.isEmpty())
+                return;
+            EntityPlayer player = world.playerEntities.get(rand.nextInt(world.playerEntities.size()));
+            if (player.func_175149_v() || Raid.isVillage(world, player.getPosition())) return;
+            spawnPatrol(world, player, rand, false);
+            nextTick = PatrolsConfig.patrolMinTime + rand.nextInt(PatrolsConfig.patrolMaxDelay);
+            return;
+        }
     }
     
     public void spawnPatrol(WorldServer world, Entity player, Random rand, boolean isCommand) {
@@ -42,13 +46,13 @@ public class PatrolSpawner {
         int l = (24 + rand.nextInt(24)) * (rand.nextBoolean() ? -1 : 1);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(player.getPosition().add(k, 0, l));
         if (!world.isAreaLoaded(pos.add(-10, 0, -10), pos.add(10, 0, 10))) return;
-        if (!isCommand && BiomeDictionary.hasType(world.getBiome(pos), BiomeDictionary.Type.MUSHROOM)) return;
-        int numSpawns = (int) Math.ceil(world.getDifficultyForLocation(pos).getAdditionalDifficulty()) + 1;
+        if (!isCommand &! PatrolsConfig.canSpawnPatrol(world.getBiome(pos))) return;
+        int numSpawns = (int) Math.ceil(world.getDifficultyForLocation(pos).getAdditionalDifficulty() * PatrolsConfig.extraSpawnsPerDifficulty) + PatrolsConfig.minSpawns;
         RaidsLogger.logInfo("Spawning patrol with " + numSpawns + " members at " + pos);
         if (isCommand && player instanceof EntityPlayer)
             player.sendMessage(new TextComponentTranslation("commands.raids.spawnPatrol.success", numSpawns, pos.getX(), pos.getY(), pos.getZ()));
         List<Class<? extends EntityLiving>> spawns = Lists.newArrayList();
-        Map.Entry<Integer, List<Map.Entry<Class<? extends EntityLiving>, Integer>>> entries = PatrolConfig.getSpawnEntities();
+        Map.Entry<Integer, List<Map.Entry<Class<? extends EntityLiving>, Integer>>> entries = PatrolsConfig.getSpawnEntities();
         for (int i = 0; i < numSpawns; i++) {
             int c = rand.nextInt(entries.getKey());
             for (Map.Entry<Class<? extends EntityLiving>, Integer> entry : entries.getValue()) {

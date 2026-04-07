@@ -174,7 +174,7 @@ public class WorldDataRaids extends WorldSavedData {
     }
     
     public static WorldDataRaids getData(WorldServer world) {
-        WorldDataRaids data = (WorldDataRaids) world.getMapStorage().getOrLoadData(WorldDataRaids.class, DATA);
+        WorldDataRaids data = (WorldDataRaids) world.getPerWorldStorage().getOrLoadData(WorldDataRaids.class, DATA);
         if (data == null) {
             data = new WorldDataRaids();
             world.getMapStorage().setData(DATA, data);

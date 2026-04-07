@@ -3,6 +3,8 @@ package net.smileycorp.raids.config;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.registries.GameData;
@@ -14,7 +16,7 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 
-public class PatrolConfig {
+public class PatrolsConfig {
 
     private static Map.Entry<Integer, List<Map.Entry<Class<? extends EntityLiving>, Integer>>> spawnEntities;
     private static String[] spawnEntitiesStr;
@@ -22,6 +24,13 @@ public class PatrolConfig {
     public static int patrolMaxDelay;
     public static int patrolChance;
     public static int dayLength;
+    public static int firstDay;
+    public static int[] spawnDimensions;
+    public static int minSpawns;;
+    public static float extraSpawnsPerDifficulty;
+    private static String[] spawnBiomesBlacklist;
+    private static List<Biome> spawnBiomes;
+    private static boolean spawnBiomesWhitelist;
     
     public static void syncConfig(FMLPreInitializationEvent event) {
         Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/patrols.cfg"));
@@ -32,6 +41,12 @@ public class PatrolConfig {
             patrolMaxDelay = config.get("general", "patrolMaxDelay", 12000, "Max delay the game can wait to attempt spawn a patrol.").getInt();
             patrolChance = config.get("general", "patrolChance", 5, "Chance for a patrol to spawn (Set to 0 to disable).").getInt();
             dayLength = config.get("general", "dayLength", 24000, "How many ticks are days? (Change if you have a mod that changes this)").getInt();
+            firstDay = config.get("general", "firstDay", 5, "How many days of a world being open until patrols can spawn?").getInt();
+            spawnDimensions = config.get("general", "spawnDimensions", new int[] {0}, "Dimensions Patrols can spawn in.").getIntList();
+            minSpawns = config.getInt("minSpawns", "general", 1, 0, 255, "Minimum number of entities to spawn in a patrol.");
+            extraSpawnsPerDifficulty = config.getFloat("extraSpawnsPerDifficulty", "general", 1, 0, 255, "Number of entities to be added to patrols per regional difficulty level (Rounded Up).");
+            spawnBiomesBlacklist = config.get("general", "spawnBiomesBlacklist", new String[] {"MUSHROOM"}, "Biomes patrols can't spawn in (Can specify either biomes names or Biome Dictionaries e.g. minecraft:plains, FOREST)?").getStringList();
+            spawnBiomesWhitelist = config.getBoolean("spawnBiomesWhitelist", "general", false, "Invert spawnBiomesBlacklist so that patrols can only spawn in the specified biome.");
         } catch(Exception e) {
         } finally {
             if (config.hasChanged()) config.save();
@@ -79,5 +94,31 @@ public class PatrolConfig {
         }
         return spawnEntities;
     }
-    
+
+    public static boolean canSpawnPatrol(Biome biome) {
+        if (spawnBiomes == null) {
+            spawnBiomes = Lists.newArrayList();
+            for (String str : spawnBiomesBlacklist) {
+                if (str.contains(":")) {
+                    try {
+                        Biome biome1 = Biome.REGISTRY.getObject(new ResourceLocation(str));
+                        if (biome1 != null) spawnBiomes.add(biome1);
+                        else RaidsLogger.logError("Biome " + str + " is not registered", new NullPointerException());
+                    } catch (Exception e) {
+                        RaidsLogger.logError(str + " is not a valid registry name", e);
+                    }
+                }
+                else {
+                    try {
+                        BiomeDictionary.Type type = BiomeDictionary.Type.getType(str);
+                        for (Biome biome1 : BiomeDictionary.getBiomes(type)) spawnBiomes.add(biome1);
+                    } catch (Exception e) {
+                        RaidsLogger.logError(str + " is not a valid registry name", e);
+                    }
+                }
+            }
+        }
+        return spawnBiomesWhitelist == spawnBiomes.contains(biome);
+    }
+
 }

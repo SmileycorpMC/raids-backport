@@ -50,7 +50,7 @@ public class CommonProxy {
 		IntegrationConfig.syncConfig(event);
 		EntityConfig.syncConfig(event);
 		OutpostConfig.syncConfig(event);
-		PatrolConfig.syncConfig(event);
+		PatrolsConfig.syncConfig(event);
 		RaidConfig.syncConfig(event);
 		MansionConfig.syncConfig(event);
 		RaidTableLoader.init(event);
