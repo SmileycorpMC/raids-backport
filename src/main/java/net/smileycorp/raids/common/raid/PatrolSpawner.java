@@ -27,15 +27,14 @@ public class PatrolSpawner {
     public void tick(WorldServer world) {
         if (world == null || world.getDifficulty() == EnumDifficulty.PEACEFUL || PatrolConfig.patrolChance <= 0) return;
         Random rand = world.rand;
+        if (nextTick == -1) nextTick = PatrolConfig.patrolMinTime + rand.nextInt(PatrolConfig.patrolMaxDelay);
         if (nextTick-- > 0) return;
-        if (nextTick == 0) {
-            long i = world.getWorldTime() / PatrolConfig.dayLength;
-            if ((i < 5 |! world.isDaytime()) || rand.nextInt(PatrolConfig.patrolChance) != 0 || world.playerEntities.isEmpty()) return;
-            EntityPlayer player = world.playerEntities.get(rand.nextInt(world.playerEntities.size()));
-            if (player.func_175149_v() || Raid.isVillage(world, player.getPosition())) return;
-            spawnPatrol(world, player, rand, false);
-        }
-        nextTick += PatrolConfig.patrolMinTime + rand.nextInt(PatrolConfig.patrolMaxDelay);
+        long day = world.getWorldTime() / PatrolConfig.dayLength;
+        if ((day < 5 |! world.isDaytime()) || rand.nextInt(PatrolConfig.patrolChance) != 0 || world.playerEntities.isEmpty()) return;
+        EntityPlayer player = world.playerEntities.get(rand.nextInt(world.playerEntities.size()));
+        if (player.func_175149_v() || Raid.isVillage(world, player.getPosition())) return;
+        spawnPatrol(world, player, rand, false);
+        nextTick = PatrolConfig.patrolMinTime + rand.nextInt(PatrolConfig.patrolMaxDelay);
     }
     
     public void spawnPatrol(WorldServer world, Entity player, Random rand, boolean isCommand) {
