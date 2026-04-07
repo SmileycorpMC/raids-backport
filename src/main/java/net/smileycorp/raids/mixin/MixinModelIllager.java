@@ -1,5 +1,6 @@
 package net.smileycorp.raids.mixin;
 
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelIllager;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -10,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ModelIllager.class)
-public class MixinModelIllager {
+public class MixinModelIllager extends ModelBase {
 
     @Shadow public ModelRenderer rightArm;
 
@@ -22,7 +23,7 @@ public class MixinModelIllager {
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/monster/AbstractIllager;getArmPose()Lnet/minecraft/entity/monster/AbstractIllager$IllagerArmPose;"), method = "setRotationAngles")
     public void raids$setRotationAngles$getArmPose(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scalefactor, Entity entity, CallbackInfo callback) {
-        if (!entity.isRiding()) return;
+        if (!isRiding) return;
         rightArm.rotateAngleX = (-(float)Math.PI / 5f);
         rightArm.rotateAngleY = 0;
         rightArm.rotateAngleZ = 0;
@@ -37,9 +38,8 @@ public class MixinModelIllager {
         leg1.rotateAngleZ = -0.07853982f;
     }
 
-    @Inject(at = @At(value = "RETURN"), method = "setRotationAngles")
-    public void raids$setRotationAngles$TAIL(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scalefactor, Entity entity, CallbackInfo callback) {
-        if (!entity.isRiding()) return;
+    @Inject(at = @At(value = "HEAD"), method = "setRotationAngles")
+    public void raids$setRotationAngles$HEAD(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scalefactor, Entity entity, CallbackInfo callback) {
         rightArm.rotateAngleX = 0;
         rightArm.rotateAngleY = 0;
         rightArm.rotateAngleZ = 0;
