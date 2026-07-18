@@ -2,6 +2,7 @@ package net.smileycorp.raids.common.entities;
 
 import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBush;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.*;
@@ -121,7 +122,7 @@ public class EntityRavager extends EntityMob {
 						BlockPos blockpos = pos.add(i, j, k);
 						IBlockState blockstate = world.getBlockState(blockpos);
 						Block block = blockstate.getBlock();
-						if (block instanceof BlockLeaves) breaking = world.destroyBlock(blockpos, true) || breaking;
+						if (block instanceof BlockBush) breaking = world.destroyBlock(blockpos, true) || breaking;
 					}
 				}
 			}
@@ -163,7 +164,7 @@ public class EntityRavager extends EntityMob {
 	
 	@Override
 	public boolean canEntityBeSeen(Entity entity) {
-		return stunnedTick <= 0 && roarTick <= 0 ? super.canEntityBeSeen(entity) : false;
+		return stunnedTick <= 0 && roarTick <= 0 && super.canEntityBeSeen(entity);
 	}
 	
 	private void roar() {
