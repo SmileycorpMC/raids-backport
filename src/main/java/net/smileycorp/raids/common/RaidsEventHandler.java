@@ -60,7 +60,7 @@ public class RaidsEventHandler {
 	@SubscribeEvent
 	public void attachEntityCapabilities(AttachCapabilitiesEvent<Entity> event) {
 		Entity entity = event.getObject();
-		if (!(entity instanceof EntityLiving) || entity == null) return;
+		if (!(entity instanceof EntityLivingBase)) return;
 		if (entity.world == null) return;
 		if (entity.world.isRemote) return;
 		if (RaidHandler.isRaider(entity)) event.addCapability(Constants.loc("Raider"), new Raider.Provider((EntityLiving) entity));
