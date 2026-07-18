@@ -3,7 +3,6 @@ package net.smileycorp.raids.common.entities;
 import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
-import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
@@ -14,6 +13,9 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
@@ -36,9 +38,9 @@ public class EntityRavager extends EntityMob {
 	
 	private static final Predicate<EntityLiving> NO_RAVAGER_AND_ALIVE = entity -> entity.isEntityAlive() && !(entity instanceof EntityRavager);
 	
-	private int attackTick;
-	private int stunnedTick;
-	private int roarTick;
+	public static final DataParameter<Integer> ATTACK_TICK = EntityDataManager.createKey(EntityRavager.class, DataSerializers.VARINT);
+	public static final DataParameter<Integer> STUNNED_TICK = EntityDataManager.createKey(EntityRavager.class, DataSerializers.VARINT);
+	public static final DataParameter<Integer> ROAR_TICK = EntityDataManager.createKey(EntityRavager.class, DataSerializers.VARINT);
 
 	public EntityRavager(World world) {
 		super(world);
@@ -46,7 +48,15 @@ public class EntityRavager extends EntityMob {
 		stepHeight = 1;
 		experienceValue = 20;
 	}
-	
+
+	@Override
+	protected void entityInit() {
+		super.entityInit();
+		dataManager.register(ATTACK_TICK, 0);
+		dataManager.register(STUNNED_TICK, 0);
+		dataManager.register(ROAR_TICK, 0);
+	}
+
 	@Override
 	public void setAttackTarget(EntityLivingBase target) {
 		if (RaidHandler.isRaider(target)) return;
@@ -76,17 +86,17 @@ public class EntityRavager extends EntityMob {
 	@Override
 	public void writeEntityToNBT(NBTTagCompound nbt) {
 		super.writeEntityToNBT(nbt);
-		nbt.setInteger("AttackTick", attackTick);
-		nbt.setInteger("StunTick", stunnedTick);
-		nbt.setInteger("RoarTick", roarTick);
+		nbt.setInteger("AttackTick", getAttackTick());
+		nbt.setInteger("StunTick", getStunnedTick());
+		nbt.setInteger("RoarTick", getRoarTick());
 	}
 	
 	@Override
 	public void readEntityFromNBT(NBTTagCompound nbt) {
 		super.readEntityFromNBT(nbt);
-		attackTick = nbt.getInteger("AttackTick");
-		stunnedTick = nbt.getInteger("StunTick");
-		roarTick = nbt.getInteger("RoarTick");
+		setAttackTick(nbt.getInteger("AttackTick"));
+		setStunnedTick(nbt.getInteger("StunTick"));
+		setRoarTick(nbt.getInteger("RoarTick"));
 	}
 	
 	@Override
@@ -128,30 +138,33 @@ public class EntityRavager extends EntityMob {
 			}
 			if (!breaking && onGround) jump();
 		}
-		if (roarTick > 0) if (roarTick-- == 10) roar();
-		if (attackTick > 0) attackTick--;
-		if (stunnedTick > 0) {
+		int roar = getRoarTick();
+		if (roar > 0 && roar-- == 10) roar();
+		if (getAttackTick() > 0) setAttackTick(getAttackTick() - 1);
+		int stunned = getStunnedTick();
+		if (stunned > 0) {
 			stunEffect();
-			if (stunnedTick-- == 0) {
+			if (stunned-- == 0) {
 				playSound(RaidsSoundEvents.RAVAGER_ROAR, 1, 1);
-				roarTick = 20;
+				setRoarTick(20);
 			}
 		}
+		setStunnedTick(stunned);
+		setRoarTick(roar);
 	}
 	
 	private void stunEffect() {
-		if (rand.nextInt(6) == 0) {
-			double x = posX - width * Math.sin(rotationYaw * ((float)Math.PI / 180f)) + (rand.nextDouble() * 0.6 - 0.3);
-			double y = posY + height - 0.3;
-			double z = posZ + width * Math.cos(rotationYaw * ((float)Math.PI / 180f)) + (rand.nextDouble() * 0.6 - 0.3);
-			world.spawnParticle(EnumParticleTypes.SPELL_MOB, x, y, z, 0.4980392156862745, 0.5137254901960784, 0.5725490196078431);
-		}
+		if (rand.nextInt(6) > 0) return;
+		double x = posX - width * Math.sin(rotationYaw * ((float)Math.PI / 180f)) + (rand.nextDouble() * 0.6 - 0.3);
+		double y = posY + height - 0.3;
+		double z = posZ + width * Math.cos(rotationYaw * ((float)Math.PI / 180f)) + (rand.nextDouble() * 0.6 - 0.3);
+		world.spawnParticle(EnumParticleTypes.SPELL_MOB, x, y, z, 0.4980392156862745, 0.5137254901960784, 0.5725490196078431);
 	}
 	
 	protected void blockUsingShield(EntityLivingBase entity) {
-		if (roarTick > 0) return;
+		if (getRoarTick() > 0) return;
 		if (rand.nextDouble() < 0.5) {
-			stunnedTick = 40;
+			setStunnedTick(40);
 			playSound(RaidsSoundEvents.RAVAGER_STUNNED, 1, 1);
 			entity.applyEntityCollision(this);
 		} else strongKnockback(entity);
@@ -159,12 +172,12 @@ public class EntityRavager extends EntityMob {
 	}
 	
 	protected boolean isImmobile() {
-		return !isEntityAlive() || attackTick > 0 || stunnedTick > 0 || roarTick > 0;
+		return !isEntityAlive() || getAttackTick() > 0 || getStunnedTick() > 0 || getRoarTick() > 0;
 	}
 	
 	@Override
 	public boolean canEntityBeSeen(Entity entity) {
-		return stunnedTick <= 0 && roarTick <= 0 && super.canEntityBeSeen(entity);
+		return getStunnedTick() <= 0 && getRoarTick() <= 0 && super.canEntityBeSeen(entity);
 	}
 	
 	private void roar() {
@@ -191,20 +204,31 @@ public class EntityRavager extends EntityMob {
 	}
 	
 	public int getAttackTick() {
-		return attackTick;
+		return dataManager.get(ATTACK_TICK);
 	}
 	
 	public int getStunnedTick() {
-		return stunnedTick;
+		return dataManager.get(STUNNED_TICK);
 	}
 	
 	public int getRoarTick() {
-		return roarTick;
+		return dataManager.get(ROAR_TICK);
+	}
+
+	public void setAttackTick(int attackTick) {
+		dataManager.set(ATTACK_TICK, attackTick);
+	}
+
+	public void setStunnedTick(int stunnedTick) {
+		dataManager.set(STUNNED_TICK, stunnedTick);
+	}
+
+	public void setRoarTick(int roarTick) {
+		dataManager.set(ROAR_TICK, roarTick);
 	}
 	
 	public boolean attackEntityAsMob(Entity entity) {
-		attackTick = 10;
-		//world.broadcast(EntityEvent(this, (byte)4);
+		setAttackTick(10);
 		playSound(RaidsSoundEvents.RAVAGER_ATTACK, 1, 1);
 		return super.attackEntityAsMob(entity);
 	}
