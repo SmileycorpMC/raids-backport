@@ -8,7 +8,7 @@ import net.smileycorp.raids.common.entities.EntityPillager;
 import net.smileycorp.raids.integration.ModIntegration;
 import net.smileycorp.raids.integration.spartanweaponry.SpartanWeaponryIntegration;
 
-public class EntityAIPillagerCrossbowAttack extends EntityAIBase {
+public class EntityAIPillagerAttackRangedCrossbow extends EntityAIBase {
     
     private final EntityPillager entity;
     private State state = State.UNCHARGED;
@@ -16,7 +16,7 @@ public class EntityAIPillagerCrossbowAttack extends EntityAIBase {
     private int attackDelay;
     private int updatePathDelay;
     
-    public EntityAIPillagerCrossbowAttack(EntityPillager entity) {
+    public EntityAIPillagerAttackRangedCrossbow(EntityPillager entity) {
         this.entity = entity;
         setMutexBits(3);
     }

@@ -34,7 +34,8 @@ import net.minecraftforge.fml.common.Optional;
 import net.smileycorp.raids.common.Constants;
 import net.smileycorp.raids.common.RaidsAdvancements;
 import net.smileycorp.raids.common.RaidsSoundEvents;
-import net.smileycorp.raids.common.entities.ai.EntityAIPillagerCrossbowAttack;
+import net.smileycorp.raids.common.entities.ai.EntityAIPillagerAttackMelee;
+import net.smileycorp.raids.common.entities.ai.EntityAIPillagerAttackRangedCrossbow;
 import net.smileycorp.raids.common.raid.RaidHandler;
 import net.smileycorp.raids.config.EntityConfig;
 import net.smileycorp.raids.integration.ModIntegration;
@@ -55,8 +56,9 @@ public class EntityPillager extends AbstractIllager implements IRangedAttackMob 
 	protected void initEntityAI() {
 		super.initEntityAI();
 		tasks.addTask(0, new EntityAISwimming(this));
-        if (ModIntegration.HAS_CROSSBOW_MOD) tasks.addTask(3, new EntityAIPillagerCrossbowAttack(this));
-        else tasks.addTask(4, new EntityAIAttackRangedBow(this, 1, 20, 15));
+        if (ModIntegration.HAS_CROSSBOW_MOD) tasks.addTask(3, new EntityAIPillagerAttackRangedCrossbow(this));
+        tasks.addTask(4, new EntityAIAttackRangedBow<>(this, 1, 20, 15));
+        tasks.addTask(5, new EntityAIPillagerAttackMelee(this));
         tasks.addTask(8, new EntityAIWanderAvoidWater(this, 1));
         tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 15, 1));
         tasks.addTask(10, new EntityAIWatchClosest(this, EntityLivingBase.class, 15));
