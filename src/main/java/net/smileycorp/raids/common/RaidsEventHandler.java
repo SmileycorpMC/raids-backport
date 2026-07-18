@@ -220,14 +220,14 @@ public class RaidsEventHandler {
 				player.getActivePotionEffect(RaidsContent.HERO_OF_THE_VILLAGE).getAmplifier() : -1;
 		for (MerchantRecipe recipe : event.getList()) {
 			ITradeDiscount trade = (ITradeDiscount) recipe;
-			if (amplifier == -1) {
+			if (amplifier < 0) {
 				trade.setDiscountedPrice(0);
 				continue;
 			}
 			int count = recipe.getItemToBuy().getCount();
 			int discount = (int)Math.floor((0.3 + 0.0625 * (double)amplifier) * (double)count);
 			trade.setDiscountedPrice(Math.max(count - discount, 1));
-		};
+		}
 	}
 	
 	@SubscribeEvent

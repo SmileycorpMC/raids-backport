@@ -45,14 +45,13 @@ public class WorldDataRaids extends WorldSavedData {
     
     private void setWorld(WorldServer world) {
         this.world = world;
-        if (raidNBT != null) {
-            for(NBTBase base : raidNBT) {
-                NBTTagCompound compound = (NBTTagCompound) base;
-                Raid raid = new Raid(world, compound);
-                raidMap.put(raid.getId(), raid);
-            }
-            raidNBT = null;
+        if (raidNBT == null) return;
+        for (NBTBase base : raidNBT) {
+            NBTTagCompound compound = (NBTTagCompound) base;
+            Raid raid = new Raid(world, compound);
+            raidMap.put(raid.getId(), raid);
         }
+        raidNBT = null;
     }
     
     public Raid get(int id) {
@@ -74,12 +73,9 @@ public class WorldDataRaids extends WorldSavedData {
     }
     
     public static boolean canJoinRaid(EntityLiving entity, Raid raid) {
-        if (entity != null && raid != null && raid.getWorld() != null) {
-            return entity.isEntityAlive() && entity.hasCapability(RaidsContent.RAIDER, null) && entity.getIdleTime() <= 2400 &&
+        return entity != null && raid != null && raid.getWorld() != null &&
+            entity.isEntityAlive() && entity.hasCapability(RaidsContent.RAIDER, null) && entity.getIdleTime() <= 2400 &&
                     entity.world.provider.getDimension() == raid.getWorld().provider.getDimension();
-        } else {
-            return false;
-        }
     }
     
     
@@ -118,7 +114,7 @@ public class WorldDataRaids extends WorldSavedData {
         nextAvailableID = nbt.getInteger("NextAvailableID");
         tick = nbt.getInteger("Tick");
         if (world == null) raidNBT = nbt.getTagList("Raids", 10);
-        else for(NBTBase base : nbt.getTagList("Raids", 10)) {
+        else for (NBTBase base : nbt.getTagList("Raids", 10)) {
             NBTTagCompound compound = (NBTTagCompound) base;
             Raid raid = new Raid(world, compound);
             raidMap.put(raid.getId(), raid);
@@ -130,7 +126,7 @@ public class WorldDataRaids extends WorldSavedData {
         nbt.setInteger("NextAvailableID", nextAvailableID);
         nbt.setInteger("Tick", tick);
         NBTTagList list = new NBTTagList();
-        for(Raid raid : raidMap.values()) {
+        for (Raid raid : raidMap.values()) {
             NBTTagCompound compound = new NBTTagCompound();
             raid.save(compound);
             list.appendTag(compound);
@@ -147,7 +143,7 @@ public class WorldDataRaids extends WorldSavedData {
     public Raid getNearbyRaid(BlockPos pos, int range) {
         Raid raid = null;
         double d0 = range;
-        for(Raid raid1 : raidMap.values()) {
+        for (Raid raid1 : raidMap.values()) {
             double d1 = raid1.getCenter().distanceSq(pos);
             if (raid1.isActive() && d1 < d0) {
                 raid = raid1;

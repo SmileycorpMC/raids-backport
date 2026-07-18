@@ -31,12 +31,7 @@ public class RaidsCriterionTrigger implements ICriterionTrigger {
     
     @Override
     public void addListener(PlayerAdvancements advancements, Listener listener) {
-        Set<Listener> set = listeners.get(advancements);
-        if (set == null) {
-            set = Sets.newHashSet();
-            listeners.put(advancements, set);
-        }
-        set.add(listener);
+       listeners.computeIfAbsent(advancements, k -> Sets.newHashSet()).add(listener);
     }
     
     @Override

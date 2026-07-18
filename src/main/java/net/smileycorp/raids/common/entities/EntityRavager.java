@@ -101,14 +101,9 @@ public class EntityRavager extends EntityMob {
 	
 	@Override
 	public Entity getControllingPassenger() {
-		if (!isAIDisabled()) {
-			List<Entity> list = getPassengers();
-			if (!list.isEmpty()) {
-				Entity entity = list.get(0);
-				return RaidHandler.isRaider(entity) ? null : entity;
-			}
-		}
-		return null;
+		if (isAIDisabled() || getPassengers().isEmpty()) return null;
+		Entity entity = getPassengers().get(0);
+		return RaidHandler.isRaider(entity) ? null : entity;
 	}
 	
 	@Override
@@ -144,7 +139,7 @@ public class EntityRavager extends EntityMob {
 		int stunned = getStunnedTick();
 		if (stunned > 0) {
 			stunEffect();
-			if (stunned-- == 0) {
+			if (--stunned == 0) {
 				playSound(RaidsSoundEvents.RAVAGER_ROAR, 1, 1);
 				setRoarTick(20);
 			}
@@ -158,7 +153,7 @@ public class EntityRavager extends EntityMob {
 		double x = posX - width * Math.sin(rotationYaw * ((float)Math.PI / 180f)) + (rand.nextDouble() * 0.6 - 0.3);
 		double y = posY + height - 0.3;
 		double z = posZ + width * Math.cos(rotationYaw * ((float)Math.PI / 180f)) + (rand.nextDouble() * 0.6 - 0.3);
-		world.spawnParticle(EnumParticleTypes.SPELL_MOB, x, y, z, 0.4980392156862745, 0.5137254901960784, 0.5725490196078431);
+		world.spawnParticle(EnumParticleTypes.SPELL_MOB, x, y, z, 0.5, 0.5, 0.5);
 	}
 	
 	protected void blockUsingShield(EntityLivingBase entity) {
@@ -182,18 +177,14 @@ public class EntityRavager extends EntityMob {
 	
 	private void roar() {
 		if (!isEntityAlive()) return;
-		for(EntityLiving livingentity : world.getEntitiesWithinAABB(EntityLiving.class, getEntityBoundingBox().grow(4), NO_RAVAGER_AND_ALIVE)) {
-			if (livingentity.getCreatureAttribute() != EnumCreatureAttribute.ILLAGER)
-				livingentity.attackEntityFrom(DamageSource.causeMobDamage(this), 6);
-			strongKnockback(livingentity);
+		for(EntityLiving entity : world.getEntitiesWithinAABB(EntityLiving.class, getEntityBoundingBox().grow(4), NO_RAVAGER_AND_ALIVE)) {
+			if (entity.getCreatureAttribute() != EnumCreatureAttribute.ILLAGER)
+				entity.attackEntityFrom(DamageSource.causeMobDamage(this), 6);
+			strongKnockback(entity);
 		}
 		Vec3d vec3 = getEntityBoundingBox().getCenter();
-		for(int i = 0; i < 40; i++) {
-			double d0 = rand.nextGaussian() * 0.2;
-			double d1 = rand.nextGaussian() * 0.2;
-			double d2 = rand.nextGaussian() * 0.2;
-			world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, vec3.x, vec3.y, vec3.z, d0, d1, d2);
-		}
+		for (int i = 0; i < 40; i++) world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, vec3.x, vec3.y, vec3.z,
+				rand.nextGaussian() * 0.2,  rand.nextGaussian() * 0.2,  rand.nextGaussian() * 0.2);
 	}
 	
 	private void strongKnockback(Entity entity) {

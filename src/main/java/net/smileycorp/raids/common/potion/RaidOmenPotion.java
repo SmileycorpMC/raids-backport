@@ -32,12 +32,9 @@ public class RaidOmenPotion extends RaidsPotion {
     public void performEffect(EntityLivingBase entity, int amplifier) {
         Random rand = entity.getRNG();
         if (entity.isInvisible()) return;
-        if (rand.nextBoolean()) {
-            if (amplifier > 4) entity.world.spawnParticle(EnumParticleTypes.FLAME, entity.posX + (rand.nextDouble() - 0.5D) * (double)entity.width,
-                    entity.posY + rand.nextDouble() * (double)entity.height, entity.posZ + (rand.nextDouble() - 0.5D) * (double)entity.width,
-                    0 ,0, 0);
-            return;
-        }
+        if (amplifier > 4 && rand.nextBoolean()) entity.world.spawnParticle(EnumParticleTypes.FLAME,
+                entity.posX + (rand.nextDouble() - 0.5D) * (double)entity.width, entity.posY + rand.nextDouble() * (double)entity.height,
+                entity.posZ + (rand.nextDouble() - 0.5D) * (double)entity.width, 0 ,0, 0);
         PacketHandler.NETWORK_INSTANCE.sendToAllTracking(new RaidsParticleMessage(EnumRaidsParticle.RAID_OMEN,
                         entity.posX + (rand.nextDouble() - 0.5D) * (double)entity.width, entity.posY + rand.nextDouble() * (double)entity.height,
                         entity.posZ + (rand.nextDouble() - 0.5D) * (double)entity.width, (double) (amplifier > 4 ? 0xF75E00 : 0xDE4058)),

@@ -29,21 +29,20 @@ public class BadOmenPotion extends RaidsPotion {
     
     @Override
     public void performEffect(EntityLivingBase entity, int amplifier) {
-        if (entity instanceof EntityPlayerMP && !((EntityPlayerMP)entity).isSpectator()) {
-            EntityPlayerMP player = (EntityPlayerMP)entity;
-            World world = player.world;
-            if (world.getDifficulty() == EnumDifficulty.PEACEFUL) return;
-            if (!Raid.isVillage(world, player.getPosition())) return;
-            if (RaidConfig.ominousBottles) {
-                Raid raid = WorldDataRaids.getData((WorldServer) world).getRaidAt(player.getPosition());
-                if (raid == null || raid.getBadOmenLevel() < raid.getMaxBadOmenLevel()) {
-                    if (RaidConfig.raidCenteredOnPlayer) RaidOmenTracker.setRaidStart(player);
-                    player.addPotionEffect(new PotionEffect(RaidsContent.RAID_OMEN, 600, amplifier));
-                    player.removePotionEffect(RaidsContent.BAD_OMEN);
-                }
+        if (!(entity instanceof EntityPlayerMP) || ((EntityPlayerMP)entity).isSpectator()) return;
+        EntityPlayerMP player = (EntityPlayerMP)entity;
+        World world = player.world;
+        if (world.getDifficulty() == EnumDifficulty.PEACEFUL) return;
+        if (!Raid.isVillage(world, player.getPosition())) return;
+        if (RaidConfig.ominousBottles) {
+            Raid raid = WorldDataRaids.getData((WorldServer) world).getRaidAt(player.getPosition());
+            if (raid == null || raid.getBadOmenLevel() < raid.getMaxBadOmenLevel()) {
+                if (RaidConfig.raidCenteredOnPlayer) RaidOmenTracker.setRaidStart(player);
+                player.addPotionEffect(new PotionEffect(RaidsContent.RAID_OMEN, 600, amplifier));
+                player.removePotionEffect(RaidsContent.BAD_OMEN);
             }
-            else WorldDataRaids.getData((WorldServer) world).createOrExtendRaid(player);
         }
+        else WorldDataRaids.getData((WorldServer) world).createOrExtendRaid(player);
     }
     
     protected ResourceLocation getTexture(PotionEffect effect) {

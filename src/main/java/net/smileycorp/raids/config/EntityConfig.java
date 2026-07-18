@@ -21,9 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EntityConfig {
-    
-    private static Configuration config;
-    
+
     public static EntityAttributesEntry pillager;
     public static boolean crossbowsBackportCrossbows;
     public static boolean crossbowCrossbows;
@@ -39,7 +37,7 @@ public class EntityConfig {
     private static String[] captainChanceStr;
     
     public static void syncConfig(FMLPreInitializationEvent event) {
-         config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/entities.cfg"));
+        Configuration config = new Configuration(new File(event.getModConfigurationDirectory().getPath() + "/raids/entities.cfg"));
         try{
             config.load();
             pillager = new EntityAttributesEntry(config, "pillager", 0.35, 32, 5, 24, 0, 0, 0, 0);

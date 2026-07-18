@@ -1,6 +1,7 @@
 package net.smileycorp.raids.common.items;
 
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,7 +18,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IRarity;
 import net.minecraftforge.fml.relauncher.Side;
@@ -51,31 +51,30 @@ public class ItemOminousBottle extends Item {
     
     @Override
     public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entity) {
-        if (!world.isRemote) {
-            world.playSound(null, entity.getPosition(), RaidsSoundEvents.OMINOUS_BOTTLE_USE, entity.getSoundCategory(), 1, 1);
-            entity.removePotionEffect(RaidsContent.BAD_OMEN);
-            if (ModIntegration.DEEPER_DEPTHS_LOADED) entity.removePotionEffect(DeeperDepthsIntegration.getBadOmen());
-            entity.addPotionEffect(new PotionEffect(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getBadOmen() :
-                    RaidsContent.BAD_OMEN, 120000, getAmplifier(stack), false, false));
-            if (entity instanceof EntityPlayerMP) CriteriaTriggers.CONSUME_ITEM.trigger((EntityPlayerMP) entity, stack);
-            if (!(entity instanceof EntityPlayer && ((EntityPlayer) entity).func_184812_l_())) stack.shrink(1);
-        }
+        if (world.isRemote) return stack;
+        world.playSound(null, entity.getPosition(), RaidsSoundEvents.OMINOUS_BOTTLE_USE, entity.getSoundCategory(), 1, 1);
+        entity.removePotionEffect(RaidsContent.BAD_OMEN);
+        if (ModIntegration.DEEPER_DEPTHS_LOADED) entity.removePotionEffect(DeeperDepthsIntegration.getBadOmen());
+        entity.addPotionEffect(new PotionEffect(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getBadOmen() :
+                RaidsContent.BAD_OMEN, 120000, getAmplifier(stack), false, false));
+        if (entity instanceof EntityPlayerMP) CriteriaTriggers.CONSUME_ITEM.trigger((EntityPlayerMP) entity, stack);
+        if (!(entity instanceof EntityPlayer && ((EntityPlayer) entity).func_184812_l_())) stack.shrink(1);
         return stack;
     }
     
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         player.setActiveHand(hand);
-        return new ActionResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
     
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
-        StringBuilder builder = new StringBuilder(I18n.translateToLocal("effect.raids.bad_omen").trim());
+        StringBuilder builder = new StringBuilder(net.minecraft.client.resources.I18n.format("effect.raids.bad_omen").trim());
         int amplifier = getAmplifier(stack);
-        if (amplifier > 0) builder.append(" " + I18n.translateToLocal("potion.potency." + amplifier).trim());
-        builder.append(" (" + Potion.getPotionDurationString(new PotionEffect(RaidsContent.BAD_OMEN, 120000), 1f) + ")");
+        if (amplifier > 0) builder.append(" ").append(I18n.format("potion.potency." + amplifier).trim());
+        builder.append(" (").append(Potion.getPotionDurationString(new PotionEffect(RaidsContent.BAD_OMEN, 120000), 1f)).append(")");
         tooltip.add((stack.getMetadata() > 4 ? TextFormatting.RED : TextFormatting.BLUE) + builder.toString());
     }
     
@@ -91,9 +90,8 @@ public class ItemOminousBottle extends Item {
     }
     
     public static ItemStack createStack(int amplifier) {
-        ItemStack stack = new ItemStack(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getOminousBottle() :
+        return new ItemStack(ModIntegration.DEEPER_DEPTHS_LOADED ? DeeperDepthsIntegration.getOminousBottle() :
                 RaidsContent.OMINOUS_BOTTLE, 1, amplifier);
-        return stack;
     }
     
     public static int getAmplifier(ItemStack stack) {
