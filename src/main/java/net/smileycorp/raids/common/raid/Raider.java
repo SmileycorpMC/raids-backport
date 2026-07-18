@@ -134,7 +134,7 @@ public interface Raider {
 		public void setLeader() {
 			if (entity != null) {
 				if (entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
-					entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner());
+					entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner().copy());
 					entity.setDropChance(EntityEquipmentSlot.HEAD, 2.0F);
 				}
 			}

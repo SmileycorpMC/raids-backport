@@ -504,7 +504,7 @@ public class Raid {
 	
 	public void setLeader(int index, EntityLiving entity) {
 		groupToLeaderMap.put(index, entity);
-		entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner());
+		entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner().copy());
 		entity.setDropChance(EntityEquipmentSlot.HEAD, 2.0F);
 	}
 	

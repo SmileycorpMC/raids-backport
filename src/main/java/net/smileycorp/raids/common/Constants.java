@@ -39,21 +39,26 @@ public class Constants {
     public static String locStr(String name) {
         return MODID + ":" + name.toLowerCase();
     }
+
+    private static ItemStack OMINOUS_BANNER = null;
     
     public static ItemStack ominousBanner() {
-        NBTTagList patterns = new NBTTagList();
-        String[] shapes = {"mr", "bs", "cs", "ms", "hh", "mc", "bo"};
-        int[] colours = {6, 7, 8, 0, 7, 7, 0};
-        for (int i = 0; i < shapes.length; i++) {
-            NBTTagCompound pattern = new NBTTagCompound();
-            pattern.setString("Pattern", shapes[i]);
-            pattern.setInteger("Color", colours[i]);
-            patterns.appendTag(pattern);
+        if (OMINOUS_BANNER == null) {
+            NBTTagList patterns = new NBTTagList();
+            String[] shapes = {"mr", "bs", "cs", "ms", "hh", "mc", "bo"};
+            int[] colours = {6, 7, 8, 0, 7, 7, 0};
+            for (int i = 0; i < shapes.length; i++) {
+                NBTTagCompound pattern = new NBTTagCompound();
+                pattern.setString("Pattern", shapes[i]);
+                pattern.setInteger("Color", colours[i]);
+                patterns.appendTag(pattern);
+            }
+            ItemStack banner = ItemBanner.makeBanner(EnumDyeColor.WHITE, patterns);
+            banner.setTranslatableName("item."+ name("OminousBanner.name"));
+            banner.getTagCompound().setInteger("HideFlags", 32);
+            OMINOUS_BANNER = banner;
         }
-        ItemStack banner = ItemBanner.makeBanner(EnumDyeColor.WHITE, patterns);
-        banner.setTranslatableName("item."+ name("OminousBanner.name"));
-        banner.getTagCompound().setInteger("HideFlags", 32);
-        return banner;
+        return OMINOUS_BANNER;
     }
     
     public static ItemStack villagerFirework(Random rand) {

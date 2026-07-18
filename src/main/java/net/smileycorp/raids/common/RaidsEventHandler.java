@@ -201,7 +201,7 @@ public class RaidsEventHandler {
 		if (chance <= 0) return;
 		if (entity.getRNG().nextFloat() > chance) return;
 		raider.setPatrolLeader(true);
-		entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner());
+		entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, Constants.ominousBanner().copy());
 	}
 
 	@SubscribeEvent
