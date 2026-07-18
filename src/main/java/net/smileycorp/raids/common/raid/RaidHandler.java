@@ -39,11 +39,12 @@ public class RaidHandler {
 	}
 	
 	public static boolean isRaider(Entity entity) {
-		return entity == null ? false : RAIDERS.contains(entity.getClass());
+		return entity != null && RAIDERS.contains(entity.getClass());
 	}
 	
 	public static boolean hasActiveRaid(Entity entity) {
-		return isRaider(entity) && entity.getCapability(RaidsContent.RAIDER, null).hasActiveRaid();
+		return isRaider(entity) && entity.hasCapability(RaidsContent.RAIDER, null)
+				&& entity.getCapability(RaidsContent.RAIDER, null).hasActiveRaid();
 	}
 	
 	public static boolean canBeCaptain(EntityLiving entity) {
