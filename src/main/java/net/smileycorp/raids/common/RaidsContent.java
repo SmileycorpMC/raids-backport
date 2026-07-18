@@ -1,5 +1,6 @@
 package net.smileycorp.raids.common;
 
+import com.sun.jna.platform.win32.WinBase;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.SoundEvent;
@@ -34,12 +35,9 @@ public class RaidsContent {
 	public static final Item OMINOUS_BOTTLE = new ItemOminousBottle();
 	
 	private static int ID = 154;
-	public static final EntityEntry PILLAGER = EntityEntryBuilder.create().entity(EntityPillager.class).id(Constants.loc("pillager"), ID++).name(Constants.name("Pillager")).egg(5451574, 9804699)
-			.tracker(64, 3, true).build();
-	public static EntityEntry RAVAGER = EntityEntryBuilder.create().entity(EntityRavager.class).id(Constants.loc("ravager"), ID++).name(Constants.name("Ravager")).egg(7697520, 5984329)
-			.tracker(64, 3, true).build();
-	public static EntityEntry ALLAY = EntityEntryBuilder.create().entity(EntityAllay.class).id(Constants.loc("allay"), ID++).name(Constants.name("Allay")).egg(56063, 44543)
-			.tracker(64, 3, true).build();
+	public static EntityEntry PILLAGER;
+	public static EntityEntry RAVAGER;
+	public static EntityEntry ALLAY;
 	
 	public static final Potion BAD_OMEN = new BadOmenPotion();
 	public static final Potion HERO_OF_THE_VILLAGE = new RaidsPotion("hero_of_the_village", false, 0x44FF44, 4);
@@ -62,8 +60,14 @@ public class RaidsContent {
 	@SubscribeEvent
 	public static void registerEntities(RegistryEvent.Register<EntityEntry> event) {
 		IForgeRegistry<EntityEntry> registry = event.getRegistry();
+		PILLAGER = EntityEntryBuilder.create().entity(EntityPillager.class).id(Constants.loc("pillager"), ID++).name(Constants.name("Pillager")).egg(5451574, 9804699)
+				.tracker(64, 3, true).build();
 		registry.register(PILLAGER);
+		RAVAGER = EntityEntryBuilder.create().entity(EntityRavager.class).id(Constants.loc("ravager"), ID++).name(Constants.name("Ravager")).egg(7697520, 5984329)
+				.tracker(64, 3, true).build();
 		registry.register(RAVAGER);
+		ALLAY = EntityEntryBuilder.create().entity(EntityAllay.class).id(Constants.loc("allay"), ID++).name(Constants.name("Allay")).egg(56063, 44543)
+				.tracker(64, 3, true).build();
 		registry.register(ALLAY);
 	}
 
