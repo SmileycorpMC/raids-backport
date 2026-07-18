@@ -24,7 +24,6 @@
     "MixinAdvancementToast",
     "MixinGuiAdvancement",
     "MixinGuiMerchant",
-    "MixinInventoryEffectRenderer",
     "MixinMerchantRecipeListClient",
     "MixinModelIllager",
     "MixinRenderEvoker",

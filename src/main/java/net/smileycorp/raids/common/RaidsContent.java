@@ -42,7 +42,7 @@ public class RaidsContent {
 			.tracker(64, 3, true).build();
 	
 	public static final Potion BAD_OMEN = new BadOmenPotion();
-	public static final Potion HERO_OF_THE_VILLAGE = new RaidsPotion(false, 0x44FF44, "hero_of_the_village");
+	public static final Potion HERO_OF_THE_VILLAGE = new RaidsPotion("hero_of_the_village", false, 0x44FF44, 4);
 	public static final Potion RAID_OMEN = new RaidOmenPotion();
 	
 	@SubscribeEvent
